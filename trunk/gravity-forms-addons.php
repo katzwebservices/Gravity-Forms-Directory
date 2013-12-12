@@ -1769,7 +1769,7 @@ class GFDirectory {
 		}
 
 		// Used by at least the show_only_user_entries() method
-		$return = apply_filters('kws_gf_directory_lead_filter', $return, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date","status", "approvedcolumn", "limituser"));
+		$return = apply_filters('kws_gf_directory_lead_filter', $return, compact("approved","sort_field_number","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date","status", "approvedcolumn", "limituser"));
 
         return $return;
     }
