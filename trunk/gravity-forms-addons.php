@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.4.4
+Version: 3.4.5.to.be.6
 Author URI: http://www.katzwebservices.com
 
 Copyright 2013 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -33,7 +33,7 @@ class GFDirectory {
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $url = "http://www.gravityforms.com";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.4.4";
+	private static $version = "3.4.5";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -962,11 +962,16 @@ class GFDirectory {
 			if(empty($approvedcolumn)) { $approvedcolumn = self::get_approved_column($form); }
 			if(empty($adminonlycolumns) && !$showadminonly) { $adminonlycolumns = self::get_admin_only($form); }
 
-			if(!$showadminonly)  {
+			/*
+if(!$showadminonly)  {
 				$lead = self::remove_admin_only(array($lead), $adminonlycolumns, $approvedcolumn, true, true, $form);
 				$lead = $lead[0];
 				$form['fields'] = self::remove_admin_only($form['fields'], $adminonlycolumns, $approvedcolumn, false, true, $form); // This is screwing things up!
 			}
+*/
+			//since 3.4.6
+			$lead = self::remove_hidden_fields( array( $lead ), $adminonlycolumns, $approvedcolumn, true, true, $showadminonly , $form );
+			$lead = $lead[0];
 
 			ob_start(); // Using ob_start() allows us to filter output
 				self::lead_detail($form, $lead, false, $inline, $options);
@@ -1148,7 +1153,9 @@ class GFDirectory {
 				}
 			}
 		}
-
+		
+		error_log('GET: '. print_r($_GET, true));
+		
 		extract( $options );
 
 			$form_id = $form;
@@ -1225,10 +1232,15 @@ class GFDirectory {
 			# @TODO - implement filtering!
 			#$filters = GFDirectory::get_filters($leads);
 
-			if(!$showadminonly)	 {
+			/*
+if(!$showadminonly)	 {
 				$columns = self::remove_admin_only($columns, $adminonlycolumns, $approvedcolumn, false, false, $form);
 				$leads = self::remove_admin_only($leads, $adminonlycolumns, $approvedcolumn, true, false, $form);
 			}
+*/
+			// since 3.4.6
+			$columns = self::remove_hidden_fields( $columns, $adminonlycolumns, $approvedcolumn, false, false, $showadminonly , $form );
+			
 
 			// Allow lightbox to determine whether showadminonly is valid without passing a query string in URL
 			if($entry === true && !empty($lightboxsettings['entry'])) {
@@ -1275,7 +1287,7 @@ class GFDirectory {
 				$directory_shown = true;
 
 
-                ?>
+				?>
 
 				<script>
 					<?php if(!empty($lightboxsettings['images']) || !empty($lightboxsettings['entry'])) { ?>
@@ -1313,17 +1325,20 @@ class GFDirectory {
 
 			<div class="wrap">
 				<?php if($titleshow) { ?><h2><?php echo $titleprefix.$title; ?> </h2><?php } ?>
-				<?php if($search && ($lead_count > 0 || !empty($_GET['gf_search']))) { ?>
+				<?php if( $search && ( $lead_count > 0 || !empty( $_GET['gf_search'] ) ) ) { ?>
 				<form id="lead_form" method="get" action="<?php echo $formaction; ?>">
+					<?php 
+					//insert new logic for search criterias
+					?>
 					<p class="search-box">
 						<label class="hidden" for="lead_search"><?php _e("Search Entries:", "gravity-forms-addons"); ?></label>
-						<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex).'"';}?> />
+						<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query ?>"<?php if( $searchtabindex ) { echo ' tabindex="'.intval( $searchtabindex ).'"'; } ?> />
 						<?php
 							// If not using permalinks, let's make the form work!
-							echo !empty($_GET['p']) ? '<input name="p" type="hidden" value="'.esc_html($_GET['p']).'" />' : '';
+							echo !empty($_GET['p']) ? '<input name="p" type="hidden" value="'.esc_html( $_GET['p'] ).'" />' : '';
 							echo !empty($_GET['page_id']) ? '<input name="page_id" type="hidden" value="'.esc_html($_GET['page_id']).'" />' : '';
 						?>
-						<input type="submit" class="button" id="lead_search_button" value="<?php _e("Search", "gravity-forms-addons") ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex++).'"';}?> />
+						<input type="submit" class="button" id="lead_search_button" value="<?php _e("Search", "gravity-forms-addons") ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex++).'"'; } ?> />
 					</p>
 				</form>
 				<?php }
@@ -2224,12 +2239,12 @@ class GFDirectory {
 		return self::check_hide_in('hideInDirectory', $form, $field_id);
 	}
 
-	static function hide_in_single($form, $field_id) {
+	static function hide_in_single( $form, $field_id ) {
 		return self::check_hide_in('hideInSingle', $form, $field_id);
 	}
-
+	
 	static function check_hide_in($type, $form, $field_id) {
-		foreach($form['fields'] as $field) {
+		foreach( $form['fields'] as $field ) {
 #			echo $field['label'] . ' / ' . floor($field['id']).' / '.floor($field_id).' / <strong>'.$field["{$type}"].'</strong><br />';
 			if(floor($field_id) === floor($field['id']) && !empty($field["{$type}"])) {
 				return true;
@@ -2238,6 +2253,40 @@ class GFDirectory {
 
 		return false;
 	}
+	
+	/** get field property value, for a specific field_id on a $form, since 3.4.6 */
+	static function get_field_property( $property, $form, $field_id = '' ) {
+		if( empty( $property ) || empty( $form ) || '' === $field_id ) {
+			return false;
+		}
+		foreach( $form['fields'] as $field ) {
+
+			if( floor( $field_id ) === floor( $field['id'] ) && !empty( $field[ $property ] ) ) {
+				return $field[ $property ];
+			}
+		}
+
+		return false;
+	}
+	
+	/** get field properties, for a specific field_id on a $form, since 3.4.6 */
+	static function get_field_properties( $form, $field_id = '' ) {
+		if( empty( $form ) || '' === $field_id ) {
+			return false;
+		}
+		
+		foreach( $form['fields'] as $field ) {
+			if( floor( $field_id ) === floor( $field['id'] ) ) {
+				return $field;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	
+
 
 	static function remove_approved_column($type = 'form', $fields, $approvedcolumn) {
 
@@ -2252,6 +2301,11 @@ class GFDirectory {
 
 	static function remove_admin_only($leads, $adminOnly, $approved, $isleads, $single = false, $form) {
 
+		error_log('Leads : '. print_r( $leads, true) );
+		error_log('Admin Only : '. print_r( $adminOnly, true) );
+		error_log('Approved : '. print_r( $approved, true) );
+		
+		
 		if(empty($adminOnly) || !is_array($adminOnly)) { $adminOnly = array(); }
 
 		if(!is_array($leads)) { return $leads; }
@@ -2292,6 +2346,86 @@ class GFDirectory {
 			return $columns;
 		}
 	}
+	
+	
+	/**  -- remove_hidden_fields() // since 3.4.6
+	 *
+	 *	New method to filter columns and fields when generating directory or single entry view
+	 *	based on Admin Only fields, or "hide from directory" fields 
+	 *	or (new since 3.4.6) only visible if user is logged in.
+	 *
+	 *	this method replaces 'self::remove_admin_only()' 
+	 *	
+	 * 	
+	 */
+	static function remove_hidden_fields( $leads, $admin_only, $approved, $is_leads, $is_single = false, $show_admin_only = false, $form ) {
+		
+		if( empty( $admin_only ) || !is_array( $admin_only ) ) { $admin_only = array(); }
+
+		if( empty( $leads ) || !is_array( $leads ) ) { return $leads; }
+
+		if( $is_leads ) {
+		
+			foreach( $leads as $index => $lead ) {
+				// the field_ids are the numeric array keys of a lead
+				$field_ids = array_filter( array_keys( $lead ), 'is_int' );
+				
+				foreach( $field_ids as $id ) {
+					if( self::check_hide_field_conditions( $id, $admin_only, $approved, $is_single, $show_admin_only, $form ) ) {
+						unset( $leads[ $index ][ $id ] );
+					}
+				}
+				
+			}
+			
+			return $leads;
+			
+		} else {
+		
+			// the KEY = field_id (to be used to check directory columns)
+			foreach( $leads as $key => $column) {
+				
+				if( self::check_hide_field_conditions( $key, $admin_only, $approved, $is_single, $show_admin_only, $form ) ) {
+					unset( $leads[ $key ] );
+				}
+				
+			}
+
+			return $leads;
+		}
+		
+		
+	}
+	
+	/** returns true if field should be hidden / returns false if not , since 3.4.6 */
+	static function check_hide_field_conditions( $field_id, $admin_only, $approved, $is_single = false, $show_admin_only = false, $form ) {
+		
+		
+		$properties = self::get_field_properties( $form, $field_id );
+		if( empty( $properties ) ) {
+			return false;
+		}
+		
+		//check if set to be hidden in directory or in single entry view
+		if( ( $is_single && !empty( $properties['hideInSingle'] ) ) || ( !$is_single && !empty( $properties['hideInDirectory'] ) ) ) {
+			return true;
+		}
+		
+		// check if is and admin only field and remove if not authorized to be shown
+		if( !$show_admin_only && @in_array( $field_id, $admin_only ) && $field_id != $approved && $key != floor($approved) ) {
+			return true;
+		}
+		
+		//check if field is only visible for logged in users, and in that case, check capabilities level
+		if( !empty( $properties['visibleToLoggedIn'] ) && !current_user_can( $properties['visibleToLoggedInCap'] ) ) {
+			return true;
+		}
+		
+		return false;
+
+	}
+	
+	
 }
 
 
