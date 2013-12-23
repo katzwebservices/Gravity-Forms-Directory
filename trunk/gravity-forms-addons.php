@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.4.5.1
+Version: 3.4.5.4
 Author URI: http://www.katzwebservices.com
 
 Copyright 2013 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -1223,8 +1223,17 @@ if(!$showadminonly)  {
 			}
 		}
 
+
+		// since 3.4.6 - remove columns of the fields not allowed to be shown
+		$columns = self::remove_hidden_fields( $columns, $adminonlycolumns, $approvedcolumn, false, false, $showadminonly , $form );
+		
+		// hook for external selection of columns
+		$columns = apply_filters( 'kws_gf_directory_filter_columns', $columns );
+
+
 		//since 3.4.6 search criteria
-		$show_search_filters = apply_filters( 'kws_gf_directory_search_filters', array(), $form ); //to be replaced by form properties
+		$show_search_filters = self::get_search_filters( $form );
+		$show_search_filters = apply_filters( 'kws_gf_directory_search_filters', $show_search_filters, $form );
 		$search_criteria = array();
 		foreach( $show_search_filters as $key ) {
 			if( !empty( $_GET['filter_'. $key ] ) ) {
@@ -1239,7 +1248,9 @@ if(!$showadminonly)  {
 #			$leads = RGFormsModel::get_leads($form_id);
 
 		$leads = GFDirectory::get_leads( $form_id, $sort_field, $sort_direction, $search_query, $first_item_index, $page_size, $star, $read, $is_numeric, $start_date, $end_date, 'active', $approvedcolumn, $limituser, $search_criteria );
-
+		
+		
+		
 		# @TODO - implement filtering!
 		#$filters = GFDirectory::get_filters($leads);
 
@@ -1249,11 +1260,7 @@ if(!$showadminonly)	 {
 			$leads = self::remove_admin_only($leads, $adminonlycolumns, $approvedcolumn, true, false, $form);
 		}
 */
-		// since 3.4.6 - remove columns of the fields not allowed to be shown
-		$columns = self::remove_hidden_fields( $columns, $adminonlycolumns, $approvedcolumn, false, false, $showadminonly , $form );
-		
-		// hook for external selection of columns
-		$columns = apply_filters( 'kws_gf_directory_filter_columns', $columns );
+
 		
 
 		// Allow lightbox to determine whether showadminonly is valid without passing a query string in URL
@@ -1273,8 +1280,16 @@ if(!$showadminonly)	 {
 		if(!empty($star)) { $args["star"] = $star; }
 
 		if($page_size > 0) {
+		
+			// $leads contains all the entries according to request, since 3.4.6, to allow multisort.
+			if( apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+				$lead_count = count( $leads );
+				$leads = array_slice( $leads, $first_item_index, $page_size );
+			} else {
+				$lead_count = self::get_lead_count($form_id, $search_query, $star, $read, $approvedcolumn, $approved, $leads, $start_date, $end_date, $limituser, $search_criteria);
 
-			$lead_count = self::get_lead_count($form_id, $search_query, $star, $read, $approvedcolumn, $approved, $leads, $start_date, $end_date, $limituser);
+			}
+			
 
 			$page_links = array(
 				'base' =>  @add_query_arg('pagenum','%#%'),// get_permalink().'%_%',
@@ -1352,7 +1367,7 @@ if(!$showadminonly)	 {
 
 			<?php // --- Render Search Box ---
 			
-			if( $search && ( $lead_count > 0 || !empty( $_GET['gf_search'] ) ) ) : ?>
+			if( $search ) : ?>
 			
 				<form id="lead_form" method="get" action="<?php echo $formaction; ?>">
 					<?php 
@@ -1671,7 +1686,7 @@ if(!$showadminonly)	 {
 #		echo '<pre>'; print_r($leads, false).'</pre>';
 	}
 
-    static public function get_credit_link($columns = 1, $options = array()) {
+    static public function get_credit_link( $columns = 1, $options = array() ) {
     	global $post;// prevents calling before <HTML>
     	if(empty($post) || is_admin()) { return; }
 
@@ -1680,7 +1695,7 @@ if(!$showadminonly)	 {
     	// Only show credit link if the user has saved settings;
     	// this prevents existing directories adding a link without user action.
     	if(isset($settings['version'])) {
-    		echo "<tr><th colspan='{$columns}'>".self::attr($options)."</th></tr>";
+    		echo "<tr><th colspan='{$columns}'>". self::attr($options) ."</th></tr>";
     	}
     }
 
@@ -1868,6 +1883,30 @@ if(!$showadminonly)	 {
         return plugins_url(null, __FILE__);
     }
 
+	
+	/**
+	 * get_search_filters function. since 3.4.6
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $form
+	 * @return array search fields ids
+	 */
+	public static function get_search_filters( $form ) {
+		if( empty($form['fields']) ) {
+			return array();
+		}
+		
+		$search_fields = array();
+		
+		foreach( $form['fields'] as $field ) {
+			if( !empty( $field['isSearchFilter'] ) ) {
+				$search_fields[] = $field['id'];
+			}
+		}
+		
+		return $search_fields;
+	}
 
 	/**
 	 * get_leads function.
@@ -1923,7 +1962,7 @@ if(!$showadminonly)	 {
 		}
 
 		// Used by at least the show_only_user_entries() method
-		$return = apply_filters( 'kws_gf_directory_lead_filter', $return, compact("approved","sort_field_number","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date","status", "approvedcolumn", "limituser") );
+		$return = apply_filters( 'kws_gf_directory_lead_filter', $return, compact("approved","sort_field_number","sort_direction","search_query","search_criterias","first_item_index","page_size","star","read","is_numeric","start_date","end_date","status", "approvedcolumn", "limituser") );
 
 		return $return;
 	}
@@ -1994,6 +2033,7 @@ if(!$showadminonly)	 {
 		$in_search_criteria = '';
 		if( !empty( $search_criterias ) ) {
 			foreach( $search_criterias as $field_id => $value ) {
+				$value = "%$value%";
 				$in_search_criteria .= $wpdb->prepare(" l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number = %s AND value LIKE %s) AND ", $field_id, $value );
 			}
 		}
@@ -2025,8 +2065,10 @@ if(!$showadminonly)	 {
 			#$search_filter .= $wpdb->prepare(" AND m.meta_key = 'is_approved' AND m.meta_value = %s", 1);
 		}
 
-		$limit_filter = '';
-		if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		$limit_filter = ''; //paging is done later since 3.4.6 to allow multisort
+		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+			if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		}
 
 		$sql = "
 			SELECT filtered.sort, l.*, d.field_number, d.value
@@ -2106,6 +2148,7 @@ if(!$showadminonly)	 {
 		$in_search_criteria = '';
 		if( !empty( $search_criterias ) ) {
 			foreach( $search_criterias as $field_id => $value ) {
+				$value = "%$value%";
 				$in_search_criteria .= $wpdb->prepare(" AND l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number = %s AND value LIKE %s)", $field_id, $value );
 			}
 		}
@@ -2142,8 +2185,10 @@ if(!$showadminonly)	 {
 			}
 		}
 
-		$limit_filter = '';
-		if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		$limit_filter = ''; //paging is done later since 3.4.6 to allow multisort
+		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+			if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		}
 
 		$sql = "
 			SELECT filtered.sort, l.*, d.field_number, d.value
@@ -2366,7 +2411,7 @@ if(!$showadminonly)	 {
 		return $value;
 	}
 
-  	static function get_lead_count($form_id, $search, $star=null, $read=null, $column, $approved = false, $leads = array(), $start_date = null, $end_date = null, $limituser = false){
+  	static function get_lead_count($form_id, $search, $star=null, $read=null, $column, $approved = false, $leads = array(), $start_date = null, $end_date = null, $limituser = false, $search_criterias ){
 		global $wpdb, $current_user;
 
 		if(!is_numeric($form_id))
@@ -2386,7 +2431,17 @@ if(!$showadminonly)	 {
 		$end_date_filter = empty($end_date) ? "" : " AND datediff(date_created, '$end_date') <=0";
 
 		$search_term = "%$search%";
-		$search_filter = empty($search) ? "" : $wpdb->prepare("AND ld.value LIKE %s", $search_term);
+		$search_filter = empty($search) ? "" : $wpdb->prepare("AND ld.value LIKE %s", $search_term );
+		
+		// new search criterias since 3.4.6
+		$in_search_criteria = '';
+		if( !empty( $search_criterias ) ) {
+			foreach( $search_criterias as $field_id => $value ) {
+				$value = "%$value%";
+				$in_search_criteria .= $wpdb->prepare(" AND l.id IN (SELECT lead_id from $detail_table_name WHERE field_number = %s AND value LIKE %s)", $field_id, $value );
+			}
+		}
+		
 
 		$user_filter = '';
 		if($limituser) {
@@ -2424,7 +2479,8 @@ if(!$showadminonly)	 {
 				$user_filter
 				$start_date_filter
 				$end_date_filter
-				$search_filter";
+				$search_filter
+				$in_search_criteria";
 
 		return $wpdb->get_var($sql);
 	}
