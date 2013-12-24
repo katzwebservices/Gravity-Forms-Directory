@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.4.5.4
+Version: 3.4.5.5
 Author URI: http://www.katzwebservices.com
 
 Copyright 2013 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -1367,7 +1367,7 @@ if(!$showadminonly)	 {
 
 			<?php // --- Render Search Box ---
 			
-			if( $search ) : ?>
+			if( $search || !empty( $show_search_filters ) ) : ?>
 			
 				<form id="lead_form" method="get" action="<?php echo $formaction; ?>">
 					<?php 
@@ -1389,8 +1389,10 @@ if(!$showadminonly)	 {
 					
 					?>
 					<p class="search-box">
-						<label class="hidden" for="lead_search"><?php _e("Search Entries:", "gravity-forms-addons"); ?></label>
-						<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query ?>"<?php if( $searchtabindex ) { echo ' tabindex="'.intval( $searchtabindex ).'"'; } ?> />
+						<?php if( $search ) : ?>
+							<label class="hidden" for="lead_search"><?php _e("Search Entries:", "gravity-forms-addons"); ?></label>
+							<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query ?>"<?php if( $searchtabindex ) { echo ' tabindex="'.intval( $searchtabindex ).'"'; } ?> />
+						<?php endif; ?>
 						<?php
 							// If not using permalinks, let's make the form work!
 							echo !empty($_GET['p']) ? '<input name="p" type="hidden" value="'.esc_html( $_GET['p'] ).'" />' : '';
@@ -1955,6 +1957,7 @@ if(!$showadminonly)	 {
 		//getting results
 
 		$results = $wpdb->get_results($sql);
+		
 
 		$return = '';
 		if(function_exists('gform_get_meta')) {
