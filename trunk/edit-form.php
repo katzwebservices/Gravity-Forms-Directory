@@ -229,7 +229,7 @@ class GFDirectory_EditForm {
 		    	}
 
 		    	$('td:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
-		    	$('th.check-column:eq(1)').after('<th class="manage-column column-cb check-column"><a href="<?php echo add_query_arg(array('sort' => $_gform_directory_approvedcolumn)); ?>"><img src="<?php echo WP_PLUGIN_URL . "/" . basename(dirname(__FILE__)); ?>/images/form-button-1.png" style="text-align:center; margin:0 auto; display:block;" title="<?php _e('Show entry in directory view?', 'gravity-forms-addons'); ?>" /></span></a></th>');
+		    	$('th.check-column:eq(1)').after('<th class="manage-column column-cb check-column"><a href="<?php echo add_query_arg(array('sort' => $_gform_directory_approvedcolumn)); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" style="text-align:center; margin:0 auto; display:block;" title="<?php _e('Show entry in directory view?', 'gravity-forms-addons'); ?>" /></span></a></th>');
 
 		    	$('tr:has(input.lead_approved)').addClass('lead_approved').find('a.toggleApproved').prop('title', unapproveTitle).text('O');
 
@@ -309,7 +309,7 @@ class GFDirectory_EditForm {
 	    	li.gf_directory_setting, li.gf_directory_setting li {
 	    		padding-bottom: 4px!important;
 	    	}
-	    	ul#gf_form_toolbar_links li#gf_form_toolbar_directory a { background: url(<?php echo WP_PLUGIN_URL . "/" . basename(dirname(__FILE__)); ?>/images/editor-icon.gif) left top no-repeat; }
+	    	ul#gf_form_toolbar_links li#gf_form_toolbar_directory a { background: url(<?php echo plugins_url( '/images/editor-icon.gif', __FILE__); ?>) left top no-repeat; }
 	    	ul#gf_form_toolbar_links li#gf_form_toolbar_directory a:hover { background-position: left -19px; }
 	    </style>
 	    <script type='text/javascript'>
