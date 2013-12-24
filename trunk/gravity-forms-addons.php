@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.4.4
+Version: 3.4.5.5
 Author URI: http://www.katzwebservices.com
 
 Copyright 2013 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -33,7 +33,7 @@ class GFDirectory {
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $url = "http://www.gravityforms.com";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.4.4";
+	private static $version = "3.4.5";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -962,11 +962,16 @@ class GFDirectory {
 			if(empty($approvedcolumn)) { $approvedcolumn = self::get_approved_column($form); }
 			if(empty($adminonlycolumns) && !$showadminonly) { $adminonlycolumns = self::get_admin_only($form); }
 
-			if(!$showadminonly)  {
+			/*
+if(!$showadminonly)  {
 				$lead = self::remove_admin_only(array($lead), $adminonlycolumns, $approvedcolumn, true, true, $form);
 				$lead = $lead[0];
 				$form['fields'] = self::remove_admin_only($form['fields'], $adminonlycolumns, $approvedcolumn, false, true, $form); // This is screwing things up!
 			}
+*/
+			//since 3.4.6
+			$lead = self::remove_hidden_fields( array( $lead ), $adminonlycolumns, $approvedcolumn, true, true, $showadminonly , $form );
+			$lead = $lead[0];
 
 			ob_start(); // Using ob_start() allows us to filter output
 				self::lead_detail($form, $lead, false, $inline, $options);
@@ -1148,369 +1153,505 @@ class GFDirectory {
 				}
 			}
 		}
-
+		
+		
 		extract( $options );
 
-			$form_id = $form;
+		$form_id = $form;
 
-			$form = RGFormsModel::get_form_meta($form_id);
+		$form = RGFormsModel::get_form_meta($form_id);
 
-			if(empty($form)) { return;}
+		if(empty($form)) { return;}
 
-			$sort_field = empty($_GET["sort"]) ? $sort : $_GET["sort"];
-			$sort_direction = empty($_GET["dir"]) ? $dir : $_GET["dir"];
-			$search_query = !empty($_GET["gf_search"]) ? $_GET["gf_search"] : null;
+		$sort_field = empty($_GET["sort"]) ? $sort : $_GET["sort"];
+		$sort_direction = empty($_GET["dir"]) ? $dir : $_GET["dir"];
+		$search_query = !empty($_GET["gf_search"]) ? $_GET["gf_search"] : null;
+		
 
-			$start_date = !empty($_GET["start_date"]) ? $_GET["start_date"] : $start_date;
-			$end_date = !empty($_GET["end_date"]) ? $_GET["end_date"] : $end_date;
+		$start_date = !empty($_GET["start_date"]) ? $_GET["start_date"] : $start_date;
+		$end_date = !empty($_GET["end_date"]) ? $_GET["end_date"] : $end_date;
 
-			$page_index = empty($_GET["pagenum"]) ? $startpage -1 : intval($_GET["pagenum"]) - 1;
-			$star = (isset($_GET["star"]) && is_numeric($_GET["star"])) ? intval($_GET["star"]) : null;
-			$read = (isset($_GET["read"]) && is_numeric($_GET["read"])) ? intval($_GET["read"]) : null;
-			$first_item_index = $page_index * $page_size;
-			$link_params = array();
-			if(!empty($page_index)) { $link_params['pagenum'] = $page_index; }
-			$formaction = remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg($link_params));
-			$tableclass .= !empty($jstable) ? ' tablesorter' : '';
-			$title = $form["title"];
-			$sort_field_meta = RGFormsModel::get_field($form, $sort_field);
-			$is_numeric = $sort_field_meta["type"] == "number";
-			$columns = self::get_grid_columns($form_id, true);
+		$page_index = empty($_GET["pagenum"]) ? $startpage -1 : intval($_GET["pagenum"]) - 1;
+		$star = (isset($_GET["star"]) && is_numeric($_GET["star"])) ? intval($_GET["star"]) : null;
+		$read = (isset($_GET["read"]) && is_numeric($_GET["read"])) ? intval($_GET["read"]) : null;
+		$first_item_index = $page_index * $page_size;
+		$link_params = array();
+		if(!empty($page_index)) { $link_params['pagenum'] = $page_index; }
+		$formaction = remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg($link_params));
+		$tableclass .= !empty($jstable) ? ' tablesorter' : '';
+		$title = $form["title"];
+		$sort_field_meta = RGFormsModel::get_field($form, $sort_field);
+		$is_numeric = $sort_field_meta["type"] == "number";
+		
+		$columns = self::get_grid_columns($form_id, true);
 
-			$approvedcolumn = null;
+		$approvedcolumn = null;
 
-			if((!$approved && $approved !== -1) || (!empty($smartapproval) && $approved === -1)) {
-                $approvedcolumn = self::get_approved_column($form);
-            }
+		if((!$approved && $approved !== -1) || (!empty($smartapproval) && $approved === -1)) {
+            $approvedcolumn = self::get_approved_column($form);
+        }
 
-			if(!empty($smartapproval) && $approved === -1 && !empty($approvedcolumn)) {
-				$approved = true; // If there is an approved column, turn on approval
-			} else {
-				$approved = false; // Otherwise, show entries as normal.
+		if(!empty($smartapproval) && $approved === -1 && !empty($approvedcolumn)) {
+			$approved = true; // If there is an approved column, turn on approval
+		} else {
+			$approved = false; // Otherwise, show entries as normal.
+		}
+
+		$entrylinkcolumns = self::get_entrylink_column($form, $entry);
+		$adminonlycolumns = self::get_admin_only($form);
+
+		//
+		// Show only a single entry
+		//
+		$detail = self::process_lead_detail(true, $entryback, $showadminonly, $adminonlycolumns, $approvedcolumn, $options, $entryonly);
+
+		if(!empty($entry) && !empty($detail)) {
+
+			// Once again, checking to make sure this hasn't been shown already with multiple shortcodes on one page.
+			if(!did_action('kws_gf_after_directory')) {
+				echo $detail;
 			}
 
-			$entrylinkcolumns = self::get_entrylink_column($form, $entry);
-			$adminonlycolumns = self::get_admin_only($form);
+			if(!empty($entryonly)) {
+				do_action('kws_gf_after_directory', do_action('kws_gf_after_directory_form_'.$form_id, $form, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
 
-			//
-			// Show only a single entry
-			//
-			$detail = self::process_lead_detail(true, $entryback, $showadminonly, $adminonlycolumns, $approvedcolumn, $options, $entryonly);
+				$content = ob_get_clean(); // Get the output and clear the buffer
 
-			if(!empty($entry) && !empty($detail)) {
-
-				// Once again, checking to make sure this hasn't been shown already with multiple shortcodes on one page.
-				if(!did_action('kws_gf_after_directory')) {
-					echo $detail;
-				}
-
-				if(!empty($entryonly)) {
-					do_action('kws_gf_after_directory', do_action('kws_gf_after_directory_form_'.$form_id, $form, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
-
-					$content = ob_get_clean(); // Get the output and clear the buffer
-
-					// If the form is form #2, two filters are applied: `kws_gf_directory_output_2` and `kws_gf_directory_output`
-					$content = apply_filters('kws_gf_directory_output', apply_filters('kws_gf_directory_output_'.$form_id, self::html_display_type_filter($content, $directoryview)));
-					return $content;
-				}
+				// If the form is form #2, two filters are applied: `kws_gf_directory_output_2` and `kws_gf_directory_output`
+				$content = apply_filters('kws_gf_directory_output', apply_filters('kws_gf_directory_output_'.$form_id, self::html_display_type_filter($content, $directoryview)));
+				return $content;
 			}
+		}
 
-			//
-			// Or start to generate the directory
-			//
+
+		// since 3.4.6 - remove columns of the fields not allowed to be shown
+		$columns = self::remove_hidden_fields( $columns, $adminonlycolumns, $approvedcolumn, false, false, $showadminonly , $form );
+		
+		// hook for external selection of columns
+		$columns = apply_filters( 'kws_gf_directory_filter_columns', $columns );
+
+
+		//since 3.4.6 search criteria
+		$show_search_filters = self::get_search_filters( $form );
+		$show_search_filters = apply_filters( 'kws_gf_directory_search_filters', $show_search_filters, $form );
+		$search_criteria = array();
+		foreach( $show_search_filters as $key ) {
+			if( !empty( $_GET['filter_'. $key ] ) ) {
+				$search_criteria[ $key ] = $_GET['filter_'. $key ];
+			}
+		}
+
+
+		//
+		// Or start to generate the directory
+		//
 #			$leads = RGFormsModel::get_leads($form_id);
 
-			$leads = GFDirectory::get_leads($form_id, $sort_field, $sort_direction, $search_query, $first_item_index, $page_size, $star, $read, $is_numeric, $start_date, $end_date, 'active', $approvedcolumn, $limituser);
+		$leads = GFDirectory::get_leads( $form_id, $sort_field, $sort_direction, $search_query, $first_item_index, $page_size, $star, $read, $is_numeric, $start_date, $end_date, 'active', $approvedcolumn, $limituser, $search_criteria );
+		
+		
+		
+		# @TODO - implement filtering!
+		#$filters = GFDirectory::get_filters($leads);
 
-			# @TODO - implement filtering!
-			#$filters = GFDirectory::get_filters($leads);
+		/*
+if(!$showadminonly)	 {
+			$columns = self::remove_admin_only($columns, $adminonlycolumns, $approvedcolumn, false, false, $form);
+			$leads = self::remove_admin_only($leads, $adminonlycolumns, $approvedcolumn, true, false, $form);
+		}
+*/
 
-			if(!$showadminonly)	 {
-				$columns = self::remove_admin_only($columns, $adminonlycolumns, $approvedcolumn, false, false, $form);
-				$leads = self::remove_admin_only($leads, $adminonlycolumns, $approvedcolumn, true, false, $form);
+		
+
+		// Allow lightbox to determine whether showadminonly is valid without passing a query string in URL
+		if($entry === true && !empty($lightboxsettings['entry'])) {
+			if(get_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly') != $showadminonly) {
+				set_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly', $showadminonly, 60*60);
 			}
+		} else {
+			delete_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly');
+		}
 
-			// Allow lightbox to determine whether showadminonly is valid without passing a query string in URL
-			if($entry === true && !empty($lightboxsettings['entry'])) {
-				if(get_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly') != $showadminonly) {
-					set_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly', $showadminonly, 60*60);
-				}
+
+		// Get a list of query args for the pagination links
+		if(!empty($search_query)) { $args["gf_search"] = urlencode($search_query); }
+		if(!empty($sort_field)) { $args["sort"] = $sort_field; }
+		if(!empty($sort_direction)) { $args["dir"] = $sort_direction; }
+		if(!empty($star)) { $args["star"] = $star; }
+
+		if($page_size > 0) {
+		
+			// $leads contains all the entries according to request, since 3.4.6, to allow multisort.
+			if( apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+				$lead_count = count( $leads );
+				$leads = array_slice( $leads, $first_item_index, $page_size );
 			} else {
-				delete_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly');
+				$lead_count = self::get_lead_count($form_id, $search_query, $star, $read, $approvedcolumn, $approved, $leads, $start_date, $end_date, $limituser, $search_criteria);
+
 			}
+			
+
+			$page_links = array(
+				'base' =>  @add_query_arg('pagenum','%#%'),// get_permalink().'%_%',
+				'format' => '&pagenum=%#%',
+				'add_args' => $args,
+				'prev_text' => $prev_text,
+				'next_text' => $next_text,
+				'total' => ceil($lead_count / $page_size),
+				'current' => $page_index + 1,
+				'show_all' => $pagelinksshowall,
+			);
+
+			$page_links = apply_filters('kws_gf_results_pagination', $page_links);
+
+			$page_links = paginate_links($page_links);
+		} else {
+			// Showing all results
+			$page_links = false;
+			$lead_count = sizeof($leads);
+		}
 
 
-			// Get a list of query args for the pagination links
-			if(!empty($search_query)) { $args["gf_search"] = urlencode($search_query); }
-			if(!empty($sort_field)) { $args["sort"] = $sort_field; }
-			if(!empty($sort_direction)) { $args["dir"] = $sort_direction; }
-			if(!empty($star)) { $args["star"] = $star; }
-
-			if($page_size > 0) {
-
-				$lead_count = self::get_lead_count($form_id, $search_query, $star, $read, $approvedcolumn, $approved, $leads, $start_date, $end_date, $limituser);
-
-				$page_links = array(
-					'base' =>  @add_query_arg('pagenum','%#%'),// get_permalink().'%_%',
-					'format' => '&pagenum=%#%',
-					'add_args' => $args,
-					'prev_text' => $prev_text,
-					'next_text' => $next_text,
-					'total' => ceil($lead_count / $page_size),
-					'current' => $page_index + 1,
-					'show_all' => $pagelinksshowall,
-				);
-
-				$page_links = apply_filters('kws_gf_results_pagination', $page_links);
-
-				$page_links = paginate_links($page_links);
-			} else {
-				// Showing all results
-				$page_links = false;
-				$lead_count = sizeof($leads);
-			}
+		if(!isset($directory_shown)) {
+			$directory_shown = true;
 
 
-			if(!isset($directory_shown)) {
-				$directory_shown = true;
+			?>
 
+			<script>
+				<?php if(!empty($lightboxsettings['images']) || !empty($lightboxsettings['entry'])) { ?>
 
-                ?>
-
-				<script>
-					<?php if(!empty($lightboxsettings['images']) || !empty($lightboxsettings['entry'])) { ?>
-
-					var tb_pathToImage = "<?php echo site_url('/wp-includes/js/thickbox/loadingAnimation.gif'); ?>";
-					var tb_closeImage = "<?php echo site_url('/wp-includes/js/thickbox/tb-close.png'); ?>";
-					var tb_height = 600;
-					<?php } ?>
-					function not_empty(variable) {
-						if(variable == '' || variable == null || variable == 'undefined' || typeof(variable) == 'undefined') {
-							return false;
-						} else {
-							return true;
-						}
-					}
-
-				<?php if(!empty($jstable)) { ?>
-					jQuery(document).ready(function($) {
-						$('.tablesorter').each(function() {
-							$(this).tablesorter(<?php echo apply_filters('kws_gf_directory_tablesorter_options', '') ?>);
-						});
-					});
-				<?php } else if(isset($jssearch) && $jssearch) { ?>
-					function Search(search, sort_field_id, sort_direction){
-						if(not_empty(search)) { var search = "&gf_search=" + encodeURIComponent(search); } else {  var search = ''; }
-						if(not_empty(sort_field_id)) { var sort = "&sort=" + sort_field_id; } else {  var sort = ''; }
-						if(not_empty(sort_direction)) { var dir = "&dir=" + sort_direction; } else {  var dir = ''; }
-						var page = '<?php if($wp_rewrite->using_permalinks()) { echo '?'; } else { echo '&'; } ?>page='+<?php echo isset($_GET['pagenum']) ? intval($_GET['pagenum']) : '"1"'; ?>;
-						var location = "<?php echo get_permalink($post->ID); ?>"+page+search+sort+dir;
-						document.location = location;
-					}
+				var tb_pathToImage = "<?php echo site_url('/wp-includes/js/thickbox/loadingAnimation.gif'); ?>";
+				var tb_closeImage = "<?php echo site_url('/wp-includes/js/thickbox/tb-close.png'); ?>";
+				var tb_height = 600;
 				<?php } ?>
-				</script>
-			<?php } ?>
+				function not_empty(variable) {
+					if(variable == '' || variable == null || variable == 'undefined' || typeof(variable) == 'undefined') {
+						return false;
+					} else {
+						return true;
+					}
+				}
 
-			<div class="wrap">
-				<?php if($titleshow) { ?><h2><?php echo $titleprefix.$title; ?> </h2><?php } ?>
-				<?php if($search && ($lead_count > 0 || !empty($_GET['gf_search']))) { ?>
+			<?php if(!empty($jstable)) { ?>
+				jQuery(document).ready(function($) {
+					$('.tablesorter').each(function() {
+						$(this).tablesorter(<?php echo apply_filters('kws_gf_directory_tablesorter_options', '') ?>);
+					});
+				});
+			<?php } else if(isset($jssearch) && $jssearch) { ?>
+				function Search(search, sort_field_id, sort_direction, search_criteria ){
+					if(not_empty(search)) { var search = "&gf_search=" + encodeURIComponent(search); } else {  var search = ''; }
+					
+					var search_filters = '';
+					if( not_empty( search_criteria ) ) {
+						$.each( search_criteria, function( index, value ){ 
+							search_filters .= "&filter_" + index + "=" + encodeURIComponent(value);
+						} );
+					}
+					
+					if(not_empty(sort_field_id)) { var sort = "&sort=" + sort_field_id; } else {  var sort = ''; }
+					if(not_empty(sort_direction)) { var dir = "&dir=" + sort_direction; } else {  var dir = ''; }
+					var page = '<?php if($wp_rewrite->using_permalinks()) { echo '?'; } else { echo '&'; } ?>page='+<?php echo isset($_GET['pagenum']) ? intval($_GET['pagenum']) : '"1"'; ?>;
+					var location = "<?php echo get_permalink($post->ID); ?>"+page+search+sort+dir+search_filters;
+					document.location = location;
+				}
+			<?php } ?>
+			</script>
+		<?php } ?>
+
+		<div class="wrap">
+			<?php if( $titleshow ) : ?>
+				<h2><?php echo $titleprefix.$title; ?></h2>
+			<?php endif; ?>
+
+			<?php // --- Render Search Box ---
+			
+			if( $search || !empty( $show_search_filters ) ) : ?>
+			
 				<form id="lead_form" method="get" action="<?php echo $formaction; ?>">
+					<?php 
+					//New logic for search criterias (since 3.4.6)
+					
+					if( !empty( $show_search_filters ) ) {
+						
+						foreach( $show_search_filters as $key ) {
+							$properties = self::get_field_properties( $form, $key );
+							if( in_array( $properties['type'] , array( 'select', 'checkbox', 'radio', 'post_category' ) ) ) {
+								echo self::render_search_dropdown( $properties['label'], 'filter_'.$properties['id'], $properties['choices'] ); //Label, name attr, choices
+							} else {
+								echo self::render_search_input( $properties['label'], 'filter_'.$properties['id'] ); //label, attr name
+							}
+							
+						}
+						
+					}
+					
+					?>
 					<p class="search-box">
-						<label class="hidden" for="lead_search"><?php _e("Search Entries:", "gravity-forms-addons"); ?></label>
-						<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex).'"';}?> />
+						<?php if( $search ) : ?>
+							<label class="hidden" for="lead_search"><?php _e("Search Entries:", "gravity-forms-addons"); ?></label>
+							<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query ?>"<?php if( $searchtabindex ) { echo ' tabindex="'.intval( $searchtabindex ).'"'; } ?> />
+						<?php endif; ?>
 						<?php
 							// If not using permalinks, let's make the form work!
-							echo !empty($_GET['p']) ? '<input name="p" type="hidden" value="'.esc_html($_GET['p']).'" />' : '';
+							echo !empty($_GET['p']) ? '<input name="p" type="hidden" value="'.esc_html( $_GET['p'] ).'" />' : '';
 							echo !empty($_GET['page_id']) ? '<input name="page_id" type="hidden" value="'.esc_html($_GET['page_id']).'" />' : '';
 						?>
-						<input type="submit" class="button" id="lead_search_button" value="<?php _e("Search", "gravity-forms-addons") ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex++).'"';}?> />
+						<input type="submit" class="button" id="lead_search_button" value="<?php _e("Search", "gravity-forms-addons") ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex++).'"'; } ?> />
 					</p>
 				</form>
-				<?php }
+			
+			<?php endif;
+
+
+			//Displaying paging links if appropriate
+
+				if($lead_count > 0 && $showcount || $page_links){
+					if($lead_count == 0) { $first_item_index--; }
+					?>
+				<div class="tablenav">
+					<div class="tablenav-pages">
+						<?php if($showcount) {
+						if(($first_item_index + $page_size) > $lead_count || $page_size <= 0) {
+							$second_part = $lead_count;
+						} else {
+							$second_part = $first_item_index + $page_size;
+						}
+						?>
+						<span class="displaying-num"><?php printf(__("Displaying %d - %d of %d", "gravity-forms-addons"), $first_item_index + 1, $second_part, $lead_count)  ?></span>
+						<?php } if($page_links){ echo $page_links; } ?>
+					</div>
+					<div class="clear"></div>
+				</div>
+					<?php
+			   }
+
+			do_action('kws_gf_before_directory_after_nav', do_action('kws_gf_before_directory_after_nav_form_'.$form_id, $form, $leads, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
+			?>
+
+			<table class="<?php echo $tableclass; ?>" cellspacing="0"<?php if(!empty($tablewidth)) { echo ' width="'.$tablewidth.'"'; } echo $tablestyle ? ' style="'.$tablestyle.'"' : ''; ?>>
+				<?php if($thead) {?>
+				<thead>
+					<tr>
+						<?php
+
+						$addressesExist = false;
+						foreach($columns as $field_id => $field_info){
+							$dir = $field_id == 0 ? "DESC" : "ASC"; //default every field so ascending sorting except date_created (id=0)
+							if($field_id == $sort_field) { //reverting direction if clicking on the currently sorted field
+								$dir = $sort_direction == "ASC" ? "DESC" : "ASC";
+							}
+							if(is_array($adminonlycolumns) && !in_array($field_id, $adminonlycolumns) || (is_array($adminonlycolumns) && in_array($field_id, $adminonlycolumns) && $showadminonly) || !$showadminonly) {
+							if($field_info['type'] == 'address' && $appendaddress && $hideaddresspieces) { $addressesExist = true; continue; }
+							?>
+							<?php
+                            $_showlink = false;
+                            if(isset($jssearch) && $jssearch && !isset($jstable)) { ?>
+							<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column" onclick="Search('<?php echo $search_query ?>', '<?php echo $field_id ?>', '<?php echo $dir ?>', '' );" style="cursor:pointer;"><?php
+							} elseif(isset($jstable) && $jstable || $field_info['type'] === 'id') {?>
+								<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column">
+							<?php } else {
+                                $_showlink = true;
+                                ?>
+							    <th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column">
+							    <a href="<?php
+								$searchpage = isset($_GET['pagenum']) ? intval($_GET['pagenum']) : 1;
+								$new_query_args = array('gf_search' => $search_query, 'sort' => $field_id, 'dir' => $dir, 'pagenum' => $searchpage );
+								foreach( $search_criteria as $key => $value ) {
+									$new_query_args[ 'filter_'.$key ] = $value;
+								}
+								echo add_query_arg( $new_query_args, get_permalink($post->ID));
+							?>"><?php
+							}
+							if($field_info['type'] == 'id' && $entry) { $label = $entryth; }
+							else { $label = $field_info["label"]; }
+
+							$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_'.$field_id, apply_filters('kws_gf_directory_th_'.sanitize_title($label), $label)));
+							echo esc_html($label);
+
+                            if($_showlink) { ?></a><?php } ?>
+						   </th>
+							<?php
+							}
+						}
+
+						if($appendaddress && $addressesExist) {
+							?>
+							<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column" onclick="Search('<?php echo $search_query ?>', '<?php echo $field_id ?>', '<?php echo $dir ?>');" style="cursor:pointer;"><?php
+							$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_address', 'Address'));
+							echo esc_html($label)
+
+							 ?></th>
+							<?php
+						}
+						?>
+					</tr>
+				</thead>
+				<?php } ?>
+				<tbody class="list:user user-list">
+					<?php
+						include(WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/template-row.php");
+					?>
+				</tbody>
+				<?php if($tfoot) {
+					if(isset($jssearch) && $jssearch && !isset($jstable)) {
+						$th = '<th scope="col" id="gf-col-'.$form_id.'-'.$field_id.'" class="manage-column" onclick="Search(\''.$search_query.'\', \''.$field_id.'\', \''.$dir.'\');" style="cursor:pointer;">';
+					} else {
+						$th = '<th scope="col" id="gf-col-'.$form_id.'-'.$field_id.'" class="manage-column">';
+					}
+				?>
+				<tfoot>
+					<tr>
+						<?php
+						$addressesExist = false;
+						foreach($columns as $field_id => $field_info){
+							$dir = $field_id == 0 ? "DESC" : "ASC"; //default every field so ascending sorting except date_created (id=0)
+							if($field_id == $sort_field) { //reverting direction if clicking on the currently sorted field
+								$dir = $sort_direction == "ASC" ? "DESC" : "ASC";
+							}
+							if(is_array($adminonlycolumns) && !in_array($field_id, $adminonlycolumns) || (is_array($adminonlycolumns) && in_array($field_id, $adminonlycolumns) && $showadminonly) || !$showadminonly) {
+							if($field_info['type'] == 'address' && $appendaddress && $hideaddresspieces) { $addressesExist = true; continue; }
+
+							echo $th;
+
+							if($field_info['type'] == 'id' && $entry) { $label = $entryth; }
+							else { $label = $field_info["label"]; }
+
+							$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_'.$field_id, apply_filters('kws_gf_directory_th_'.sanitize_title($label), $label)));
+							echo esc_html($label)
+
+							 ?></th>
+							<?php
+							}
+						}
+						if($appendaddress && $addressesExist) {
+							?>
+							<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column" onclick="Search('<?php echo $search_query ?>', '<?php echo $field_id ?>', '<?php echo $dir ?>');" style="cursor:pointer;"><?php
+							$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_address', 'Address'));
+							echo esc_html($label)
+
+							 ?></th>
+							<?php
+						}
+						?>
+					</tr>
+					<?php if(!empty($credit)) { self::get_credit_link(sizeof($columns), $options); } ?>
+				</tfoot>
+				<?php } ?>
+			</table>
+				<?php
+
+					do_action('kws_gf_after_directory_before_nav', do_action('kws_gf_after_directory_before_nav_form_'.$form_id, $form, $leads, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
 
 
 				//Displaying paging links if appropriate
 
-					if($lead_count > 0 && $showcount || $page_links){
-						if($lead_count == 0) { $first_item_index--; }
-						?>
-					<div class="tablenav">
-						<div class="tablenav-pages">
-							<?php if($showcount) {
-							if(($first_item_index + $page_size) > $lead_count || $page_size <= 0) {
-								$second_part = $lead_count;
-							} else {
-								$second_part = $first_item_index + $page_size;
-							}
-							?>
-							<span class="displaying-num"><?php printf(__("Displaying %d - %d of %d", "gravity-forms-addons"), $first_item_index + 1, $second_part, $lead_count)  ?></span>
-							<?php } if($page_links){ echo $page_links; } ?>
-						</div>
-						<div class="clear"></div>
-					</div>
-						<?php
-				   }
-
-				do_action('kws_gf_before_directory_after_nav', do_action('kws_gf_before_directory_after_nav_form_'.$form_id, $form, $leads, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
-				?>
-
-				<table class="<?php echo $tableclass; ?>" cellspacing="0"<?php if(!empty($tablewidth)) { echo ' width="'.$tablewidth.'"'; } echo $tablestyle ? ' style="'.$tablestyle.'"' : ''; ?>>
-					<?php if($thead) {?>
-					<thead>
-						<tr>
-							<?php
-
-							$addressesExist = false;
-							foreach($columns as $field_id => $field_info){
-								$dir = $field_id == 0 ? "DESC" : "ASC"; //default every field so ascending sorting except date_created (id=0)
-								if($field_id == $sort_field) { //reverting direction if clicking on the currently sorted field
-									$dir = $sort_direction == "ASC" ? "DESC" : "ASC";
-								}
-								if(is_array($adminonlycolumns) && !in_array($field_id, $adminonlycolumns) || (is_array($adminonlycolumns) && in_array($field_id, $adminonlycolumns) && $showadminonly) || !$showadminonly) {
-								if($field_info['type'] == 'address' && $appendaddress && $hideaddresspieces) { $addressesExist = true; continue; }
-								?>
-								<?php
-                                $_showlink = false;
-                                if(isset($jssearch) && $jssearch && !isset($jstable)) { ?>
-								<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column" onclick="Search('<?php echo $search_query ?>', '<?php echo $field_id ?>', '<?php echo $dir ?>');" style="cursor:pointer;"><?php
-								} elseif(isset($jstable) && $jstable || $field_info['type'] === 'id') {?>
-									<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column">
-								<?php } else {
-                                    $_showlink = true;
-                                    ?>
-								    <th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column">
-								    <a href="<?php
-									$searchpage = isset($_GET['pagenum']) ? intval($_GET['pagenum']) : 1;
-									echo add_query_arg(array('gf_search' => $search_query, 'sort' => $field_id, 'dir' => $dir, 'pagenum' => $searchpage), get_permalink($post->ID));
-								?>"><?php
-								}
-								if($field_info['type'] == 'id' && $entry) { $label = $entryth; }
-								else { $label = $field_info["label"]; }
-
-								$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_'.$field_id, apply_filters('kws_gf_directory_th_'.sanitize_title($label), $label)));
-								echo esc_html($label);
-
-                                if($_showlink) { ?></a><?php } ?>
-							   </th>
-								<?php
-								}
-							}
-
-							if($appendaddress && $addressesExist) {
-								?>
-								<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column" onclick="Search('<?php echo $search_query ?>', '<?php echo $field_id ?>', '<?php echo $dir ?>');" style="cursor:pointer;"><?php
-								$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_address', 'Address'));
-								echo esc_html($label)
-
-								 ?></th>
-								<?php
-							}
-							?>
-						</tr>
-					</thead>
-					<?php } ?>
-					<tbody class="list:user user-list">
-						<?php
-							include(WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/template-row.php");
-						?>
-					</tbody>
-					<?php if($tfoot) {
-						if(isset($jssearch) && $jssearch && !isset($jstable)) {
-							$th = '<th scope="col" id="gf-col-'.$form_id.'-'.$field_id.'" class="manage-column" onclick="Search(\''.$search_query.'\', \''.$field_id.'\', \''.$dir.'\');" style="cursor:pointer;">';
-						} else {
-							$th = '<th scope="col" id="gf-col-'.$form_id.'-'.$field_id.'" class="manage-column">';
-						}
+				if($lead_count > 0 && $showcount || $page_links){
+					if($lead_count == 0) { $first_item_index--; }
 					?>
-					<tfoot>
-						<tr>
-							<?php
-							$addressesExist = false;
-							foreach($columns as $field_id => $field_info){
-								$dir = $field_id == 0 ? "DESC" : "ASC"; //default every field so ascending sorting except date_created (id=0)
-								if($field_id == $sort_field) { //reverting direction if clicking on the currently sorted field
-									$dir = $sort_direction == "ASC" ? "DESC" : "ASC";
-								}
-								if(is_array($adminonlycolumns) && !in_array($field_id, $adminonlycolumns) || (is_array($adminonlycolumns) && in_array($field_id, $adminonlycolumns) && $showadminonly) || !$showadminonly) {
-								if($field_info['type'] == 'address' && $appendaddress && $hideaddresspieces) { $addressesExist = true; continue; }
-
-								echo $th;
-
-								if($field_info['type'] == 'id' && $entry) { $label = $entryth; }
-								else { $label = $field_info["label"]; }
-
-								$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_'.$field_id, apply_filters('kws_gf_directory_th_'.sanitize_title($label), $label)));
-								echo esc_html($label)
-
-								 ?></th>
-								<?php
-								}
-							}
-							if($appendaddress && $addressesExist) {
-								?>
-								<th scope="col" id="gf-col-<?php echo $form_id.'-'.$field_id ?>" class="manage-column" onclick="Search('<?php echo $search_query ?>', '<?php echo $field_id ?>', '<?php echo $dir ?>');" style="cursor:pointer;"><?php
-								$label = apply_filters('kws_gf_directory_th', apply_filters('kws_gf_directory_th_address', 'Address'));
-								echo esc_html($label)
-
-								 ?></th>
-								<?php
-							}
-							?>
-						</tr>
-						<?php if(!empty($credit)) { self::get_credit_link(sizeof($columns), $options); } ?>
-					</tfoot>
-					<?php } ?>
-				</table>
-					<?php
-
-						do_action('kws_gf_after_directory_before_nav', do_action('kws_gf_after_directory_before_nav_form_'.$form_id, $form, $leads, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
-
-
-					//Displaying paging links if appropriate
-
-					if($lead_count > 0 && $showcount || $page_links){
-						if($lead_count == 0) { $first_item_index--; }
+				<div class="tablenav">
+					<div class="tablenav-pages">
+						<?php if($showcount) {
+						if(($first_item_index + $page_size) > $lead_count || $page_size <= 0) {
+							$second_part = $lead_count;
+						} else {
+							$second_part = $first_item_index + $page_size;
+						}
 						?>
-					<div class="tablenav">
-						<div class="tablenav-pages">
-							<?php if($showcount) {
-							if(($first_item_index + $page_size) > $lead_count || $page_size <= 0) {
-								$second_part = $lead_count;
-							} else {
-								$second_part = $first_item_index + $page_size;
-							}
-							?>
-							<span class="displaying-num"><?php printf(__("Displaying %d - %d of %d", "gravity-forms-addons"), $first_item_index + 1, $second_part, $lead_count)  ?></span>
-							<?php } if($page_links){ echo $page_links; } ?>
-						</div>
-						<div class="clear"></div>
+						<span class="displaying-num"><?php printf(__("Displaying %d - %d of %d", "gravity-forms-addons"), $first_item_index + 1, $second_part, $lead_count)  ?></span>
+						<?php } if($page_links){ echo $page_links; } ?>
 					</div>
-						<?php
-				   }
+					<div class="clear"></div>
+				</div>
+					<?php
+			   }
 
-				  ?>
-			</div>
-			<?php
-			if(empty($credit)) {
-				echo "\n".'<!-- Directory generated by Gravity Forms Directory & Addons : http://wordpress.org/extend/plugins/gravity-forms-addons/ -->'."\n";
-			}
+			  ?>
+		</div>
+		<?php
+		if(empty($credit)) {
+			echo "\n".'<!-- Directory generated by Gravity Forms Directory & Addons : http://wordpress.org/extend/plugins/gravity-forms-addons/ -->'."\n";
+		}
 
-			do_action('kws_gf_after_directory', do_action('kws_gf_after_directory_form_'.$form_id, $form, $leads, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
+		do_action('kws_gf_after_directory', do_action('kws_gf_after_directory_form_'.$form_id, $form, $leads, compact("approved","sort_field","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date")));
 
-			$content = ob_get_contents(); // Get the output
-			ob_end_clean(); // Clear the cache
+		$content = ob_get_contents(); // Get the output
+		ob_end_clean(); // Clear the cache
 
-			// If the form is form #2, two filters are applied: `kws_gf_directory_output_2` and `kws_gf_directory_output`
-			$content = apply_filters('kws_gf_directory_output', apply_filters('kws_gf_directory_output_'.$form_id, self::html_display_type_filter($content, $directoryview)));
+		// If the form is form #2, two filters are applied: `kws_gf_directory_output_2` and `kws_gf_directory_output`
+		$content = apply_filters('kws_gf_directory_output', apply_filters('kws_gf_directory_output_'.$form_id, self::html_display_type_filter($content, $directoryview)));
 
-			return $content; // Return it!
+		return $content; // Return it!
 	}
 
+
+
 	/**
+	 * render_search_dropdown function. since 3.4.6
+	 * 
+	 * @access private
+	 * @static
+	 * @param string $label (default: '') search field label
+	 * @param string $name (default: '') input name attribute
+	 * @param array $choices 
+	 * @return field dropdown html
+	 */
+	static private function render_search_dropdown( $label = '', $name = '', $choices ) {
+		
+		if( empty( $choices ) || !is_array( $choices ) || empty( $name ) ) {
+			return '';
+		}
+		
+		$current_value = isset( $_GET[ $name ] ) ? $_GET[ $name ] : '';
+		
+		$output = '<div class="search-box">';
+		$output .= '<label for=search-box-'.$name.'>' . $label . '</label>';
+		$output .= '<select name="'.$name.'" id="search-box-'.$name.'">';
+		$output .= '<option value="" '. selected( '', $current_value, false ) .'>---</option>';
+		foreach( $choices as $choice ) {
+			$output .= '<option value="'. $choice['value'] .'" '. selected( $choice['value'], $current_value, false ) .'>'. $choice['text'] .'</option>';
+		}
+		$output .= '</select>';
+		$output .= '</div>';
+		
+		return $output;
+	
+	}
+	
+	
+	/**
+	 * render_search_input function. since 3.4.6
+	 * 
+	 * @access private
+	 * @static
+	 * @param string $label (default: '') search field label
+	 * @param string $name (default: '') input name attribute
+	 * @return field input html
+	 */
+	static private function render_search_input( $label = '', $name = '' ) {
+	
+		if( empty( $name ) ) {
+			return '';
+		}
+		
+		$current_value = isset( $_GET[ $name ] ) ? $_GET[ $name ] : '';
+		
+		$output = '<div class="search-box">';
+		$output .= '<label for=search-box-'.$name.'>' . $label . '</label>';
+		$output .= '<input type="text" name="'.$name.'" id="search-box-'.$name.'" value="'.$current_value.'">';
+		$output .= '</div>';
+		
+		return $output;
+	
+	}
+	
+	/** ** To be removed ? **
 	 * Generate and show the drop-down filters.
 	 * @param  array $leads Entries as retrieved by GFDirectory::get_leads()
 	 * @return string $output
 	 */
-	static private function get_filters($leads) {
+	static private function  get_filters($leads) {
 
         $form_id = $leads[0]['form_id'];
 
@@ -1547,7 +1688,7 @@ class GFDirectory {
 #		echo '<pre>'; print_r($leads, false).'</pre>';
 	}
 
-    static public function get_credit_link($columns = 1, $options = array()) {
+    static public function get_credit_link( $columns = 1, $options = array() ) {
     	global $post;// prevents calling before <HTML>
     	if(empty($post) || is_admin()) { return; }
 
@@ -1556,7 +1697,7 @@ class GFDirectory {
     	// Only show credit link if the user has saved settings;
     	// this prevents existing directories adding a link without user action.
     	if(isset($settings['version'])) {
-    		echo "<tr><th colspan='{$columns}'>".self::attr($options)."</th></tr>";
+    		echo "<tr><th colspan='{$columns}'>". self::attr($options) ."</th></tr>";
     	}
     }
 
@@ -1744,35 +1885,90 @@ class GFDirectory {
         return plugins_url(null, __FILE__);
     }
 
-	public static function get_leads($form_id, $sort_field_number=0, $sort_direction='DESC', $search='', $offset=0, $page_size=30, $star=null, $read=null, $is_numeric_sort = false, $start_date=null, $end_date=null, $status='active', $approvedcolumn = null, $limituser = false) {
-        global $wpdb;
+	
+	/**
+	 * get_search_filters function. since 3.4.6
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $form
+	 * @return array search fields ids
+	 */
+	public static function get_search_filters( $form ) {
+		if( empty($form['fields']) ) {
+			return array();
+		}
+		
+		$search_fields = array();
+		
+		foreach( $form['fields'] as $field ) {
+			if( !empty( $field['isSearchFilter'] ) ) {
+				$search_fields[] = $field['id'];
+			}
+		}
+		
+		return $search_fields;
+	}
 
-        if($sort_field_number == 0)
-            $sort_field_number = "date_created";
+	/**
+	 * get_leads function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param int $form_id
+	 * @param int $sort_field_number (default: 0)
+	 * @param string $sort_direction (default: 'DESC')
+	 * @param string $search (default: '')
+	 * @param int $offset (default: 0)
+	 * @param int $page_size (default: 30)
+	 * @param mixed $star (default: null)
+	 * @param mixed $read (default: null)
+	 * @param bool $is_numeric_sort (default: false)
+	 * @param mixed $start_date (default: null)
+	 * @param mixed $end_date (default: null)
+	 * @param string $status (default: 'active')
+	 * @param mixed $approvedcolumn (default: null)
+	 * @param bool $limituser (default: false)
+	 * @param array $search_criterias, since 3.4.6
+	 * @return array Leads results
+	 */
+	public static function get_leads($form_id, $sort_field_number=0, $sort_direction='DESC', $search='', $offset=0, $page_size=30, $star=null, $read=null, $is_numeric_sort = false, $start_date=null, $end_date=null, $status='active', $approvedcolumn = null, $limituser = false, $search_criterias ) {
+	
+		global $wpdb;
 
-        // Retreive the leads based on whether it's sorted or not.
-        if(is_numeric($sort_field_number))
-            $sql = self::sort_by_custom_field_query($form_id, $sort_field_number, $sort_direction, $search, $offset, $page_size, $star, $read, $is_numeric_sort, $status, $approvedcolumn, $limituser);
-        else
-            $sql = self::sort_by_default_field_query($form_id, $sort_field_number, $sort_direction, $search, $offset, $page_size, $star, $read, $is_numeric_sort, $start_date, $end_date, $status, $approvedcolumn, $limituser);
+		if($sort_field_number == 0)
+			$sort_field_number = "date_created";
+		
+		//since 3.4.6
+		if( empty( $search_criterias ) ) {
+			$search_criterias = array();
+		}
+
+		// Retrieve the leads based on whether it's sorted or not.
+		if( is_numeric( $sort_field_number ) ) {
+			$sql = self::sort_by_custom_field_query($form_id, $sort_field_number, $sort_direction, $search, $search_criterias, $offset, $page_size, $star, $read, $is_numeric_sort, $status, $approvedcolumn, $limituser );
+		} else {
+			$sql = self::sort_by_default_field_query($form_id, $sort_field_number, $sort_direction, $search, $search_criterias, $offset, $page_size, $star, $read, $is_numeric_sort, $start_date, $end_date, $status, $approvedcolumn, $limituser );
+		}
 
 		//initializing rownum
-        $wpdb->query("select @rownum:=0");
+		$wpdb->query("select @rownum:=0");
 
-        //getting results
+		//getting results
 
-        $results = $wpdb->get_results($sql);
+		$results = $wpdb->get_results($sql);
+		
 
-        $return = '';
+		$return = '';
 		if(function_exists('gform_get_meta')) {
 			$return = RGFormsModel::build_lead_array($results); // This is a private function until 1.6
 		}
 
 		// Used by at least the show_only_user_entries() method
-		$return = apply_filters('kws_gf_directory_lead_filter', $return, compact("approved","sort_field_number","sort_direction","search_query","first_item_index","page_size","star","read","is_numeric","start_date","end_date","status", "approvedcolumn", "limituser"));
+		$return = apply_filters( 'kws_gf_directory_lead_filter', $return, compact("approved","sort_field_number","sort_direction","search_query","search_criterias","first_item_index","page_size","star","read","is_numeric","start_date","end_date","status", "approvedcolumn", "limituser") );
 
-        return $return;
-    }
+		return $return;
+	}
 
     static function is_current_user( $lead = array()) {
 		global $current_user;
@@ -1785,125 +1981,191 @@ class GFDirectory {
 		return array_filter($leads, array('GFDirectory', 'is_current_user'));
 	}
 
+	
 	/**
+	 * sort_by_custom_field_query function.
+	 * 
 	 * A copy of the Gravity Forms method, but adding $approvedcolumns and $limituser args
+	 *
+	 * @access private
+	 * @static
+	 * @param mixed $form_id
+	 * @param int $sort_field_number (default: 0)
+	 * @param string $sort_direction (default: 'DESC')
+	 * @param string $search (default: '')
+	 * @param array $search_criterias, since 3.4.6
+	 * @param int $offset (default: 0)
+	 * @param int $page_size (default: 30)
+	 * @param mixed $star (default: null)
+	 * @param mixed $read (default: null)
+	 * @param bool $is_numeric_sort (default: false)
+	 * @param string $status (default: 'active')
+	 * @param mixed $approvedcolumn (default: null)
+	 * @param bool $limituser (default: false)
+	 * @return void
 	 */
-    private static function sort_by_custom_field_query($form_id, $sort_field_number=0, $sort_direction='DESC', $search='', $offset=0, $page_size=30, $star=null, $read=null, $is_numeric_sort = false, $status='active', $approvedcolumn = null, $limituser = false){
-        global $wpdb, $current_user;
-        if(!is_numeric($form_id) || !is_numeric($sort_field_number)|| !is_numeric($offset)|| !is_numeric($page_size))
-            return "";
+	private static function sort_by_custom_field_query($form_id, $sort_field_number=0, $sort_direction='DESC', $search='', $search_criterias, $offset=0, $page_size=30, $star=null, $read=null, $is_numeric_sort = false, $status='active', $approvedcolumn = null, $limituser = false ){
+		global $wpdb, $current_user;
+		if(!is_numeric($form_id) || !is_numeric($sort_field_number)|| !is_numeric($offset)|| !is_numeric($page_size))
+			return "";
 
-        $lead_detail_table_name = RGFormsModel::get_lead_details_table_name();
-        $lead_table_name = RGFormsModel::get_lead_table_name();
+		$lead_detail_table_name = RGFormsModel::get_lead_details_table_name();
+		$lead_table_name = RGFormsModel::get_lead_table_name();
 
-        $orderby = $is_numeric_sort ? "ORDER BY query, (value+0) $sort_direction" : "ORDER BY query, value $sort_direction";
+		$orderby = $is_numeric_sort ? "ORDER BY query, (value+0) $sort_direction" : "ORDER BY query, value $sort_direction";
 
-        //$search = empty($search) ? "" : "WHERE d.value LIKE '%$search%' ";
-        $search_term = "%$search%";
-        $search_filter = empty($search) ? "" : $wpdb->prepare("WHERE d.value LIKE %s", $search_term);
+		//$search = empty($search) ? "" : "WHERE d.value LIKE '%$search%' ";
+		$search_term = "%$search%";
+		$search_filter = empty($search) ? "" : $wpdb->prepare("WHERE d.value LIKE %s", $search_term);
 
-        //starred clause
-        $where = empty($search) ? "WHERE" : "AND";
-        $search_filter .= $star !== null && $status == 'active' ? $wpdb->prepare("$where is_starred=%d AND status='active' ", $star) : "";
+		//starred clause
+		$where = empty($search) ? "WHERE" : "AND";
+		$search_filter .= $star !== null && $status == 'active' ? $wpdb->prepare("$where is_starred=%d AND status='active' ", $star) : "";
 
-        //read clause
-        $where = empty($search) ? "WHERE" : "AND";
-        $search_filter .= $read !== null && $status == 'active' ? $wpdb->prepare("$where is_read=%d AND status='active' ", $read) : "";
+		//read clause
+		$where = empty($search) ? "WHERE" : "AND";
+		$search_filter .= $read !== null && $status == 'active' ? $wpdb->prepare("$where is_read=%d AND status='active' ", $read) : "";
 
 		//status clause
-        if(function_exists('gform_get_meta')) {
-        	$where = empty($search) ? "WHERE" : "AND";
-	        $search_filter .= $wpdb->prepare("$where status=%s ", $status);
-	    }
+		if(function_exists('gform_get_meta')) {
+			$where = empty($search) ? "WHERE" : "AND";
+			 $search_filter .= $wpdb->prepare("$where status=%s ", $status);
+		 }
+		 
+		// new search criterias since 3.4.6
+		$in_search_criteria = '';
+		if( !empty( $search_criterias ) ) {
+			foreach( $search_criterias as $field_id => $value ) {
+				$value = "%$value%";
+				$in_search_criteria .= $wpdb->prepare(" l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number = %s AND value LIKE %s) AND ", $field_id, $value );
+			}
+		}
+		$where = empty($search_filter) ? "WHERE " : "AND ";
+		$in_search_criteria = ( !empty($in_search_criteria) ) ? $where . substr( $in_search_criteria, 0, -4 ) : ''; // to add where/and and remove the last AND
+		
 
 		if($limituser) {
 			get_currentuserinfo();
 			if((int)$current_user->ID !== 0 || ($current_user->ID === 0 && apply_filters('kws_gf_show_entries_if_not_logged_in', apply_filters('kws_gf_treat_not_logged_in_as_user', true)))) {
 				$where = empty($search_filter) ? "WHERE" : "AND";
-	        	if((int)$current_user->ID === 0) {
-	        		$search_filter .= $wpdb->prepare("$where (created_by IS NULL OR created_by=%d)", $current_user->ID);
-	        	} else {
-	        		$search_filter .= $wpdb->prepare("$where l.created_by=%d ", $current_user->ID);
-	        	}
+			 	if((int)$current_user->ID === 0) {
+			 		$search_filter .= $wpdb->prepare("$where (created_by IS NULL OR created_by=%d)", $current_user->ID);
+			 	} else {
+			 		$search_filter .= $wpdb->prepare("$where l.created_by=%d ", $current_user->ID);
+			 	}
 			} else {
 				return false;
 			}
 		}
 
-        $field_number_min = $sort_field_number - 0.001;
-        $field_number_max = $sort_field_number + 0.001;
+		$field_number_min = $sort_field_number - 0.001;
+		$field_number_max = $sort_field_number + 0.001;
 
-        $in_filter = "";
+		$in_filter = "";
 		if(!empty($approvedcolumn)) {
 			$in_filter = $wpdb->prepare("WHERE l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number BETWEEN %f AND %f)", $approvedcolumn - 0.001, $approvedcolumn + 0.001);
 			// This will work once all the fields are converted to the meta_key after 1.6
 			#$search_filter .= $wpdb->prepare(" AND m.meta_key = 'is_approved' AND m.meta_value = %s", 1);
 		}
 
-		$limit_filter = '';
-		if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		$limit_filter = ''; //paging is done later since 3.4.6 to allow multisort
+		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+			if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		}
 
-        $sql = "
-            SELECT filtered.sort, l.*, d.field_number, d.value
-            FROM $lead_table_name l
-            INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-            INNER JOIN (
-                SELECT distinct sorted.sort, l.id
-                FROM $lead_table_name l
-                INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-                INNER JOIN (
-                    SELECT @rownum:=@rownum+1 as sort, id FROM (
-                        SELECT 0 as query, lead_id as id, value
-                        FROM $lead_detail_table_name
-                        WHERE form_id=$form_id
-                        AND field_number between $field_number_min AND $field_number_max
+		$sql = "
+			SELECT filtered.sort, l.*, d.field_number, d.value
+			FROM $lead_table_name l
+			INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
+			INNER JOIN (
+				SELECT distinct sorted.sort, l.id
+				FROM $lead_table_name l
+				INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
+				INNER JOIN (
+					SELECT @rownum:=@rownum+1 as sort, id FROM (
+						SELECT 0 as query, lead_id as id, value
+						FROM $lead_detail_table_name
+						WHERE form_id=$form_id
+						AND field_number between $field_number_min AND $field_number_max
 
-                        UNION ALL
+						UNION ALL
 
-                        SELECT 1 as query, l.id, d.value
-                        FROM $lead_table_name l
-                        LEFT OUTER JOIN $lead_detail_table_name d ON d.lead_id = l.id AND field_number between $field_number_min AND $field_number_max
-                        WHERE l.form_id=$form_id
-                        AND d.lead_id IS NULL
+						SELECT 1 as query, l.id, d.value
+						FROM $lead_table_name l
+						LEFT OUTER JOIN $lead_detail_table_name d ON d.lead_id = l.id AND field_number between $field_number_min AND $field_number_max
+						WHERE l.form_id=$form_id
+						AND d.lead_id IS NULL
 
-                    ) sorted1
-                   $orderby
-                ) sorted ON d.lead_id = sorted.id
-                $search_filter
-                $limit_filter
-            ) filtered ON filtered.id = l.id
-            $in_filter
-            ORDER BY filtered.sort";
+					) sorted1
+				   $orderby
+				) sorted ON d.lead_id = sorted.id
+				$search_filter
+				$in_search_criteria
+				$limit_filter
+			) filtered ON filtered.id = l.id
+			$in_filter
+			ORDER BY filtered.sort";
 
-        return $sql;
-    }
+		return $sql;
+	}
 
-    /**
+
+	/**
+	 * sort_by_default_field_query function. 
+	 *
 	 * A copy of the Gravity Forms method, but adding $approvedcolumns and $limituser args
+	 * 
+	 * @access private
+	 * @static
+	 * @param mixed $form_id
+	 * @param mixed $sort_field
+	 * @param string $sort_direction (default: 'DESC')
+	 * @param string $search (default: '')
+	 * @param array $search_criterias - since 3.4.6
+	 * @param int $offset (default: 0)
+	 * @param int $page_size (default: 30)
+	 * @param mixed $star (default: null)
+	 * @param mixed $read (default: null)
+	 * @param bool $is_numeric_sort (default: false)
+	 * @param mixed $start_date (default: null)
+	 * @param mixed $end_date (default: null)
+	 * @param string $status (default: 'active')
+	 * @param mixed $approvedcolumn (default: null)
+	 * @param bool $limituser (default: false)
+	 * @return void
 	 */
-    private static function sort_by_default_field_query($form_id, $sort_field, $sort_direction='DESC', $search='', $offset=0, $page_size=30, $star=null, $read=null, $is_numeric_sort = false, $start_date=null, $end_date=null, $status='active', $approvedcolumn = null, $limituser = false){
-        global $wpdb, $current_user;
+	private static function sort_by_default_field_query($form_id, $sort_field, $sort_direction='DESC', $search='', $search_criterias, $offset=0, $page_size=30, $star=null, $read=null, $is_numeric_sort = false, $start_date=null, $end_date=null, $status='active', $approvedcolumn = null, $limituser = false){
+		global $wpdb, $current_user;
 
 		if(!is_numeric($form_id) || !is_numeric($offset)|| !is_numeric($page_size)){
-            return "";
-        }
+			return "";
+		}
 
-        $lead_detail_table_name = RGFormsModel::get_lead_details_table_name();
-        $lead_table_name = RGFormsModel::get_lead_table_name();
+		$lead_detail_table_name = RGFormsModel::get_lead_details_table_name();
+		$lead_table_name = RGFormsModel::get_lead_table_name();
 
-        $search_term = "%$search%";
-        $search_filter = empty($search) ? "" : $wpdb->prepare(" AND value LIKE %s", $search_term);
+		$search_term = "%$search%";
+		$search_filter = empty($search) ? "" : $wpdb->prepare(" AND value LIKE %s", $search_term);
+		
+		// new search criterias since 3.4.6
+		$in_search_criteria = '';
+		if( !empty( $search_criterias ) ) {
+			foreach( $search_criterias as $field_id => $value ) {
+				$value = "%$value%";
+				$in_search_criteria .= $wpdb->prepare(" AND l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number = %s AND value LIKE %s)", $field_id, $value );
+			}
+		}
 
-        $star_filter = $star !== null && $status == 'active' ? $wpdb->prepare(" AND is_starred=%d AND status='active' ", $star) : "";
-        $read_filter = $read !== null && $status == 'active' ? $wpdb->prepare(" AND is_read=%d AND status='active' ", $read) :  "";
-        if(function_exists('gform_get_meta')) {
-	        $status_filter = $wpdb->prepare(" AND status=%s ", $status);
-	    } else {
-	    	$status_filter = '';
-	    }
+		$star_filter = $star !== null && $status == 'active' ? $wpdb->prepare(" AND is_starred=%d AND status='active' ", $star) : "";
+		$read_filter = $read !== null && $status == 'active' ? $wpdb->prepare(" AND is_read=%d AND status='active' ", $read) :	"";
+		if(function_exists('gform_get_meta')) {
+			 $status_filter = $wpdb->prepare(" AND status=%s ", $status);
+		 } else {
+		 	$status_filter = '';
+		 }
 
-        $start_date_filter = empty($start_date) ? "" : " AND datediff(date_created, '$start_date') >=0";
-        $end_date_filter = empty($end_date) ? "" : " AND datediff(date_created, '$end_date') <=0";
+		$start_date_filter = empty($start_date) ? "" : " AND datediff(date_created, '$start_date') >=0";
+		$end_date_filter = empty($end_date) ? "" : " AND datediff(date_created, '$end_date') <=0";
 
 		$in_filter = "";
 		if(!empty($approvedcolumn)) {
@@ -1916,48 +2178,51 @@ class GFDirectory {
 		if($limituser) {
 			get_currentuserinfo();
 			if((int)$current_user->ID !== 0 || ($current_user->ID === 0 && apply_filters('kws_gf_show_entries_if_not_logged_in', apply_filters('kws_gf_treat_not_logged_in_as_user', true)))) {
-	        	if((int)$current_user->ID === 0) {
-	        		$user_filter = $wpdb->prepare(" AND (created_by IS NULL OR created_by=%d)", $current_user->ID);
-	        	} else {
-	        		$user_filter = $wpdb->prepare(" AND created_by=%d ", $current_user->ID);
-	        	}
+			 	if((int)$current_user->ID === 0) {
+			 		$user_filter = $wpdb->prepare(" AND (created_by IS NULL OR created_by=%d)", $current_user->ID);
+			 	} else {
+			 		$user_filter = $wpdb->prepare(" AND created_by=%d ", $current_user->ID);
+			 	}
 			} else {
 				return false;
 			}
 		}
 
-		$limit_filter = '';
-		if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		$limit_filter = ''; //paging is done later since 3.4.6 to allow multisort
+		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+			if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
+		}
 
-        $sql = "
-            SELECT filtered.sort, l.*, d.field_number, d.value
-            FROM $lead_table_name l
-            INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-            INNER JOIN
-            (
-                SELECT @rownum:=@rownum + 1 as sort, id
-                FROM
-                (
-                    SELECT distinct l.id
-                    FROM $lead_table_name l
-                    INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-                    WHERE $in_filter
-                    l.form_id=$form_id
-                    $search_filter
-                    $star_filter
-                    $read_filter
-                    $user_filter
-                    $status_filter
-                    $start_date_filter
-                    $end_date_filter
-                    ORDER BY $sort_field $sort_direction
-                    $limit_filter
-                ) page
-            ) filtered ON filtered.id = l.id
-            ORDER BY filtered.sort";
+		$sql = "
+			SELECT filtered.sort, l.*, d.field_number, d.value
+			FROM $lead_table_name l
+			INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
+			INNER JOIN
+			(
+				SELECT @rownum:=@rownum + 1 as sort, id
+				FROM
+				(
+					SELECT distinct l.id
+					FROM $lead_table_name l
+					INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
+					WHERE $in_filter
+					l.form_id=$form_id
+					$search_filter
+					$in_search_criteria
+					$star_filter
+					$read_filter
+					$user_filter
+					$status_filter
+					$start_date_filter
+					$end_date_filter
+					ORDER BY $sort_field $sort_direction
+					$limit_filter
+				) page
+			) filtered ON filtered.id = l.id
+			ORDER BY filtered.sort";
 
-        return $sql;
-    }
+		return $sql;
+	}
 
     static function directory_anchor_text($value = null) {
 
@@ -2149,7 +2414,7 @@ class GFDirectory {
 		return $value;
 	}
 
-  	static function get_lead_count($form_id, $search, $star=null, $read=null, $column, $approved = false, $leads = array(), $start_date = null, $end_date = null, $limituser = false){
+  	static function get_lead_count($form_id, $search, $star=null, $read=null, $column, $approved = false, $leads = array(), $start_date = null, $end_date = null, $limituser = false, $search_criterias ){
 		global $wpdb, $current_user;
 
 		if(!is_numeric($form_id))
@@ -2169,7 +2434,17 @@ class GFDirectory {
 		$end_date_filter = empty($end_date) ? "" : " AND datediff(date_created, '$end_date') <=0";
 
 		$search_term = "%$search%";
-		$search_filter = empty($search) ? "" : $wpdb->prepare("AND ld.value LIKE %s", $search_term);
+		$search_filter = empty($search) ? "" : $wpdb->prepare("AND ld.value LIKE %s", $search_term );
+		
+		// new search criterias since 3.4.6
+		$in_search_criteria = '';
+		if( !empty( $search_criterias ) ) {
+			foreach( $search_criterias as $field_id => $value ) {
+				$value = "%$value%";
+				$in_search_criteria .= $wpdb->prepare(" AND l.id IN (SELECT lead_id from $detail_table_name WHERE field_number = %s AND value LIKE %s)", $field_id, $value );
+			}
+		}
+		
 
 		$user_filter = '';
 		if($limituser) {
@@ -2207,7 +2482,8 @@ class GFDirectory {
 				$user_filter
 				$start_date_filter
 				$end_date_filter
-				$search_filter";
+				$search_filter
+				$in_search_criteria";
 
 		return $wpdb->get_var($sql);
 	}
@@ -2224,12 +2500,12 @@ class GFDirectory {
 		return self::check_hide_in('hideInDirectory', $form, $field_id);
 	}
 
-	static function hide_in_single($form, $field_id) {
+	static function hide_in_single( $form, $field_id ) {
 		return self::check_hide_in('hideInSingle', $form, $field_id);
 	}
-
+	
 	static function check_hide_in($type, $form, $field_id) {
-		foreach($form['fields'] as $field) {
+		foreach( $form['fields'] as $field ) {
 #			echo $field['label'] . ' / ' . floor($field['id']).' / '.floor($field_id).' / <strong>'.$field["{$type}"].'</strong><br />';
 			if(floor($field_id) === floor($field['id']) && !empty($field["{$type}"])) {
 				return true;
@@ -2238,6 +2514,40 @@ class GFDirectory {
 
 		return false;
 	}
+	
+	/** get field property value, for a specific field_id on a $form, since 3.4.6 */
+	static function get_field_property( $property, $form, $field_id = '' ) {
+		if( empty( $property ) || empty( $form ) || '' === $field_id ) {
+			return false;
+		}
+		foreach( $form['fields'] as $field ) {
+
+			if( floor( $field_id ) === floor( $field['id'] ) && !empty( $field[ $property ] ) ) {
+				return $field[ $property ];
+			}
+		}
+
+		return false;
+	}
+	
+	/** get field properties, for a specific field_id on a $form, since 3.4.6 */
+	static function get_field_properties( $form, $field_id = '' ) {
+		if( empty( $form ) || '' === $field_id ) {
+			return false;
+		}
+		
+		foreach( $form['fields'] as $field ) {
+			if( floor( $field_id ) === floor( $field['id'] ) ) {
+				return $field;
+			}
+		}
+		return false;
+	}
+	
+	
+	
+	
+
 
 	static function remove_approved_column($type = 'form', $fields, $approvedcolumn) {
 
@@ -2252,6 +2562,8 @@ class GFDirectory {
 
 	static function remove_admin_only($leads, $adminOnly, $approved, $isleads, $single = false, $form) {
 
+		
+		
 		if(empty($adminOnly) || !is_array($adminOnly)) { $adminOnly = array(); }
 
 		if(!is_array($leads)) { return $leads; }
@@ -2292,6 +2604,101 @@ class GFDirectory {
 			return $columns;
 		}
 	}
+	
+	
+	/**  -- remove_hidden_fields() // since 3.4.6
+	 *
+	 *	New method to filter columns and fields when generating directory or single entry view
+	 *	based on Admin Only fields, or "hide from directory" fields 
+	 *	or (new since 3.4.6) only visible if user is logged in.
+	 *
+	 *	this method replaces 'self::remove_admin_only()' 
+	 *	
+	 * 	
+	 */
+	
+	/**
+	 * remove_hidden_fields function.
+	 * 
+	 * @access public
+	 * @static
+	 * @param mixed $leads
+	 * @param mixed $admin_only
+	 * @param mixed $approved
+	 * @param mixed $is_leads
+	 * @param bool $is_single (default: false)
+	 * @param bool $show_admin_only (default: false)
+	 * @param mixed $form
+	 * @return void
+	 */
+	static function remove_hidden_fields( $leads, $admin_only, $approved, $is_leads, $is_single = false, $show_admin_only = false, $form ) {
+		
+		if( empty( $admin_only ) || !is_array( $admin_only ) ) { $admin_only = array(); }
+
+		if( empty( $leads ) || !is_array( $leads ) ) { return $leads; }
+
+		if( $is_leads ) {
+		
+			foreach( $leads as $index => $lead ) {
+				// the field_ids are the numeric array keys of a lead
+				$field_ids = array_filter( array_keys( $lead ), 'is_int' );
+				
+				foreach( $field_ids as $id ) {
+					if( self::check_hide_field_conditions( $id, $admin_only, $approved, $is_single, $show_admin_only, $form ) ) {
+						unset( $leads[ $index ][ $id ] );
+					}
+				}
+				
+			}
+			
+			return $leads;
+			
+		} else {
+		
+			// the KEY = field_id (to be used to check directory columns)
+			foreach( $leads as $key => $column) {
+				
+				if( self::check_hide_field_conditions( $key, $admin_only, $approved, $is_single, $show_admin_only, $form ) ) {
+					unset( $leads[ $key ] );
+				}
+				
+			}
+
+			return $leads;
+		}
+		
+		
+	}
+	
+	/** returns true if field should be hidden / returns false if not , since 3.4.6 */
+	static function check_hide_field_conditions( $field_id, $admin_only, $approved, $is_single = false, $show_admin_only = false, $form ) {
+		
+		
+		$properties = self::get_field_properties( $form, $field_id );
+		if( empty( $properties ) ) {
+			return false;
+		}
+		
+		//check if set to be hidden in directory or in single entry view
+		if( ( $is_single && !empty( $properties['hideInSingle'] ) ) || ( !$is_single && !empty( $properties['hideInDirectory'] ) ) ) {
+			return true;
+		}
+		
+		// check if is and admin only field and remove if not authorized to be shown
+		if( !$show_admin_only && @in_array( $field_id, $admin_only ) && $field_id != $approved && $key != floor($approved) ) {
+			return true;
+		}
+		
+		//check if field is only visible for logged in users, and in that case, check capabilities level
+		if( !empty( $properties['visibleToLoggedIn'] ) && !current_user_can( $properties['visibleToLoggedInCap'] ) ) {
+			return true;
+		}
+		
+		return false;
+
+	}
+	
+	
 }
 
 

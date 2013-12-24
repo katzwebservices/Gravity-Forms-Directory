@@ -242,47 +242,64 @@ class GFDirectory_EditForm {
 
 	public function use_as_entry_link_settings($position, $form_id){
 
-	    //create settings on position 50 (right after Admin Label)
-	    if($position === -1){
-	        ?>
-	        </ul>
-	      </div>
-	      <div id="gform_tab_3">
-		        <ul>
-			        <li class="use_as_entry_link gf_directory_setting field_setting">
-			            <label for="field_use_as_entry_link">
-			                <?php _e("Use As Link to Single Entry", "gravity-forms-addons"); ?>
-			                <?php gform_tooltip("kws_gf_directory_use_as_link_to_single_entry") ?>
-			            </label>
-			            <label for="field_use_as_entry_link"><input type="checkbox" value="1" id="field_use_as_entry_link" /> <?php _e("Use this field as a link to single entry view", "gravity-forms-addons"); ?></label>
-			        </li>
-			        <li class="use_as_entry_link_value gf_directory_setting field_setting">
-			            <label>
-			                <?php _e("Single Entry Link Text", "gravity-forms-addons"); ?>
-			                <span class="howto"><?php _e('Note: it is a good idea to use required fields for links to single entries so there are no blank links.', 'gravity-forms-addons'); ?></span>
-			            </label>
+		 //create settings on position 50 (right after Admin Label)
+		 if($position === -1) : ?>
+			</ul>
+			</div>
+			<div id="gform_tab_3">
+				<ul>
+					<li class="use_as_entry_link gf_directory_setting field_setting">
+						<label for="field_use_as_entry_link">
+							<?php _e("Use As Link to Single Entry", "gravity-forms-addons"); ?>
+							<?php gform_tooltip("kws_gf_directory_use_as_link_to_single_entry") ?>
+						</label>
+						<label for="field_use_as_entry_link"><input type="checkbox" value="1" id="field_use_as_entry_link" /> <?php _e("Use this field as a link to single entry view", "gravity-forms-addons"); ?></label>
+					</li>
+					<li class="use_as_entry_link_value gf_directory_setting field_setting">
+						<label>
+							<?php _e("Single Entry Link Text", "gravity-forms-addons"); ?>
+							<span class="howto"><?php _e('Note: it is a good idea to use required fields for links to single entries so there are no blank links.', 'gravity-forms-addons'); ?></span>
+						</label>
 
-			        	<label><input type="radio" name="field_use_as_entry_link_value" id="field_use_as_entry_link_value" value="on" /> <?php _e("Use field values from entry", "gravity-forms-addons"); ?></label>
-			        	<label><input type="radio" name="field_use_as_entry_link_value" id="field_use_as_entry_link_label" value="label" /> <?php _e(sprintf("Use the Field Label %s as link text", '<span id="entry_link_label_text"></span>'), "gravity-forms-addons"); ?></label>
-			        	<label><input type="radio" name="field_use_as_entry_link_value" id="field_use_as_entry_link_custom" value="custom" /> <?php _e("Use custom link text.", "gravity-forms-addons"); ?></label>
-			        	<span class="hide-if-js" style="display:block;clear:both; margin-left:1.5em"><input type="text" class="widefat" id="field_use_as_entry_link_value_custom_text" value="" /><span class="howto"><?php _e(sprintf('%s%%value%%%s will be replaced with each entry\'s value.', "<code class='code'>", '</code>'), 'gravity-forms-addons'); ?></span></span>
-			        </li>
-			        <li class="hide_in_directory_view gf_directory_setting field_setting">
-			            <label for="hide_in_directory_view">
-			                <?php _e("Hide This Field in Directory View?", "gravity-forms-addons"); ?>
-			                <?php gform_tooltip("kws_gf_directory_hide_in_directory_view") ?>
-			            </label>
-			        	<label><input type="checkbox" id="hide_in_directory_view" /> <?php _e("Hide this field in the directory view.", "gravity-forms-addons"); ?></label>
-			        </li>
-			        <li class="hide_in_single_entry_view gf_directory_setting field_setting">
-			            <label for="hide_in_single_entry_view">
-			                <?php _e("Hide This Field in Single Entry View?", "gravity-forms-addons"); ?>
-			                <?php gform_tooltip("kws_gf_directory_hide_in_single_entry_view") ?>
-			            </label>
-			        	<label><input type="checkbox" id="hide_in_single_entry_view" /> <?php _e("Hide this field in the single entry view.", "gravity-forms-addons"); ?></label>
-			        </li>
-	        <?php
-	   }
+						<label><input type="radio" name="field_use_as_entry_link_value" id="field_use_as_entry_link_value" value="on" /> <?php _e("Use field values from entry", "gravity-forms-addons"); ?></label>
+						<label><input type="radio" name="field_use_as_entry_link_value" id="field_use_as_entry_link_label" value="label" /> <?php _e(sprintf("Use the Field Label %s as link text", '<span id="entry_link_label_text"></span>'), "gravity-forms-addons"); ?></label>
+						<label><input type="radio" name="field_use_as_entry_link_value" id="field_use_as_entry_link_custom" value="custom" /> <?php _e("Use custom link text.", "gravity-forms-addons"); ?></label>
+						<span class="hide-if-js" style="display:block;clear:both; margin-left:1.5em"><input type="text" class="widefat" id="field_use_as_entry_link_value_custom_text" value="" /><span class="howto"><?php _e(sprintf('%s%%value%%%s will be replaced with each entry\'s value.', "<code class='code'>", '</code>'), 'gravity-forms-addons'); ?></span></span>
+					</li>
+					<li class="hide_in_directory_view only_visible_to_logged_in only_visible_to_logged_in_cap gf_directory_setting field_setting">
+						<label for="hide_in_directory_view">
+							<?php _e("Hide This Field in Directory View?", "gravity-forms-addons"); ?>
+							<?php gform_tooltip("kws_gf_directory_hide_in_directory_view") ?>
+						</label>
+						<label><input type="checkbox" id="hide_in_directory_view" /> <?php _e("Hide this field in the directory view.", "gravity-forms-addons"); ?></label>
+					
+						<label>
+							<input type="checkbox" id="only_visible_to_logged_in" /> <?php _e("Only visible to logged in users with ", "gravity-forms-addons"); ?>
+							<select id="only_visible_to_logged_in_cap">
+								<option value="read"><?php _e("Any", "gravity-forms-addons"); ?></option>
+								<option value="publish_posts"><?php _e("Author or higher", "gravity-forms-addons"); ?></option>
+								<option value="delete_others_posts"><?php _e("Editor or higher", "gravity-forms-addons"); ?></option>
+								<option value="manage_options"><?php _e("Administrator", "gravity-forms-addons"); ?></option>
+							</select>
+							<?php _e(" role. ", "gravity-forms-addons"); ?>
+						</label>
+							
+						</li>
+						<li class="hide_in_single_entry_view gf_directory_setting field_setting">
+							<label for="hide_in_single_entry_view">
+								<?php _e("Hide This Field in Single Entry View?", "gravity-forms-addons"); ?>
+								<?php gform_tooltip("kws_gf_directory_hide_in_single_entry_view") ?>
+							</label>
+							<label><input type="checkbox" id="hide_in_single_entry_view" /> <?php _e("Hide this field in the single entry view.", "gravity-forms-addons"); ?></label>
+						</li>
+						<li class="use_field_as_search_filter gf_directory_setting field_setting">
+							<label for="use_field_as_search_filter">
+								<?php _e("Directory Search Field", "gravity-forms-addons"); ?>
+								<?php //gform_tooltip("kws_gf_directory_hide_in_single_entry_view") ?>
+							</label>
+							<input type="checkbox" id="use_field_as_search_filter" /> <?php _e("Use this field as a search filter", "gravity-forms-addons"); ?>
+						</li>
+		<?php endif;
 	}
 
 	public function toolbar_links() {
@@ -363,19 +380,43 @@ class GFDirectory_EditForm {
 					if($("#hide_in_directory_view", $li).is(':checked')) {
 						hideInDirectory = true;
 					}
-
 					SetFieldProperty('hideInDirectory', hideInDirectory);
 					SetFieldProperty('hideInSingle', hideInSingle);
 					SetFieldProperty('useAsEntryLink', entrylink);
-		        });
+					
+					// since 3.4.6
+					var visibleToLoggedIn = false;
+					if($("#only_visible_to_logged_in", $li).is(':checked')) {
+						visibleToLoggedIn = true;
+					}
+					SetFieldProperty('visibleToLoggedIn', visibleToLoggedIn);
+					
+					var isSearchFilter = false;
+					if($("#use_field_as_search_filter", $li).is(':checked')) {
+						isSearchFilter = true;
+					}
+					SetFieldProperty('isSearchFilter', isSearchFilter );
 
-				$('#field_label').change(function() {
+		        });
+		        
+		        
+		        $('#field_label').change(function() {
 					kwsGFupdateEntryLinkLabel($(this).val());
 				});
-
+				
 				function kwsGFupdateEntryLinkLabel(label) {
 					$('#entry_link_label_text').html(' ("'+label+'")');
 				}
+				
+				
+				$('#only_visible_to_logged_in_cap').change( function() {
+					if( $("#only_visible_to_logged_in").is(':checked') ) {
+						SetFieldProperty('visibleToLoggedInCap', $(this).val() );
+					}
+				
+				});
+				
+
 
 		        //binding to the load field settings event to initialize the checkbox
 		        $(document).bind("gform_load_field_settings", function(event, field, form){
@@ -410,11 +451,18 @@ class GFDirectory_EditForm {
 			        kwsGFupdateEntryLinkLabel(field.label);
 
 
-		            $("#field_use_as_entry_link_label").prop("checked", field["useAsEntryLink"] === 'label');
+					$("#field_use_as_entry_link_label").prop("checked", field["useAsEntryLink"] === 'label');
 
-		            $("#hide_in_single_entry_view").prop("checked", (field["hideInSingle"] === true || field["hideInSingle"] === "on"));
-		            $("#hide_in_directory_view").prop("checked", (field["hideInDirectory"] === true || field["hideInDirectory"] === "on"));
-
+					$("#hide_in_single_entry_view").prop("checked", (field["hideInSingle"] === true || field["hideInSingle"] === "on"));
+					$("#hide_in_directory_view").prop("checked", (field["hideInDirectory"] === true || field["hideInDirectory"] === "on"));
+					
+					//since 3.4.6
+					$("#only_visible_to_logged_in").prop("checked", (field["visibleToLoggedIn"] === true || field["visibleToLoggedIn"] === "on"));
+					$("#only_visible_to_logged_in_cap").val( field["visibleToLoggedInCap"] );
+					//since 3.4.6
+					$("#use_field_as_search_filter").prop("checked", (field["isSearchFilter"] === true || field["isSearchFilter"] === "on"));
+					
+					
 
 		        });
 	       });
