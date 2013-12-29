@@ -272,7 +272,7 @@ class GFDirectory_EditForm {
 							<?php gform_tooltip("kws_gf_directory_hide_in_directory_view") ?>
 						</label>
 						<label><input type="checkbox" id="hide_in_directory_view" /> <?php _e("Hide this field in the directory view.", "gravity-forms-addons"); ?></label>
-					
+
 						<label>
 							<input type="checkbox" id="only_visible_to_logged_in" /> <?php _e("Only visible to logged in users with ", "gravity-forms-addons"); ?>
 							<select id="only_visible_to_logged_in_cap">
@@ -283,7 +283,7 @@ class GFDirectory_EditForm {
 							</select>
 							<?php _e(" role. ", "gravity-forms-addons"); ?>
 						</label>
-							
+
 						</li>
 						<li class="hide_in_single_entry_view gf_directory_setting field_setting">
 							<label for="hide_in_single_entry_view">
@@ -295,9 +295,9 @@ class GFDirectory_EditForm {
 						<li class="use_field_as_search_filter gf_directory_setting field_setting">
 							<label for="use_field_as_search_filter">
 								<?php _e("Directory Search Field", "gravity-forms-addons"); ?>
-								<?php //gform_tooltip("kws_gf_directory_hide_in_single_entry_view") ?>
+								<?php gform_tooltip("kws_gf_directory_use_field_as_search_filter") ?>
 							</label>
-							<input type="checkbox" id="use_field_as_search_filter" /> <?php _e("Use this field as a search filter", "gravity-forms-addons"); ?>
+							<label for="use_field_as_search_filter"><input type="checkbox" id="use_field_as_search_filter" /> <?php _e("Use this field as a search filter", "gravity-forms-addons"); ?></label>
 						</li>
 		<?php endif;
 	}
@@ -309,13 +309,21 @@ class GFDirectory_EditForm {
 	    	li.gf_directory_setting, li.gf_directory_setting li {
 	    		padding-bottom: 4px!important;
 	    	}
-	    	ul#gf_form_toolbar_links li#gf_form_toolbar_directory a { background: url(<?php echo plugins_url( '/images/editor-icon.gif', __FILE__); ?>) left top no-repeat; }
-	    	ul#gf_form_toolbar_links li#gf_form_toolbar_directory a:hover { background-position: left -19px; }
+	    	<?php
+
+			// After 1.8, GF includes Font Awesome icons, so don't use the old image icon.
+	    	if(version_compare(str_replace('beta', '', GFForms::$version), '1.8', '<')) {
+				?>
+				ul#gf_form_toolbar_links li#gf_form_toolbar_directory a { background: url(<?php echo plugins_url( '/images/editor-icon.gif', __FILE__); ?>) left top no-repeat; }
+				ul#gf_form_toolbar_links li#gf_form_toolbar_directory a:hover { background-position: left -19px; }
+				<?php
+	    	}
+	    	?>
 	    </style>
 	    <script type='text/javascript'>
 	    	jQuery(document).ready(function($) {
 	    		var url = '<?php echo add_query_arg(array('gf_page' => 'directory_columns', 'id' => @$_GET['id'], 'TB_iframe' => 'true', 'height' => 600, 'width' => 700), admin_url()); ?>';
-	    		$link = $('<li class="gf_form_toolbar_preview gf_form_toolbar_directory" id="gf_form_toolbar_directory"><a href="'+url+'" class="thickbox" title="<?php echo esc_html(__('Modify Gravity Forms Directory Columns', 'gravity-forms-addons')); ?>"><?php _e('Directory Columns', 'gravity-forms-addons'); ?></a></li>');
+	    		$link = $('<li class="gf_form_toolbar_preview gf_form_toolbar_directory" id="gf_form_toolbar_directory"><a href="'+url+'" class="thickbox" title="<?php echo esc_html(__('Modify Gravity Forms Directory Columns', 'gravity-forms-addons')); ?>"><i class="icon-large icon-list-alt"></i> <?php _e('Directory Columns', 'gravity-forms-addons'); ?></a></li>');
 	    		$('#gf_form_toolbar_links').append($link);
 	    	});
 	    </script>
@@ -383,14 +391,14 @@ class GFDirectory_EditForm {
 					SetFieldProperty('hideInDirectory', hideInDirectory);
 					SetFieldProperty('hideInSingle', hideInSingle);
 					SetFieldProperty('useAsEntryLink', entrylink);
-					
-					// since 3.4.6
+
+					// since 3.5
 					var visibleToLoggedIn = false;
 					if($("#only_visible_to_logged_in", $li).is(':checked')) {
 						visibleToLoggedIn = true;
 					}
 					SetFieldProperty('visibleToLoggedIn', visibleToLoggedIn);
-					
+
 					var isSearchFilter = false;
 					if($("#use_field_as_search_filter", $li).is(':checked')) {
 						isSearchFilter = true;
@@ -398,24 +406,24 @@ class GFDirectory_EditForm {
 					SetFieldProperty('isSearchFilter', isSearchFilter );
 
 		        });
-		        
-		        
+
+
 		        $('#field_label').change(function() {
 					kwsGFupdateEntryLinkLabel($(this).val());
 				});
-				
+
 				function kwsGFupdateEntryLinkLabel(label) {
 					$('#entry_link_label_text').html(' ("'+label+'")');
 				}
-				
-				
+
+
 				$('#only_visible_to_logged_in_cap').change( function() {
 					if( $("#only_visible_to_logged_in").is(':checked') ) {
 						SetFieldProperty('visibleToLoggedInCap', $(this).val() );
 					}
-				
+
 				});
-				
+
 
 
 		        //binding to the load field settings event to initialize the checkbox
@@ -455,14 +463,14 @@ class GFDirectory_EditForm {
 
 					$("#hide_in_single_entry_view").prop("checked", (field["hideInSingle"] === true || field["hideInSingle"] === "on"));
 					$("#hide_in_directory_view").prop("checked", (field["hideInDirectory"] === true || field["hideInDirectory"] === "on"));
-					
-					//since 3.4.6
+
+					//since 3.5
 					$("#only_visible_to_logged_in").prop("checked", (field["visibleToLoggedIn"] === true || field["visibleToLoggedIn"] === "on"));
 					$("#only_visible_to_logged_in_cap").val( field["visibleToLoggedInCap"] );
-					//since 3.4.6
+					//since 3.5
 					$("#use_field_as_search_filter").prop("checked", (field["isSearchFilter"] === true || field["isSearchFilter"] === "on"));
-					
-					
+
+
 
 		        });
 	       });
@@ -474,6 +482,7 @@ class GFDirectory_EditForm {
    		$tooltips["kws_gf_directory_use_as_link_to_single_entry"] = __(sprintf("%sLink to single entry using this field%sIf you would like to link to the single entry view using this link, check the box.", '<h6>', '</h6>'), 'gravity-forms-addons');
    		$tooltips['kws_gf_directory_hide_in_directory_view'] = __(sprintf('%sHide in Directory View%sIf checked, this field will not be shown in the directory view, even if it is visible in the %sDirectory Columns%s. If this field is Admin Only (set in the Advanced tab), it will be hidden in the directory view unless "Show Admin-Only columns" is enabled in the directory. Even if "Show Admin-Only columns" is enabled, checking this box will hide the column in the directory view.', '<h6>', '</h6>', sprintf('<a class="thickbox" title="%s" href="'.add_query_arg(array('gf_page' => 'directory_columns', 'id' => @$_GET['id'], 'TB_iframe' => 'true', 'height' => 600, 'width' => 700), admin_url()).'">', __('Modify Directory Columns', 'gravity-forms-addons')), '</a>'), 'gravity-forms-addons');
    		$tooltips['kws_gf_directory_hide_in_single_entry_view'] = __(sprintf('%sHide in Single Entry View%sIf checked, this field will not be shown in the single entry view of the directory.', '<h6>', '</h6>'), 'gravity-forms-addons');
+   		$tooltips['kws_gf_directory_use_field_as_search_filter'] = __(sprintf('%sDirectory Search Field%sIf checked, add search fields to the Directory search form. If this field is a text field, a text search input will be added that will search only this field. Otherwise, the field choices will be used to populate a dropdown menu search input. Example: if the field has choices "A", "B", and "C", the search dropdown will have those items as choices in a dropdown search field.', '<h6>', '</h6>'), 'gravity-forms-addons');
    		return $tooltips;
 	}
 

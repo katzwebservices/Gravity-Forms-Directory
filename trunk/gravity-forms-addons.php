@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.4.5.5
+Version: 3.5.1
 Author URI: http://www.katzwebservices.com
 
 Copyright 2013 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -31,9 +31,8 @@ add_action('plugins_loaded',  'kws_gf_load_functions');
 class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
-	private static $url = "http://www.gravityforms.com";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.4.5";
+	private static $version = "3.5.1";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -915,9 +914,7 @@ class GFDirectory {
 	static public function get_back_link($options = array()) {
 		global $pagenow,$wp_rewrite;
 
-		if(empty($options)) {
-			$options = self::directory_defaults();
-		}
+		$options = self::directory_defaults($options);
 
 		if(isset($_GET['edit'])) {
 			return '<p class="entryback"><a href="'.add_query_arg(array(), remove_query_arg(array('edit'))).'">'.esc_html(__(apply_filters('kws_gf_directory_edit_entry_cancel', "&larr; Cancel Editing"), "gravity-forms-addons")).'</a></p>';
@@ -962,14 +959,7 @@ class GFDirectory {
 			if(empty($approvedcolumn)) { $approvedcolumn = self::get_approved_column($form); }
 			if(empty($adminonlycolumns) && !$showadminonly) { $adminonlycolumns = self::get_admin_only($form); }
 
-			/*
-if(!$showadminonly)  {
-				$lead = self::remove_admin_only(array($lead), $adminonlycolumns, $approvedcolumn, true, true, $form);
-				$lead = $lead[0];
-				$form['fields'] = self::remove_admin_only($form['fields'], $adminonlycolumns, $approvedcolumn, false, true, $form); // This is screwing things up!
-			}
-*/
-			//since 3.4.6
+			//since 3.5
 			$lead = self::remove_hidden_fields( array( $lead ), $adminonlycolumns, $approvedcolumn, true, true, $showadminonly , $form );
 			$lead = $lead[0];
 
@@ -979,7 +969,7 @@ if(!$showadminonly)  {
 			ob_end_clean(); // Clear the buffer
 
 			// Get the back link if this is a single entry.
-			$link = !empty($entryonly) ? self::get_back_link() : '';
+			$link = !empty($entryonly) ? self::get_back_link(array('entryback' => $entryback)) : '';
 
 			$content = $link . $content;
 			$content = apply_filters('kws_gf_directory_detail', apply_filters('kws_gf_directory_detail_'.(int)$leadid, $content, (int)$leadid), (int)$leadid);
@@ -1153,8 +1143,8 @@ if(!$showadminonly)  {
 				}
 			}
 		}
-		
-		
+
+
 		extract( $options );
 
 		$form_id = $form;
@@ -1166,7 +1156,7 @@ if(!$showadminonly)  {
 		$sort_field = empty($_GET["sort"]) ? $sort : $_GET["sort"];
 		$sort_direction = empty($_GET["dir"]) ? $dir : $_GET["dir"];
 		$search_query = !empty($_GET["gf_search"]) ? $_GET["gf_search"] : null;
-		
+
 
 		$start_date = !empty($_GET["start_date"]) ? $_GET["start_date"] : $start_date;
 		$end_date = !empty($_GET["end_date"]) ? $_GET["end_date"] : $end_date;
@@ -1182,7 +1172,7 @@ if(!$showadminonly)  {
 		$title = $form["title"];
 		$sort_field_meta = RGFormsModel::get_field($form, $sort_field);
 		$is_numeric = $sort_field_meta["type"] == "number";
-		
+
 		$columns = self::get_grid_columns($form_id, true);
 
 		$approvedcolumn = null;
@@ -1224,14 +1214,14 @@ if(!$showadminonly)  {
 		}
 
 
-		// since 3.4.6 - remove columns of the fields not allowed to be shown
+		// since 3.5 - remove columns of the fields not allowed to be shown
 		$columns = self::remove_hidden_fields( $columns, $adminonlycolumns, $approvedcolumn, false, false, $showadminonly , $form );
-		
+
 		// hook for external selection of columns
 		$columns = apply_filters( 'kws_gf_directory_filter_columns', $columns );
 
 
-		//since 3.4.6 search criteria
+		//since 3.5 search criteria
 		$show_search_filters = self::get_search_filters( $form );
 		$show_search_filters = apply_filters( 'kws_gf_directory_search_filters', $show_search_filters, $form );
 		$search_criteria = array();
@@ -1245,28 +1235,13 @@ if(!$showadminonly)  {
 		//
 		// Or start to generate the directory
 		//
-#			$leads = RGFormsModel::get_leads($form_id);
-
 		$leads = GFDirectory::get_leads( $form_id, $sort_field, $sort_direction, $search_query, $first_item_index, $page_size, $star, $read, $is_numeric, $start_date, $end_date, 'active', $approvedcolumn, $limituser, $search_criteria );
-		
-		
-		
-		# @TODO - implement filtering!
-		#$filters = GFDirectory::get_filters($leads);
 
-		/*
-if(!$showadminonly)	 {
-			$columns = self::remove_admin_only($columns, $adminonlycolumns, $approvedcolumn, false, false, $form);
-			$leads = self::remove_admin_only($leads, $adminonlycolumns, $approvedcolumn, true, false, $form);
-		}
-*/
-
-		
 
 		// Allow lightbox to determine whether showadminonly is valid without passing a query string in URL
 		if($entry === true && !empty($lightboxsettings['entry'])) {
 			if(get_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly') != $showadminonly) {
-				set_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly', $showadminonly, 60*60);
+				set_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly', $showadminonly, HOUR_IN_SECONDS);
 			}
 		} else {
 			delete_site_transient('gf_form_'.$form_id.'_post_'.$post->ID.'_showadminonly');
@@ -1280,16 +1255,16 @@ if(!$showadminonly)	 {
 		if(!empty($star)) { $args["star"] = $star; }
 
 		if($page_size > 0) {
-		
-			// $leads contains all the entries according to request, since 3.4.6, to allow multisort.
-			if( apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+
+			// $leads contains all the entries according to request, since 3.5, to allow multisort.
+			if( apply_filters( 'kws_gf_directory_want_multisort', false ) ) {
 				$lead_count = count( $leads );
 				$leads = array_slice( $leads, $first_item_index, $page_size );
 			} else {
 				$lead_count = self::get_lead_count($form_id, $search_query, $star, $read, $approvedcolumn, $approved, $leads, $start_date, $end_date, $limituser, $search_criteria);
 
 			}
-			
+
 
 			$page_links = array(
 				'base' =>  @add_query_arg('pagenum','%#%'),// get_permalink().'%_%',
@@ -1342,14 +1317,14 @@ if(!$showadminonly)	 {
 			<?php } else if(isset($jssearch) && $jssearch) { ?>
 				function Search(search, sort_field_id, sort_direction, search_criteria ){
 					if(not_empty(search)) { var search = "&gf_search=" + encodeURIComponent(search); } else {  var search = ''; }
-					
+
 					var search_filters = '';
 					if( not_empty( search_criteria ) ) {
-						$.each( search_criteria, function( index, value ){ 
+						$.each( search_criteria, function( index, value ){
 							search_filters .= "&filter_" + index + "=" + encodeURIComponent(value);
 						} );
 					}
-					
+
 					if(not_empty(sort_field_id)) { var sort = "&sort=" + sort_field_id; } else {  var sort = ''; }
 					if(not_empty(sort_direction)) { var dir = "&dir=" + sort_direction; } else {  var dir = ''; }
 					var page = '<?php if($wp_rewrite->using_permalinks()) { echo '?'; } else { echo '&'; } ?>page='+<?php echo isset($_GET['pagenum']) ? intval($_GET['pagenum']) : '"1"'; ?>;
@@ -1366,15 +1341,15 @@ if(!$showadminonly)	 {
 			<?php endif; ?>
 
 			<?php // --- Render Search Box ---
-			
+
 			if( $search || !empty( $show_search_filters ) ) : ?>
-			
+
 				<form id="lead_form" method="get" action="<?php echo $formaction; ?>">
-					<?php 
-					//New logic for search criterias (since 3.4.6)
-					
+					<?php
+					//New logic for search criterias (since 3.5)
+
 					if( !empty( $show_search_filters ) ) {
-						
+
 						foreach( $show_search_filters as $key ) {
 							$properties = self::get_field_properties( $form, $key );
 							if( in_array( $properties['type'] , array( 'select', 'checkbox', 'radio', 'post_category' ) ) ) {
@@ -1382,11 +1357,11 @@ if(!$showadminonly)	 {
 							} else {
 								echo self::render_search_input( $properties['label'], 'filter_'.$properties['id'] ); //label, attr name
 							}
-							
+
 						}
-						
+
 					}
-					
+
 					?>
 					<p class="search-box">
 						<?php if( $search ) : ?>
@@ -1401,7 +1376,7 @@ if(!$showadminonly)	 {
 						<input type="submit" class="button" id="lead_search_button" value="<?php _e("Search", "gravity-forms-addons") ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex++).'"'; } ?> />
 					</p>
 				</form>
-			
+
 			<?php endif;
 
 
@@ -1588,23 +1563,24 @@ if(!$showadminonly)	 {
 
 
 	/**
-	 * render_search_dropdown function. since 3.4.6
-	 * 
+	 * render_search_dropdown function.
+	 *
+	 * @since 3.5
 	 * @access private
 	 * @static
 	 * @param string $label (default: '') search field label
 	 * @param string $name (default: '') input name attribute
-	 * @param array $choices 
+	 * @param array $choices
 	 * @return field dropdown html
 	 */
 	static private function render_search_dropdown( $label = '', $name = '', $choices ) {
-		
+
 		if( empty( $choices ) || !is_array( $choices ) || empty( $name ) ) {
 			return '';
 		}
-		
+
 		$current_value = isset( $_GET[ $name ] ) ? $_GET[ $name ] : '';
-		
+
 		$output = '<div class="search-box">';
 		$output .= '<label for=search-box-'.$name.'>' . $label . '</label>';
 		$output .= '<select name="'.$name.'" id="search-box-'.$name.'">';
@@ -1614,15 +1590,16 @@ if(!$showadminonly)	 {
 		}
 		$output .= '</select>';
 		$output .= '</div>';
-		
+
 		return $output;
-	
+
 	}
-	
-	
+
+
 	/**
-	 * render_search_input function. since 3.4.6
-	 * 
+	 * render_search_input function.
+	 *
+	 * @since 3.5
 	 * @access private
 	 * @static
 	 * @param string $label (default: '') search field label
@@ -1630,63 +1607,22 @@ if(!$showadminonly)	 {
 	 * @return field input html
 	 */
 	static private function render_search_input( $label = '', $name = '' ) {
-	
+
 		if( empty( $name ) ) {
 			return '';
 		}
-		
+
 		$current_value = isset( $_GET[ $name ] ) ? $_GET[ $name ] : '';
-		
+
 		$output = '<div class="search-box">';
 		$output .= '<label for=search-box-'.$name.'>' . $label . '</label>';
 		$output .= '<input type="text" name="'.$name.'" id="search-box-'.$name.'" value="'.$current_value.'">';
 		$output .= '</div>';
-		
+
 		return $output;
-	
+
 	}
-	
-	/** ** To be removed ? **
-	 * Generate and show the drop-down filters.
-	 * @param  array $leads Entries as retrieved by GFDirectory::get_leads()
-	 * @return string $output
-	 */
-	static private function  get_filters($leads) {
 
-        $form_id = $leads[0]['form_id'];
-
-        if(empty($leads) || !is_array($leads)) { return ''; }
-        $filters = array();
-		foreach($leads as $lead) {
-			foreach($lead as $key => $value) {
-				if(!empty($value) && (!isset($filters[$key]) || (isset($filters[$key]) && (!is_array($filters[$key]) || !in_array($value, $filters[$key]))))) {
-					$filters[$key][] = $value;
-				}
-			}
-		}
-
-		$output = '<form method="get">';
-		foreach($filters as $key => $filter) {
-			$output .= '<select name="filter['.$key.']">';
-				$output .= '<option value="">Select a '.$key.'</option>';
-				foreach($filter as $value) {
-					$output .= '<option value="'.$key.'|'.$value.'">'.$value.'</option>';
-				}
-			$output .= '</select>';
-		}
-		$output .= '
-            <input type="hidden" name="gf_search" />
-            <input type="submit" value="Search" />
-        </form>';
-        #echo $output;
-		return $output;
-#		echo $output;
-#		echo '<pre>'; print_r($filters, false).'</pre>';
-
-#		echo '<h3>Form ID #'.$form_id.'</h3>';
-#		echo '<pre>'; print_r($filters, false).'</pre>';
-#		echo '<pre>'; print_r($leads, false).'</pre>';
-	}
 
     static public function get_credit_link( $columns = 1, $options = array() ) {
     	global $post;// prevents calling before <HTML>
@@ -1885,10 +1821,11 @@ if(!$showadminonly)	 {
         return plugins_url(null, __FILE__);
     }
 
-	
+
 	/**
-	 * get_search_filters function. since 3.4.6
-	 * 
+	 * get_search_filters function.
+	 *
+	 * @since 3.5
 	 * @access public
 	 * @static
 	 * @param mixed $form
@@ -1898,21 +1835,21 @@ if(!$showadminonly)	 {
 		if( empty($form['fields']) ) {
 			return array();
 		}
-		
+
 		$search_fields = array();
-		
+
 		foreach( $form['fields'] as $field ) {
 			if( !empty( $field['isSearchFilter'] ) ) {
 				$search_fields[] = $field['id'];
 			}
 		}
-		
+
 		return $search_fields;
 	}
 
 	/**
 	 * get_leads function.
-	 * 
+	 *
 	 * @access public
 	 * @static
 	 * @param int $form_id
@@ -1929,17 +1866,17 @@ if(!$showadminonly)	 {
 	 * @param string $status (default: 'active')
 	 * @param mixed $approvedcolumn (default: null)
 	 * @param bool $limituser (default: false)
-	 * @param array $search_criterias, since 3.4.6
+	 * @param array $search_criterias, since 3.5
 	 * @return array Leads results
 	 */
 	public static function get_leads($form_id, $sort_field_number=0, $sort_direction='DESC', $search='', $offset=0, $page_size=30, $star=null, $read=null, $is_numeric_sort = false, $start_date=null, $end_date=null, $status='active', $approvedcolumn = null, $limituser = false, $search_criterias ) {
-	
+
 		global $wpdb;
 
 		if($sort_field_number == 0)
 			$sort_field_number = "date_created";
-		
-		//since 3.4.6
+
+		//since 3.5
 		if( empty( $search_criterias ) ) {
 			$search_criterias = array();
 		}
@@ -1957,7 +1894,7 @@ if(!$showadminonly)	 {
 		//getting results
 
 		$results = $wpdb->get_results($sql);
-		
+
 
 		$return = '';
 		if(function_exists('gform_get_meta')) {
@@ -1981,10 +1918,10 @@ if(!$showadminonly)	 {
 		return array_filter($leads, array('GFDirectory', 'is_current_user'));
 	}
 
-	
+
 	/**
 	 * sort_by_custom_field_query function.
-	 * 
+	 *
 	 * A copy of the Gravity Forms method, but adding $approvedcolumns and $limituser args
 	 *
 	 * @access private
@@ -1993,7 +1930,7 @@ if(!$showadminonly)	 {
 	 * @param int $sort_field_number (default: 0)
 	 * @param string $sort_direction (default: 'DESC')
 	 * @param string $search (default: '')
-	 * @param array $search_criterias, since 3.4.6
+	 * @param array $search_criterias, since 3.5
 	 * @param int $offset (default: 0)
 	 * @param int $page_size (default: 30)
 	 * @param mixed $star (default: null)
@@ -2031,8 +1968,8 @@ if(!$showadminonly)	 {
 			$where = empty($search) ? "WHERE" : "AND";
 			 $search_filter .= $wpdb->prepare("$where status=%s ", $status);
 		 }
-		 
-		// new search criterias since 3.4.6
+
+		// new search criterias since 3.5
 		$in_search_criteria = '';
 		if( !empty( $search_criterias ) ) {
 			foreach( $search_criterias as $field_id => $value ) {
@@ -2042,7 +1979,7 @@ if(!$showadminonly)	 {
 		}
 		$where = empty($search_filter) ? "WHERE " : "AND ";
 		$in_search_criteria = ( !empty($in_search_criteria) ) ? $where . substr( $in_search_criteria, 0, -4 ) : ''; // to add where/and and remove the last AND
-		
+
 
 		if($limituser) {
 			get_currentuserinfo();
@@ -2068,8 +2005,8 @@ if(!$showadminonly)	 {
 			#$search_filter .= $wpdb->prepare(" AND m.meta_key = 'is_approved' AND m.meta_value = %s", 1);
 		}
 
-		$limit_filter = ''; //paging is done later since 3.4.6 to allow multisort
-		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+		$limit_filter = ''; //paging is done later since 3.5 to allow multisort
+		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) {
 			if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
 		}
 
@@ -2111,17 +2048,17 @@ if(!$showadminonly)	 {
 
 
 	/**
-	 * sort_by_default_field_query function. 
+	 * sort_by_default_field_query function.
 	 *
 	 * A copy of the Gravity Forms method, but adding $approvedcolumns and $limituser args
-	 * 
+	 *
 	 * @access private
 	 * @static
 	 * @param mixed $form_id
 	 * @param mixed $sort_field
 	 * @param string $sort_direction (default: 'DESC')
 	 * @param string $search (default: '')
-	 * @param array $search_criterias - since 3.4.6
+	 * @param array $search_criterias - since 3.5
 	 * @param int $offset (default: 0)
 	 * @param int $page_size (default: 30)
 	 * @param mixed $star (default: null)
@@ -2146,8 +2083,8 @@ if(!$showadminonly)	 {
 
 		$search_term = "%$search%";
 		$search_filter = empty($search) ? "" : $wpdb->prepare(" AND value LIKE %s", $search_term);
-		
-		// new search criterias since 3.4.6
+
+		// new search criterias since 3.5
 		$in_search_criteria = '';
 		if( !empty( $search_criterias ) ) {
 			foreach( $search_criterias as $field_id => $value ) {
@@ -2188,8 +2125,8 @@ if(!$showadminonly)	 {
 			}
 		}
 
-		$limit_filter = ''; //paging is done later since 3.4.6 to allow multisort
-		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) { 
+		$limit_filter = ''; //paging is done later since 3.5 to allow multisort
+		if( !apply_filters( 'kws_gf_directory_want_multisort', false ) ) {
 			if($page_size > 0) { $limit_filter = "LIMIT $offset,$page_size"; }
 		}
 
@@ -2410,6 +2347,14 @@ if(!$showadminonly)	 {
 			}
 		}
 
+		// If this is a preview, add preview arguments to the link.
+		// @since 3.5
+		if(!empty($_GET['preview']) && !empty($_GET['preview_id']) && !empty($_GET['preview_nonce'])) {
+			if(current_user_can( 'edit_posts' )) {
+				$href = add_query_arg(array('preview' => $_GET['preview'], 'preview_id' => $_GET['preview_id'], 'preview_nonce' => $_GET['preview_nonce']), $href);
+			}
+		}
+
 		$value = '<a href="'.$href.'"'.$linkClass.' title="'.$entrytitle.'">'.$entrylink.'</a>';
 		return $value;
 	}
@@ -2435,8 +2380,8 @@ if(!$showadminonly)	 {
 
 		$search_term = "%$search%";
 		$search_filter = empty($search) ? "" : $wpdb->prepare("AND ld.value LIKE %s", $search_term );
-		
-		// new search criterias since 3.4.6
+
+		// new search criterias since 3.5
 		$in_search_criteria = '';
 		if( !empty( $search_criterias ) ) {
 			foreach( $search_criterias as $field_id => $value ) {
@@ -2444,7 +2389,7 @@ if(!$showadminonly)	 {
 				$in_search_criteria .= $wpdb->prepare(" AND l.id IN (SELECT lead_id from $detail_table_name WHERE field_number = %s AND value LIKE %s)", $field_id, $value );
 			}
 		}
-		
+
 
 		$user_filter = '';
 		if($limituser) {
@@ -2503,7 +2448,7 @@ if(!$showadminonly)	 {
 	static function hide_in_single( $form, $field_id ) {
 		return self::check_hide_in('hideInSingle', $form, $field_id);
 	}
-	
+
 	static function check_hide_in($type, $form, $field_id) {
 		foreach( $form['fields'] as $field ) {
 #			echo $field['label'] . ' / ' . floor($field['id']).' / '.floor($field_id).' / <strong>'.$field["{$type}"].'</strong><br />';
@@ -2514,8 +2459,12 @@ if(!$showadminonly)	 {
 
 		return false;
 	}
-	
-	/** get field property value, for a specific field_id on a $form, since 3.4.6 */
+
+	/**
+	 * get field property value, for a specific field_id on a $form
+	 *
+	 * @since  3.5
+	*/
 	static function get_field_property( $property, $form, $field_id = '' ) {
 		if( empty( $property ) || empty( $form ) || '' === $field_id ) {
 			return false;
@@ -2529,13 +2478,20 @@ if(!$showadminonly)	 {
 
 		return false;
 	}
-	
-	/** get field properties, for a specific field_id on a $form, since 3.4.6 */
+
+	/**
+	 * get field properties, for a specific field_id on a $form
+	 *
+	 * @since 3.5
+	 * @param  array $form     GF Form array
+	 * @param  string $field_id Field ID
+	 * @return boolean|array           If the field matches the searched-for field ID, return the field array. Otherwise, return false.
+	 */
 	static function get_field_properties( $form, $field_id = '' ) {
 		if( empty( $form ) || '' === $field_id ) {
 			return false;
 		}
-		
+
 		foreach( $form['fields'] as $field ) {
 			if( floor( $field_id ) === floor( $field['id'] ) ) {
 				return $field;
@@ -2543,11 +2499,13 @@ if(!$showadminonly)	 {
 		}
 		return false;
 	}
-	
-	
-	
-	
 
+	/**
+	 * Deprecated.
+	 *
+	 * @deprecated 3.5
+	 */
+	static function remove_admin_only() {}
 
 	static function remove_approved_column($type = 'form', $fields, $approvedcolumn) {
 
@@ -2560,66 +2518,13 @@ if(!$showadminonly)	 {
 		return $fields;
 	}
 
-	static function remove_admin_only($leads, $adminOnly, $approved, $isleads, $single = false, $form) {
 
-		
-		
-		if(empty($adminOnly) || !is_array($adminOnly)) { $adminOnly = array(); }
-
-		if(!is_array($leads)) { return $leads; }
-
-		$i = 0;
-		if($isleads) {
-            if(empty($leads) || !is_array($leads)) { return array(); }
-			foreach($leads as $key => $lead) {
-				if(@in_array($key, $adminOnly) && $key != $approved && $key != floor($approved)) {
-					if($single) {
-						foreach($adminOnly as $ao) {
-							unset($lead[$ao]);
-						}
-					} else {
-						unset($leads[$i]);
-					}
-				}
-			}
-			return $leads;
-		} else {
-			$columns = $leads;
-			foreach($columns as $key => $column) {
-				// Not sure why this was coded like this. Doesn't seem to make much sense now.
-				// if(@in_array($key, $adminOnly) && $key != $approved && $key != floor($approved) && !$single || ($single && (!isset($column['id']) || isset($column['id']) && in_array($column['id'], $adminOnly)))) {
-				if(
-					@in_array($key, $adminOnly) && $key != $approved ||
-					($single && self::hide_in_single($form, $key)) ||
-					(!$single && self::hide_in_directory($form, $key))
-				) {
-					if($single) {
-						unset($columns[floor($key)]);
-					} else {
-						unset($columns[$key]);
-					}
-				}
-			}
-
-			return $columns;
-		}
-	}
-	
-	
-	/**  -- remove_hidden_fields() // since 3.4.6
-	 *
-	 *	New method to filter columns and fields when generating directory or single entry view
-	 *	based on Admin Only fields, or "hide from directory" fields 
-	 *	or (new since 3.4.6) only visible if user is logged in.
-	 *
-	 *	this method replaces 'self::remove_admin_only()' 
-	 *	
-	 * 	
-	 */
-	
 	/**
-	 * remove_hidden_fields function.
-	 * 
+	 * Filter columns and fields when generating directory or single entry view based on Admin Only fields, or "hide from directory" fields or (since 3.5) only visible if user is logged in.
+	 *
+	 * This method replaces GFDirectory::remove_admin_only() in 3.5
+	 *
+	 * @since  3.5
 	 * @access public
 	 * @static
 	 * @param mixed $leads
@@ -2632,73 +2537,73 @@ if(!$showadminonly)	 {
 	 * @return void
 	 */
 	static function remove_hidden_fields( $leads, $admin_only, $approved, $is_leads, $is_single = false, $show_admin_only = false, $form ) {
-		
+
 		if( empty( $admin_only ) || !is_array( $admin_only ) ) { $admin_only = array(); }
 
 		if( empty( $leads ) || !is_array( $leads ) ) { return $leads; }
 
 		if( $is_leads ) {
-		
+
 			foreach( $leads as $index => $lead ) {
 				// the field_ids are the numeric array keys of a lead
 				$field_ids = array_filter( array_keys( $lead ), 'is_int' );
-				
+
 				foreach( $field_ids as $id ) {
 					if( self::check_hide_field_conditions( $id, $admin_only, $approved, $is_single, $show_admin_only, $form ) ) {
 						unset( $leads[ $index ][ $id ] );
 					}
 				}
-				
+
 			}
-			
+
 			return $leads;
-			
+
 		} else {
-		
+
 			// the KEY = field_id (to be used to check directory columns)
 			foreach( $leads as $key => $column) {
-				
+
 				if( self::check_hide_field_conditions( $key, $admin_only, $approved, $is_single, $show_admin_only, $form ) ) {
 					unset( $leads[ $key ] );
 				}
-				
+
 			}
 
 			return $leads;
 		}
-		
-		
+
+
 	}
-	
-	/** returns true if field should be hidden / returns false if not , since 3.4.6 */
+
+	/** returns true if field should be hidden / returns false if not , since 3.5 */
 	static function check_hide_field_conditions( $field_id, $admin_only, $approved, $is_single = false, $show_admin_only = false, $form ) {
-		
-		
+
+
 		$properties = self::get_field_properties( $form, $field_id );
 		if( empty( $properties ) ) {
 			return false;
 		}
-		
+
 		//check if set to be hidden in directory or in single entry view
 		if( ( $is_single && !empty( $properties['hideInSingle'] ) ) || ( !$is_single && !empty( $properties['hideInDirectory'] ) ) ) {
 			return true;
 		}
-		
+
 		// check if is and admin only field and remove if not authorized to be shown
 		if( !$show_admin_only && @in_array( $field_id, $admin_only ) && $field_id != $approved && $key != floor($approved) ) {
 			return true;
 		}
-		
+
 		//check if field is only visible for logged in users, and in that case, check capabilities level
 		if( !empty( $properties['visibleToLoggedIn'] ) && !current_user_can( $properties['visibleToLoggedInCap'] ) ) {
 			return true;
 		}
-		
+
 		return false;
 
 	}
-	
-	
+
+
 }
 
 
