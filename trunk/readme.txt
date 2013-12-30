@@ -216,6 +216,9 @@ To fix this issue, add this to your theme's `functions.php` file:
 
 == Changelog ==
 
+= 3.5.2 (December 30, 2013) =
+* Fixed: Fatal error for users using < Gravity Forms 1.8
+
 = 3.5 & 3.5.1 (December 29, 2013) =
 * Added: __Advanced search filters!__ Filter results based on fields of the form. For more information, read the item in the FAQ tab: "How do Directory Search filters work?"
 * Added: Make fields visibile based on whether an user is logged-in and has certain capabilities ("Only visible to logged in users with [Any] role." setting in the Directory tab)
@@ -445,6 +448,9 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+
+= 3.5.2 (December 30, 2013) =
+* Fixed: Fatal error for users using < Gravity Forms 1.8
 
 = 3.5 & 3.5.1 (December 29, 2013) =
 * Added: __Advanced search filters!__ Filter results based on fields of the form. For more information, read the item in the FAQ tab: "How do Directory Search filters work?"

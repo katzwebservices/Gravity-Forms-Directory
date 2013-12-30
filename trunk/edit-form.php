@@ -312,7 +312,7 @@ class GFDirectory_EditForm {
 	    	<?php
 
 			// After 1.8, GF includes Font Awesome icons, so don't use the old image icon.
-	    	if(version_compare(str_replace('beta', '', GFForms::$version), '1.8', '<')) {
+	    	if(version_compare(str_replace('beta', '', GFCommon::$version), '1.8', '<')) {
 				?>
 				ul#gf_form_toolbar_links li#gf_form_toolbar_directory a { background: url(<?php echo plugins_url( '/images/editor-icon.gif', __FILE__); ?>) left top no-repeat; }
 				ul#gf_form_toolbar_links li#gf_form_toolbar_directory a:hover { background-position: left -19px; }
