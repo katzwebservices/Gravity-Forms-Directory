@@ -127,7 +127,7 @@ class GFDirectory_Admin {
 		}
 
 		if(!empty($settings['modify_admin']['expand'])) {
-			if(@$_REQUEST['page'] == 'gf_edit_forms' && isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
+			if(isset($_REQUEST['page']) && $_REQUEST['page'] == 'gf_edit_forms' && isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) {
 				$style = '<style>
 					.gforms_edit_form_expanded ul.menu li.add_field_button_container ul,
 					.gforms_edit_form_expanded ul.menu li.add_field_button_container ul ol {
