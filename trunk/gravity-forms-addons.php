@@ -304,7 +304,7 @@ class GFDirectory {
     		}
 
     		if(!empty($lightboxsettings)) {
-    			wp_enqueue_script('colorbox', plugins_url( "/colorbox/jquery.colorbox-min.js", __FILE__), array('jquery'));
+    			wp_enqueue_script('colorbox', plugins_url( "/colorbox/js/jquery.colorbox-min.js", __FILE__), array('jquery'));
     			wp_enqueue_style('colorbox', plugins_url( "/colorbox/example{$lightboxstyle}/colorbox.css", __FILE__), array());
     			$kws_gf_scripts[] = $kws_gf_styles[] = 'colorbox';
     			add_action(apply_filters('kws_gf_directory_colorbox_action', 'wp_footer'), array('GFDirectory', 'load_colorbox'), 1000);
