@@ -1321,7 +1321,7 @@ class GFDirectory {
 					var search_filters = '';
 					if( not_empty( search_criteria ) ) {
 						$.each( search_criteria, function( index, value ){
-							search_filters .= "&filter_" + index + "=" + encodeURIComponent(value);
+							search_filters += "&filter_" + index + "=" + encodeURIComponent(value);
 						} );
 					}
 
