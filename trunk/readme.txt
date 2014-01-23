@@ -216,6 +216,18 @@ To fix this issue, add this to your theme's `functions.php` file:
 
 == Changelog ==
 
+= 3.5.4 (January 23, 2014) =
+* Separated Change Entry Creator functionality into a separate, packaged plugin. This will allow you to enable or disable the functionality as you would a plugin.
+* Added a new filter (`kws_gf_entry_creator_users`) for the Change Entry Creator plugin. This allows you to define what users appear in the dropdown (as an array of `WP_User` objects). If no users are specified, all users are shown.
+
+= 3.5.3 (January 13, 2014) =
+The fixes in this update were submitted by [Dylan Bartlett](http://www.dylanbarlett.com). Thanks, Dylan!
+
+* Check for 'page' request var instead of suppressing error when not set.
+* Add filters & actions to `gf_edit_forms` only when editing a specific form
+* Fixed: Use correct path to enqueue Colorbox JS
+* Fixed: JS syntax in Search function
+
 = 3.5.2 (December 30, 2013) =
 * Fixed: Fatal error for users using < Gravity Forms 1.8
 
@@ -448,6 +460,18 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+
+= 3.5.4 (January 23, 2014) =
+* Separated Change Entry Creator functionality into a separate, packaged plugin. This will allow you to enable or disable the functionality as you would a plugin.
+* Added a new filter (`kws_gf_entry_creator_users`) for the Change Entry Creator plugin. This allows you to define what users appear in the dropdown (as an array of `WP_User` objects). If no users are specified, all users are shown.
+
+= 3.5.3 (January 13, 2014) =
+The fixes in this update were submitted by [Dylan Bartlett](http://www.dylanbarlett.com). Thanks, Dylan!
+
+* Check for 'page' request var instead of suppressing error when not set.
+* Add filters & actions to `gf_edit_forms` only when editing a specific form
+* Fixed: Use correct path to enqueue Colorbox JS
+* Fixed: JS syntax in Search function
 
 = 3.5.2 (December 30, 2013) =
 * Fixed: Fatal error for users using < Gravity Forms 1.8
