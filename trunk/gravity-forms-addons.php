@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.5.4
+Version: 3.5.4.1
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
