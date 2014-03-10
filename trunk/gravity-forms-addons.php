@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.5.4.1
+Version: 3.5.4.2
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -32,7 +32,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.5.4.1";
+	private static $version = "3.5.4.2";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -127,7 +127,7 @@ class GFDirectory {
 
 		include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/edit-form.php');
 		include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/admin.php');
-        include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/change-lead-creator.php');
+        include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/gravity-forms-lead-creator.php');
 
 		if(in_array(RG_CURRENT_PAGE, array("gf_entries", "admin.php", "admin-ajax.php"))) {
 	    	self::globals_get_approved_column();
