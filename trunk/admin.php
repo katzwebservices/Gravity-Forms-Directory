@@ -233,7 +233,7 @@ EOD;
 		}
 	}
 
-	static function add_mce_popup(){
+	function add_mce_popup(){
 
 		//Action target that displays the popup to insert a form to a post/page
 		?>
@@ -364,7 +364,7 @@ EOD;
 		<?php
 	}
 
-	function make_popup_options($js = false) {
+	static function make_popup_options($js = false) {
 		$i = 0;
 
 		$defaults = GFDirectory::directory_defaults();
@@ -559,7 +559,7 @@ EOD;
 		}
 	}
 
-	function make_field($type, $id, $default, $label, $defaults = array()) {
+	static function make_field($type, $id, $default, $label, $defaults = array()) {
 		$rawid = $id;
 		$idLabel = '';
 		if(GFDirectory::is_gravity_page('gf_settings')){
@@ -639,7 +639,7 @@ EOD;
 		}
 	}
 
-	function make_popup_js($type, $id, $defaults) {
+	static function make_popup_js($type, $id, $defaults) {
 
 		foreach($defaults as $key => $default) {
 			if($default === true || $default === 'on') {
@@ -714,16 +714,16 @@ EOD;
 	}
 
 	//Creates directory left nav menu under Forms
-    public static function create_menu($menus){
+    public function create_menu($menus){
         // Adding submenu if user has access
         $permission = GFDirectory::has_access("gravityforms_directory");
         if(!empty($permission))
-            $menus[] = array("name" => "gf_settings&addon=Directory+%26+Addons", "label" => __("Directory &amp; Addons", "gravity-forms-addons"), "callback" =>  array("GFDirectory_Admin", "settings_page"), "permission" => $permission);
+            $menus[] = array("name" => "gf_settings&addon=Directory+%26+Addons", "label" => __("Directory &amp; Addons", "gravity-forms-addons"), "callback" =>  array(&$this, "settings_page"), "permission" => $permission);
 
         return $menus;
     }
 
-    public static function settings_page(){
+    public function settings_page(){
 		$message = $validimage = false; global $plugin_page;
 
         if(isset($_POST["gf_addons_submit"])){

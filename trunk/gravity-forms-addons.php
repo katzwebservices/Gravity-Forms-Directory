@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.5.4.2
+Version: 3.5.4.3
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -32,7 +32,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.5.4.2";
+	private static $version = "3.5.4.3";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -251,7 +251,7 @@ class GFDirectory {
 		if(preg_match('/'.sanitize_title(apply_filters('kws_gf_directory_endpoint', 'entry')).'\/([0-9]+)(?:\/|-)([0-9]+)\/?/ism',$url, $matches)) {
 			$link = add_query_arg(array('form'=>(int)$matches[1], 'leadid'=>(int)$matches[2]), $link);
 		} elseif(isset($_REQUEST['leadid']) && isset($_REQUEST['form'])) {
-			$link = add_query_arg(array('leadid'=>(int)$_REQUEST['leadid'], 'form'=>(int)$_REQUEST['form']), $link);
+			$link = wp_nonce_url(add_query_arg(array('leadid'=>(int)$_REQUEST['leadid'], 'form'=>(int)$_REQUEST['form']), $link), sprintf('view-%d-%d', $_REQUEST['leadid'], $_REQUEST['form']), 'view');
 		}
 		return $link;
 	}
@@ -271,7 +271,7 @@ class GFDirectory {
 			if($matches)  { $leadid = $matches[2]; $form = $matches[1]; }
 			else { $leadid = $_REQUEST['leadid']; $form = $_REQUEST['form']; }
 
-			return add_query_arg(array('leadid' =>$leadid, 'form'=>$form), trailingslashit($permalink));
+			return wp_nonce_url(add_query_arg(array('leadid' =>$leadid, 'form'=>$form), trailingslashit($permalink)), sprintf('view-%d-%d', $leadid, $form), 'view');
 		}
 		return $permalink;
 	}
@@ -911,10 +911,10 @@ class GFDirectory {
 	 * @param string $entryback (default: '') The text of the back-link anchor
 	 * @return string The HTML link for the backlink
 	 */
-	static public function get_back_link($options = array()) {
+	static public function get_back_link($passed_entryback = '') {
 		global $pagenow,$wp_rewrite;
 
-		$options = self::directory_defaults($options);
+		$options = self::directory_defaults();
 
 		if(isset($_GET['edit'])) {
 			return '<p class="entryback"><a href="'.add_query_arg(array(), remove_query_arg(array('edit'))).'">'.esc_html(__(apply_filters('kws_gf_directory_edit_entry_cancel', "&larr; Cancel Editing"), "gravity-forms-addons")).'</a></p>';
@@ -923,21 +923,35 @@ class GFDirectory {
 		list($formid, $leadid) = self::get_form_and_lead_ids();
 		extract($options);
 
-        if($pagenow !== 'entry-details.php') {
-            $href = remove_query_arg(array('row', 'leadid', 'form', 'edit'));
-    		if($wp_rewrite->using_permalinks()) {
-    			$href = preg_replace('/('.sanitize_title(apply_filters('kws_gf_directory_endpoint', 'entry')).'\/(?:[0-9]+)(?:\/|-)(?:[0-9]+)\/?)/ism', '', $href);
-    		}
-    		$url = parse_url(add_query_arg(array(), $href));
-    		if(!empty($url['query']) && !empty($permalink)) { $href .= '?'.$url['query']; }
-    		if(!empty($options['entryanchor'])) { $href .= '#lead_row_'.$leadid; }
+		// Use passed value, if available. Otherwise, use default
+		$entryback = !empty($passed_entryback) ? $passed_entryback : $entryback;
+
+        if($pagenow === 'entry-details.php') {
+
+        	// If possible, link back to the original post.
+        	if(isset($_GET['post'])) {
+        		$href = get_permalink((int)$_GET['post']);
+        	} else {
+        	// Otherwise we rely on Javascript below.
+        		$href = '#';
+        	}
+
+        	$onclick = ' onclick="parent.jQuery.fn.colorbox.close();"';
         } else {
-            $href = '#" onclick="parent.jQuery.fn.colorbox.close();';
+        	$onclick = '';
+	        $href = remove_query_arg(array('row', 'leadid', 'form', 'edit'));
+			if($wp_rewrite->using_permalinks()) {
+				$href = preg_replace('/('.sanitize_title(apply_filters('kws_gf_directory_endpoint', 'entry')).'\/(?:[0-9]+)(?:\/|-)(?:[0-9]+)\/?)/ism', '', $href);
+			}
         }
+
+        $url = parse_url(add_query_arg(array(), $href));
+        if(!empty($url['query']) && !empty($permalink)) { $href .= '?'.$url['query']; }
+		if(!empty($options['entryanchor'])) { $href .= '#lead_row_'.$leadid; }
 
 		// If there's a back link, format it
 		if(!empty($entryback) && !empty($entryonly)) {
-			$link = apply_filters('kws_gf_directory_backlink', '<p class="entryback"><a href="'.$href.'">'.esc_html($entryback).'</a></p>', $href, $entryback);
+			$link = apply_filters('kws_gf_directory_backlink', '<p class="entryback"><a href="'.$href.'"'.$onclick.'>'.esc_html($entryback).'</a></p>', $href, $entryback);
 		} else {
 			$link = '';
 		}
@@ -969,7 +983,7 @@ class GFDirectory {
 			ob_end_clean(); // Clear the buffer
 
 			// Get the back link if this is a single entry.
-			$link = !empty($entryonly) ? self::get_back_link(array('entryback' => $entryback)) : '';
+			$link = !empty($entryonly) ? self::get_back_link($entryback) : '';
 
 			$content = $link . $content;
 			$content = apply_filters('kws_gf_directory_detail', apply_filters('kws_gf_directory_detail_'.(int)$leadid, $content, (int)$leadid), (int)$leadid);
@@ -2321,8 +2335,7 @@ class GFDirectory {
 		$entrytitle = apply_filters('kws_gf_directory_detail_title', apply_filters('kws_gf_directory_detail_title_'.$lead_id, $entrytitle));
 
 		if(!empty($lightboxsettings['entry'])) {
-			$href = plugins_url( "/entry-details.php?leadid=$lead_id&amp;form={$form_id}&amp;post={$post->ID}", __FILE__);
-
+			$href = wp_nonce_url(plugins_url( "/entry-details.php?leadid=$lead_id&amp;form={$form_id}&amp;post={$post->ID}", __FILE__), sprintf('view-%d-%d', $lead_id, $form_id), 'view');
 			if(wp_script_is('colorbox', 'registered')) {
 				$linkClass = ' class="colorbox lightbox" rel="directory_all directory_entry"';
 			} else if(wp_script_is('thickbox', 'registered')) {
@@ -2343,7 +2356,7 @@ class GFDirectory {
 				$href = add_query_arg(array('gf_search' => !empty($_REQUEST['gf_search']) ? $_REQUEST['gf_search'] : null, 'sort' => isset($_REQUEST['sort']) ? $_REQUEST['sort'] : null, 'dir' => isset($_REQUEST['dir']) ? $_REQUEST['dir'] : null, 'pagenum' => isset($_REQUEST['pagenum']) ? $_REQUEST['pagenum'] : null, 'start_date' => isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : null, 'end_date' => isset($_REQUEST['start_date']) ? $_REQUEST['end_date'] : null), $href);
 			} else {
 				// example.com/?page_id=24&leadid=14&form=4
-				$href = add_query_arg(array('leadid'=>$lead_id, 'form' => $form_id));
+				$href = wp_nonce_url(add_query_arg(array('leadid'=>$lead_id, 'form' => $form_id)), sprintf('view-%d-%d', $lead_id, $form_id), 'view');
 			}
 		}
 
