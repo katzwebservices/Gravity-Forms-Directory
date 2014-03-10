@@ -127,7 +127,7 @@ class GFDirectory {
 
 		include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/edit-form.php');
 		include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/admin.php');
-        include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/change-lead-creator.php');
+        include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/gravity-forms-lead-creator.php');
 
 		if(in_array(RG_CURRENT_PAGE, array("gf_entries", "admin.php", "admin-ajax.php"))) {
 	    	self::globals_get_approved_column();
