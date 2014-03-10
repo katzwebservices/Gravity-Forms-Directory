@@ -222,7 +222,7 @@ To fix this issue, add this to your theme's `functions.php` file:
 == Changelog ==
 
 = 3.5.4.3 (March 10, 2014) =
-* IMPORTANT SECURITY UPDATE - security hole patched. __Update as soon as possible.__
+* IMPORTANT SECURITY UPDATE - security hole patched. __Update as soon as possible.__ (Thanks, BMoskovits)
 * Fixed: Lightbox entry view now allows `wp-content` to be a different name
 * Fixed: Static PHP messages on settings page
 * Fixed: Back to Directory link now works with Javascript disabled
