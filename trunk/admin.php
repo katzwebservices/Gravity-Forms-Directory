@@ -316,9 +316,9 @@ EOD;
 					echo $setvalues;
 			?>
 
-				var win = window.dialogArguments || opener || parent || top;
+				//var win = window.dialogArguments || opener || parent || top;
 				var shortcode = "[directory form=\"" + directory_id +"\"" + <?php echo addslashes($idOutputList); ?>"]";
-				win.send_to_editor(shortcode);
+				window.send_to_editor(shortcode);
 				return false;
 			}
 		});
