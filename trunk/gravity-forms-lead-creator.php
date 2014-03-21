@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Change Entry Creator Add-on
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: This simple addon allows users with Entry-editing capabilities to change who a <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> lead is assigned to.
 Author: Katz Web Services, Inc.
-Version: 3.5.4.3
+Version: 3.5.4.3.1
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc. (email: info@katzwebservices.com)
@@ -36,7 +36,11 @@ function kws_gf_change_entry_creator_form($form_id, $lead) {
         $users = apply_filters( 'kws_gf_entry_creator_users', '', $form_id );
 
         if( empty( $users ) ) {
-	        $users = get_users();
+        	$count = count_users();
+        	if( !empty( $count['total_users'] ) && $count['total_users'] > (int)apply_filters( 'kws_gf_entry_creator_max_users', 300 ) )
+	        	$users = get_users( 'role=administrator' );
+	        else
+	        	$users = get_users();
 		}
 
         $output = '<label for="change_created_by">';
