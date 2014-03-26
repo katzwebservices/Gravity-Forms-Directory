@@ -224,6 +224,7 @@ To fix this issue, add this to your theme's `functions.php` file:
 = 3.5.4.5 (March 21, 2014) =
 * Fixed: View entry issue when website has too many users caused by entry creator change select box. If more than 300 users, show only administrators.
 * Fixed: Undefined variable notice (line 2606)
+* Added filter to convert the post_title field in a link to the post itself
 
 = 3.5.4.3 (March 10, 2014) =
 * IMPORTANT SECURITY UPDATE - security hole patched. __Update as soon as possible.__ (Thanks, BMoskovits)
@@ -487,6 +488,7 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 = 3.5.4.5 (March 21, 2014) =
 * Fixed: View entry issue when website has too many users caused by entry creator change select box. If more than 300 users, show only administrators.
 * Fixed: Undefined variable notice (line 2606)
+* Added filter to convert the post_title field in a link to the post itself
 
 = 3.5.4.3 (March 10, 2014) =
 * IMPORTANT SECURITY UPDATE - security hole patched. __Update as soon as possible.__
