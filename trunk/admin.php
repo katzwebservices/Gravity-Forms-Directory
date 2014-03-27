@@ -426,11 +426,11 @@ EOD;
 				#array('checkbox',  'lightbox'  ,  true, __( sprintf("Show images in a %slightbox%s", '<a href="http://en.wikipedia.org/wiki/Lightbox_(JavaScript)" target="_blank">', '</a>'), 'gravity-forms-addons')),
 				array('radio'	, 'lightboxstyle' ,
 					array(
-						array('label' =>'Style 1 <a href="'.GFDirectory::get_base_url().'/colorbox/example1/index.html" target="_blank">See example</a>', 'value'=>'1'),
-						array('label' =>'Style 2 <a href="'.GFDirectory::get_base_url().'/colorbox/example2/index.html" target="_blank">See example</a>', 'value'=>'2'),
-						array('label' =>'Style 3 <a href="'.GFDirectory::get_base_url().'/colorbox/example3/index.html" target="_blank">See example</a>', 'value'=>'3','default'=>'1'),
-						array('label' =>'Style 4 <a href="'.GFDirectory::get_base_url().'/colorbox/example4/index.html" target="_blank">See example</a>', 'value'=>'4'),
-						array('label' =>'Style 5 <a href="'.GFDirectory::get_base_url().'/colorbox/example5/index.html" target="_blank">See example</a>', 'value'=>'5')
+						array('label' =>'Style 1 <a href="'.GFDirectory::get_base_url().'/bower_components/colorbox/example1/index.html" target="_blank">See example</a>', 'value'=>'1'),
+						array('label' =>'Style 2 <a href="'.GFDirectory::get_base_url().'/bower_components/colorbox/example2/index.html" target="_blank">See example</a>', 'value'=>'2'),
+						array('label' =>'Style 3 <a href="'.GFDirectory::get_base_url().'/bower_components/colorbox/example3/index.html" target="_blank">See example</a>', 'value'=>'3','default'=>'1'),
+						array('label' =>'Style 4 <a href="'.GFDirectory::get_base_url().'/bower_components/colorbox/example4/index.html" target="_blank">See example</a>', 'value'=>'4'),
+						array('label' =>'Style 5 <a href="'.GFDirectory::get_base_url().'/bower_components/colorbox/example5/index.html" target="_blank">See example</a>', 'value'=>'5')
 					), "What style should the lightbox use?"
 				),
 				array('checkboxes'	, 'lightboxsettings' ,

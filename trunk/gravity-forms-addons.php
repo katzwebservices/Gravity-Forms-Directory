@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.5.5
+Version: 3.6
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -32,7 +32,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.5.5";
+	private static $version = "3.6";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -125,9 +125,9 @@ class GFDirectory {
 
 		if(!self::is_gravityforms_installed()) { return false; }
 
-		include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/edit-form.php');
-		include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/admin.php');
-        include_once(WP_PLUGIN_DIR . '/' . basename(dirname( __FILE__ )) .'/gravity-forms-lead-creator.php');
+		include_once(plugin_dir_path( __FILE__ ) .'/edit-form.php');
+		include_once(plugin_dir_path( __FILE__ ) .'/admin.php');
+        include_once(plugin_dir_path( __FILE__ ) .'/gravity-forms-lead-creator.php');
 
 		if(in_array(RG_CURRENT_PAGE, array("gf_entries", "admin.php", "admin-ajax.php"))) {
 	    	self::globals_get_approved_column();
@@ -297,15 +297,15 @@ class GFDirectory {
 
     		if($jstable) {
     			$theme = apply_filters('kws_gf_tablesorter_theme', 'blue', $form);
-    			wp_enqueue_style('tablesorter-'.$theme, plugins_url( "/tablesorter/themes/{$theme}/style.css", __FILE__));
-    			wp_enqueue_script('tablesorter-min', plugins_url( "/tablesorter/jquery.tablesorter.min.js", __FILE__), array('jquery'));
+    			wp_enqueue_style('tablesorter-'.$theme, plugins_url( "/bower_components/jquery.tablesorter/css/theme.{$theme}.css", __FILE__));
+    			wp_enqueue_script('tablesorter-min', plugins_url( "/bower_components/jquery.tablesorter/js/jquery.tablesorter.min.js", __FILE__), array('jquery'));
     			$kws_gf_styles[] = 'tablesorter-'.$theme;
     			$kws_gf_scripts[] = 'tablesorter-min';
     		}
 
     		if(!empty($lightboxsettings)) {
-    			wp_enqueue_script('colorbox', plugins_url( "/colorbox/jquery.colorbox-min.js", __FILE__), array('jquery'));
-    			wp_enqueue_style('colorbox', plugins_url( "/colorbox/example{$lightboxstyle}/colorbox.css", __FILE__), array());
+    			wp_enqueue_script('colorbox', plugins_url( "/bower_components/colorbox/jquery.colorbox-min.js", __FILE__), array('jquery'));
+    			wp_enqueue_style('colorbox', plugins_url( "/bower_components/colorbox/example{$lightboxstyle}/colorbox.css", __FILE__), array());
     			$kws_gf_scripts[] = $kws_gf_styles[] = 'colorbox';
     			add_action(apply_filters('kws_gf_directory_colorbox_action', 'wp_footer'), array('GFDirectory', 'load_colorbox'), 1000);
 			}
@@ -1122,9 +1122,9 @@ class GFDirectory {
 		global $wpdb,$wp_rewrite,$post, $wpdb,$directory_shown,$kws_gf_scripts,$kws_gf_styles;
 
 		if(!class_exists('GFEntryDetail')) { @require_once(GFCommon::get_base_path() . "/entry_detail.php"); }
-		if(!class_exists('GFCommon')) { @require_once(WP_PLUGIN_DIR . "/gravityforms/common.php"); }
-		if(!class_exists('RGFormsModel')) { @require_once(WP_PLUGIN_DIR . "/gravityforms/forms_model.php"); }
-		if(!class_exists('GFEntryList')) { require_once(WP_PLUGIN_DIR . "/gravityforms/entry_list.php"); }
+		if(!class_exists('GFCommon')) { @require_once(GFCommon::get_base_path() . "/common.php"); }
+		if(!class_exists('RGFormsModel')) { @require_once(GFCommon::get_base_path() . "/forms_model.php"); }
+		if(!class_exists('GFEntryList')) { require_once(GFCommon::get_base_path() . "/entry_list.php"); }
 
 		//quit if version of wp is not supported
 		if(!class_exists('GFCommon') || !GFCommon::ensure_wp_version())
@@ -1182,7 +1182,7 @@ class GFDirectory {
 		$link_params = array();
 		if(!empty($page_index)) { $link_params['pagenum'] = $page_index; }
 		$formaction = remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg($link_params));
-		$tableclass .= !empty($jstable) ? ' tablesorter' : '';
+		$tableclass .= !empty($jstable) ? sprintf(' tablesorter tablesorter-%s', apply_filters('kws_gf_tablesorter_theme', 'blue', $form)) : '';
 		$title = $form["title"];
 		$sort_field_meta = RGFormsModel::get_field($form, $sort_field);
 		$is_numeric = $sort_field_meta["type"] == "number";
@@ -1480,7 +1480,7 @@ class GFDirectory {
 				<?php } ?>
 				<tbody class="list:user user-list">
 					<?php
-						include(WP_PLUGIN_DIR . "/" . basename(dirname(__FILE__)) . "/template-row.php");
+						include(plugin_dir_path( __FILE__ ) . "/template-row.php");
 					?>
 				</tbody>
 				<?php if($tfoot) {
