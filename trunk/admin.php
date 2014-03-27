@@ -531,7 +531,7 @@ EOD;
 			}
 		}
 	$advanced = array(
-			array('text', 'tableclass' ,  'gf_directory widefat fixed', __( "Class for the <table>, <ul>, or <dl>", 'gravity-forms-addons')),
+			array('text', 'tableclass' ,  'gf_directory widefat', __( "Class for the <table>, <ul>, or <dl>", 'gravity-forms-addons')),
 			array('text', 'tablestyle' ,  '', __( "inline CSS for the <table>, <ul>, or <dl>", 'gravity-forms-addons')),
 			array('text', 'rowclass' ,  '', __( "Class for the <table>, <ul>, or <dl>", 'gravity-forms-addons')),
 			array('text', 'rowstyle' ,  '', __( "Inline CSS for all <tbody><tr>'s, <ul><li>'s, or <dl><dt>'s", 'gravity-forms-addons')),
