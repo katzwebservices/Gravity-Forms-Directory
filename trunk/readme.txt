@@ -220,6 +220,16 @@ To fix this issue, add this to your theme's `functions.php` file:
 <code>add_filter('kws_gf_display_all_fields', create_function('$content', 'return "";') );</code>
 
 == Changelog ==
+= 3.6 (March 27, 2014) =
+* Updated Colorbox js plugin (v 1.5.5)
+	* Fixed: jquery.colorbox-min.js path
+* Updated Tablesorter plugin
+	- Now Tablesorter supports more themes using the `kws_gf_tablesorter_theme` filter:
+		- `black-ice`, `blue`, `bootstrap`, `bootstrap_2`, `dark`, `default`, `dropbox`, `green`, `grey`, `ice`, `jui`
+		- [See themes here](http://mottie.github.io/tablesorter/docs/themes.html)
+* Fixed: When displaying the post link allow `nofollow` and `target` configuration
+* Fixed: Added support for non-standard locations of plugin directories
+* Modified: Removed the default `fixed` table class, this was conflicting with several WordPress themes' CSS
 
 = 3.5.4.5 (March 21, 2014) =
 * Fixed: View entry issue when website has too many users caused by entry creator change select box. If more than 300 users, show only administrators.
@@ -484,6 +494,16 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+= 3.6 (March 27, 2014) =
+* Updated Colorbox js plugin (v 1.5.5)
+	* Fixed: jquery.colorbox-min.js path
+* Updated Tablesorter plugin
+	- Now Tablesorter supports more themes using the `kws_gf_tablesorter_theme` filter:
+		- `black-ice`, `blue`, `bootstrap`, `bootstrap_2`, `dark`, `default`, `dropbox`, `green`, `grey`, `ice`, `jui`
+		- [See themes here](http://mottie.github.io/tablesorter/docs/themes.html)
+* Fixed: When displaying the post link allow `nofollow` and `target` configuration
+* Fixed: Added support for non-standard locations of plugin directories
+* Modified: Removed the default `fixed` table class, this was conflicting with several WordPress themes' CSS
 
 = 3.5.4.5 (March 21, 2014) =
 * Fixed: View entry issue when website has too many users caused by entry creator change select box. If more than 300 users, show only administrators.
