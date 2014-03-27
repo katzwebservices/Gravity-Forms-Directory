@@ -43,7 +43,7 @@ class GFDirectory {
 			'directoryview' => 'table', // Table, list or DL
 			'entryview' => 'table', // Table, list or DL
 			'hovertitle' => true, // Show column name as user hovers over cell
-			'tableclass' => 'gf_directory widefat fixed', // Class for the <table>
+			'tableclass' => 'gf_directory widefat', // Class for the <table>
 			'tablestyle' => '', // inline CSS for the <table>
 			'rowclass' => '', // Class for the <table>
 			'rowstyle' => '', // inline CSS for all <tbody><tr>'s
