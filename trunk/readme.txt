@@ -2,7 +2,7 @@
 Tags: gravity forms, gravity form, forms, gravity, form, crm, directory, business, business directory, list, listings, sort, submissions, table, tables, member, contact, contacts, directorypress, business directory, directory plugin, wordpress directory, classifieds, captcha, cforms, contact, contact form, contact form 7, contact forms, CRM, email, enhanced wp contact form, feedback, form, forms, gravity, gravity form, gravity forms, secure form, simplemodal contact form, wp contact form, widget
 Requires at least: 3.3
 Tested up to: 3.8.1
-Stable tag: 3.5.4.5
+Stable tag: 3.6.1
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Gravity%20Forms%20Addons&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
@@ -220,6 +220,9 @@ To fix this issue, add this to your theme's `functions.php` file:
 <code>add_filter('kws_gf_display_all_fields', create_function('$content', 'return "";') );</code>
 
 == Changelog ==
+= 3.6.1 (March 31, 2014) =
+* Fixed: When updating an entry on the frontend, allow the update of conditional hidden fields (if visible)
+
 = 3.6 (March 27, 2014) =
 * Updated Colorbox js plugin (v 1.5.5)
 	* Fixed: jquery.colorbox-min.js path
@@ -494,6 +497,9 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+= 3.6.1 (March 31, 2014) =
+* Fixed: When updating an entry on the frontend, allow the update of conditional hidden fields (if visible)
+
 = 3.6 (March 27, 2014) =
 * Updated Colorbox js plugin (v 1.5.5)
 	* Fixed: jquery.colorbox-min.js path

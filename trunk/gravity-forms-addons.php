@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.6
+Version: 3.6.1
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -32,7 +32,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.6";
+	private static $version = "3.6.1";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -505,7 +505,8 @@ class GFDirectory {
 	    	// Product fields can't be edited, so that doesn't really matter.
            if(!empty($is_valid) || (empty($is_valid) && empty($validation_message))) {
 	            do_action('kws_gf_directory_pre_update_lead', $lead, $Form);
-	            RGFormsModel::save_lead($Form, $lead);
+	            // since @3.6.1 to enable conditional fields' updates.
+	            self::save_lead($Form, $lead);
 	            $lead = RGFormsModel::get_lead($lead["id"]);
 
 	            do_action('kws_gf_directory_post_update_lead', $lead, $Form);
@@ -2615,6 +2616,118 @@ class GFDirectory {
 		return false;
 
 	}
+
+	/**
+	 * Adapted from forms_model.php, RGFormsModel::save_lead($Form, $lead)
+	 * @param  array $form Form object.
+	 * @param  array $lead Lead object
+	 * @return void
+	 */
+	public static function save_lead($form, &$lead ){
+        global $wpdb;
+
+        if(IS_ADMIN && !GFCommon::current_user_can_any("gravityforms_edit_entries"))
+            die(__("You don't have adequate permission to edit entries.", "gravityforms"));
+
+        $lead_detail_table = RGFormsModel::get_lead_details_table_name();
+
+        //Inserting lead if null
+        if($lead == null){
+            global $current_user;
+            $user_id = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
+
+            $lead_table = RGFormsModel::get_lead_table_name();
+            $user_agent = RGFormsModel::truncate($_SERVER["HTTP_USER_AGENT"], 250);
+            $currency = GFCommon::get_currency();
+            $source_url = RGFormsModel::truncate(RGFormsModel::get_current_page_url(), 200);
+
+            $wpdb->query($wpdb->prepare("INSERT INTO $lead_table(form_id, ip, source_url, date_created, user_agent, currency, created_by) VALUES(%d, %s, %s, utc_timestamp(), %s, %s, {$user_id})", $form["id"], RGFormsModel::get_ip(), $source_url, $user_agent, $currency));
+
+
+            //reading newly created lead id
+            $lead_id = $wpdb->insert_id;
+            $lead = array("id" => $lead_id);
+
+        }
+
+        $current_fields = $wpdb->get_results($wpdb->prepare("SELECT id, field_number FROM $lead_detail_table WHERE lead_id=%d", $lead["id"]));
+        $original_post_id = rgget("post_id", $lead);
+
+        $total_fields = array();
+        $calculation_fields = array();
+        $recalculate_total = false;
+
+        foreach($form["fields"] as $field){
+
+            //Ignore fields that are marked as display only
+            if(rgget("displayOnly", $field) && $field["type"] != "password"){
+                continue;
+            }
+
+            //ignore pricing fields in the entry detail
+            if(RG_CURRENT_VIEW == "entry" && GFCommon::is_pricing_field($field["type"])){
+                continue;
+            }
+
+
+            //process total field after all fields have been saved
+            if($field["type"] == "total"){
+                $total_fields[] = $field;
+                continue;
+            }
+
+            //only save fields that are not hidden (except on entry screen)
+            if(RG_CURRENT_VIEW == "entry" || !RGFormsModel::is_field_hidden($form, $field, array(), $lead ) ){
+                // process calculation fields after all fields have been saved (moved after the is hidden check)
+                if( GFCommon::has_field_calculation($field) ) {
+                    $calculation_fields[] = $field;
+                    continue;
+                }
+
+                GFCommon::log_debug("Saving field {$field["label"]}");
+
+                if($field['type'] == 'post_category')
+                    $field = GFCommon::add_categories_as_choices($field, '');
+
+                if(isset($field["inputs"]) && is_array($field["inputs"])){
+
+                    foreach($field["inputs"] as $input)
+                        RGFormsModel::save_input($form, $field, $lead, $current_fields, $input["id"]);
+                }
+                else{
+                    RGFormsModel::save_input($form, $field, $lead, $current_fields, $field["id"]);
+                }
+            }
+        }
+
+        if(!empty($calculation_fields)) {
+            foreach($calculation_fields as $calculation_field) {
+
+                GFCommon::log_debug("Saving calculated field {$calculation_field["label"]}");
+
+                if(isset($calculation_field["inputs"]) && is_array($calculation_field["inputs"])){
+                    foreach($calculation_field["inputs"] as $input) {
+                        RGFormsModel::save_input($form, $calculation_field, $lead, $current_fields, $input["id"]);
+                        RGFormsModel::refresh_lead_field_value($lead["id"], $input["id"]);
+                    }
+                }
+                else{
+                    RGFormsModel::save_input($form, $calculation_field, $lead, $current_fields, $calculation_field["id"]);
+                    RGFormsModel::refresh_lead_field_value($lead["id"], $calculation_field["id"]);
+                }
+
+            }
+            RGFormsModel::refresh_product_cache($form, $lead = RGFormsModel::get_lead($lead['id']));
+        }
+
+        //saving total field as the last field of the form.
+        if(!empty($total_fields)) {
+            foreach($total_fields as $total_field){
+                GFCommon::log_debug("Saving total field.");
+                RGFormsModel::save_input($form, $total_field, $lead, $current_fields, $total_field["id"]);
+            }
+        }
+    }
 
 
 }

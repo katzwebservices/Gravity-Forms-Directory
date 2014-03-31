@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Change Entry Creator Add-on
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: This simple addon allows users with Entry-editing capabilities to change who a <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> lead is assigned to.
 Author: Katz Web Services, Inc.
-Version: 3.6
+Version: 3.6.1
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc. (email: info@katzwebservices.com)
