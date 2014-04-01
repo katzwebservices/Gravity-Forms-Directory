@@ -403,7 +403,7 @@ class GFDirectory {
 	    return in_array($current_page, $gf_pages);
     }
 
-    function directory_update_approved($lead_id = 0, $approved = 0, $form_id = 0, $approvedcolumn = 0) {
+    static function directory_update_approved($lead_id = 0, $approved = 0, $form_id = 0, $approvedcolumn = 0) {
         global $wpdb, $_gform_directory_approvedcolumn, $current_user;
         $current_user = wp_get_current_user();
         $user_data = get_userdata($current_user->ID);
