@@ -222,6 +222,7 @@ To fix this issue, add this to your theme's `functions.php` file:
 == Changelog ==
 = 3.6.1 (March 31, 2014) =
 * Fixed: When updating an entry on the frontend, allow the update of conditional hidden fields (if visible)
+* Fixed: Add Directory button (to introduce directory shortcode)
 
 = 3.6 (March 27, 2014) =
 * Updated Colorbox js plugin (v 1.5.5)
@@ -499,6 +500,7 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 == Upgrade Notice ==
 = 3.6.1 (March 31, 2014) =
 * Fixed: When updating an entry on the frontend, allow the update of conditional hidden fields (if visible)
+* Fixed: Add Directory button (to introduce directory shortcode)
 
 = 3.6 (March 27, 2014) =
 * Updated Colorbox js plugin (v 1.5.5)
