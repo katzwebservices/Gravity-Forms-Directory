@@ -2684,8 +2684,6 @@ class GFDirectory {
                     continue;
                 }
 
-                GFCommon::log_debug("Saving field {$field["label"]}");
-
                 if($field['type'] == 'post_category')
                     $field = GFCommon::add_categories_as_choices($field, '');
 
@@ -2698,12 +2696,13 @@ class GFDirectory {
                     RGFormsModel::save_input($form, $field, $lead, $current_fields, $field["id"]);
                 }
             }
+
+	        //Refresh lead to support conditionals (not optimal but...)
+	        $lead = RGFormsModel::get_lead( $lead['id'] );
         }
 
         if(!empty($calculation_fields)) {
             foreach($calculation_fields as $calculation_field) {
-
-                GFCommon::log_debug("Saving calculated field {$calculation_field["label"]}");
 
                 if(isset($calculation_field["inputs"]) && is_array($calculation_field["inputs"])){
                     foreach($calculation_field["inputs"] as $input) {
