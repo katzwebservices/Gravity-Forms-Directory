@@ -4,7 +4,7 @@ Plugin Name: Gravity Forms Directory & Addons
 Plugin URI: http://katz.co/gravity-forms-addons/
 Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
 Author: Katz Web Services, Inc.
-Version: 3.6.1
+Version: 3.6.1.2
 Author URI: http://www.katzwebservices.com
 
 Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
@@ -32,7 +32,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.6.1";
+	private static $version = "3.6.1.2";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -570,6 +570,9 @@ class GFDirectory {
 
 
 	static public function lead_detail($Form, $lead, $allow_display_empty_fields=false, $inline = true, $options = array()) {
+
+			if( !class_exists('GFEntryList')) { require_once(GFCommon::get_base_path() . "/entry_list.php"); }
+
 			global $current_user, $_gform_directory_approvedcolumn;
 			get_currentuserinfo();
 
@@ -659,8 +662,8 @@ class GFDirectory {
 								$size = '';
 								if(!empty($url)){
 									//displaying thumbnail (if file is an image) or an icon based on the extension
-									 $icon = GFEntryList::get_icon_url($url);
-									 if(!preg_match('/icon\_image\.gif/ism', $icon)) {
+									$icon = GFEntryList::get_icon_url($url);
+									if(!preg_match('/icon\_image\.gif/ism', $icon)) {
 									 	$lightboxclass = '';
 									 	$src = $icon;
 									 	if(!empty($getimagesize)) {
@@ -670,7 +673,7 @@ class GFDirectory {
 											$size = false;
 											$img = "<img src='$src' />";
 										}
-									 } else { // No thickbox for non-images please
+									} else { // No thickbox for non-images please
 									 	switch(strtolower(trim($postimage))) {
 									 		case 'image':
 									 			$src = $url;
@@ -685,8 +688,8 @@ class GFDirectory {
 										} else {
 											$size = false;
 										}
-									 }
-									 $img = array(
+									}
+									$img = array(
 									 	'src' => $src,
 									 	'size' => $size,
 									 	'title' => $title,
@@ -694,46 +697,61 @@ class GFDirectory {
 									 	'description' => $description,
 									 	'url' => esc_attr($url),
 									 	'code' => isset($size[3]) ? "<img src='$src' {$size[3]} />" : "<img src='$src' />"
-									 );
-									 $img = apply_filters('kws_gf_directory_lead_image', apply_filters('kws_gf_directory_lead_image_'.$postimage, apply_filters('kws_gf_directory_lead_image_'.$lead['id'], $img)));
-									 $value = $display_value = "<a href='{$url}'{$target}{$lightboxclass}>{$img['code']}</a>";
+									);
+									$img = apply_filters('kws_gf_directory_lead_image', apply_filters('kws_gf_directory_lead_image_'.$postimage, apply_filters('kws_gf_directory_lead_image_'.$lead['id'], $img)));
+
+									//lightbox class
+									$lightboxclass = '';
+				 					if(!empty($lightboxsettings['images'])) {
+										if(wp_script_is('colorbox', 'registered')) {
+											$lightboxclass = ' class="colorbox lightbox"';
+										} else if(wp_script_is('thickbox', 'registered')) {
+											$lightboxclass = ' class="thickbox lightbox"';
+										}
+									}
+									// link target
+									$target = ($linknewwindow && empty($lightboxsettings['images'])) ? ' target="_blank"' : '';
+
+									$value = $display_value = "<a href='{$url}'{$target}{$lightboxclass}>{$img['code']}</a>";
 								}
 							break;
 
 							default :
 								//ignore product fields as they will be grouped together at the end of the grid
-                            if(GFCommon::is_product_field($field["type"])){
-                                $has_product_fields = true;
-                                continue;
-                            }
+	                            if(GFCommon::is_product_field($field["type"])){
+	                                $has_product_fields = true;
+	                                continue;
+	                            }
 
-                            $value = RGFormsModel::get_lead_field_value($lead, $field);
-                            $display_value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
+	                            $value = RGFormsModel::get_lead_field_value($lead, $field);
+	                            $display_value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
+	                        break;
 
-                            $display_value = apply_filters("gform_entry_field_value", $display_value, $field, $lead, $Form);
-                            if($display_empty_fields || !empty($display_value) || $display_value === "0"){
-                                $count++;
-                                $is_last = $count >= $field_count && !$has_product_fields ? true : false;
-                                $last_row = $is_last ? " lastrow" : "";
+						} // end switch
 
-                                $display_value =  empty($display_value) && $display_value !== "0" ? "&nbsp;" : $display_value;
+						$display_value = apply_filters("gform_entry_field_value", $display_value, $field, $lead, $Form);
+                        if($display_empty_fields || !empty($display_value) || $display_value === "0"){
+                            $count++;
+                            $is_last = $count >= $field_count && !$has_product_fields ? true : false;
+                            $last_row = $is_last ? " lastrow" : "";
 
-                                $content = '
-                                <tr>
-                                    <th colspan="2" class="entry-view-field-name">' . esc_html(GFCommon::get_label($field)) . '</th>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" class="entry-view-field-value' . $last_row . '">' . $display_value . '</td>
-                                </tr>';
+                            $display_value =  empty($display_value) && $display_value !== "0" ? "&nbsp;" : $display_value;
 
-                                $content = apply_filters("gform_field_content", $content, $field, $value, $lead["id"], $Form["id"]);
+                            $content = '
+                            <tr>
+                                <th colspan="2" class="entry-view-field-name">' . esc_html(GFCommon::get_label($field)) . '</th>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="entry-view-field-value' . $last_row . '">' . $display_value . '</td>
+                            </tr>';
 
-                                echo $content;
+                            $content = apply_filters("gform_field_content", $content, $field, $value, $lead["id"], $Form["id"]);
 
-                            }
-							break;
-						}
-					} // End switch
+                            echo $content;
+
+                        }
+
+					} // End foreach
 
 					$products = array();
                 if($has_product_fields){
@@ -2684,8 +2702,6 @@ class GFDirectory {
                     continue;
                 }
 
-                GFCommon::log_debug("Saving field {$field["label"]}");
-
                 if($field['type'] == 'post_category')
                     $field = GFCommon::add_categories_as_choices($field, '');
 
@@ -2698,12 +2714,13 @@ class GFDirectory {
                     RGFormsModel::save_input($form, $field, $lead, $current_fields, $field["id"]);
                 }
             }
+
+	        //Refresh lead to support conditionals (not optimal but...)
+	        $lead = RGFormsModel::get_lead( $lead['id'] );
         }
 
         if(!empty($calculation_fields)) {
             foreach($calculation_fields as $calculation_field) {
-
-                GFCommon::log_debug("Saving calculated field {$calculation_field["label"]}");
 
                 if(isset($calculation_field["inputs"]) && is_array($calculation_field["inputs"])){
                     foreach($calculation_field["inputs"] as $input) {

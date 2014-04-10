@@ -761,6 +761,11 @@ EOD;
 				text-align: center;
 				<?php echo isset($_GET['viewinstructions']) ? 'display:none;' : ''; ?>
 			}
+			#kws_gf_donate div.aligncenter {
+				max-width: 700px;
+				margin: 0 auto;
+				float: none;
+			}
 			#kws_gf_donate * { text-align: left;}
 			#kws_gf_donate h3 {
 				margin: 0;
@@ -774,10 +779,6 @@ EOD;
 			}
 			#kws_gf_donate .button-primary {
 				display:block; float:left; margin:5px 0; text-align:center;
-			}
-			#kws_gf_donate .aligncenter {
-				float: left;
-				width: 100%;
 			}
 			#kws_gf_donate img {
 				max-width: 100%;
@@ -849,15 +850,12 @@ EOD;
 		if(apply_filters('kws_gf_show_donate_box', true)) {
 		?>
 		<div id="kws_gf_donate">
-			<a href="https://katz.co/gravityview/" title="<?php esc_attr_e( 'Go to GravityView Website', 'gravity-forms-addons' ); ?>" class="aligncenter"><img src= "<?php echo plugins_url( '/images/GravityView.png', __FILE__ ); ?>" alt="GravityView Logo" /></a>
-			<h3><?php _e('Better, simpler, and landing soon.', 'gravity-forms-addons'); ?></h3>
-			<p><?php _e('A brand-new Directory plugin is almost ready, and we need testers. Sign up below for early access.'); ?></p>
-			<form action="http<?php echo is_ssl() ? 's' : '';?>://katzwebservices.us1.list-manage2.com/subscribe/post?u=3346cf42e4d8a3a195bc80579&amp;id=98107e6ded" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-				<input type="email" value="" name="EMAIL" class="email widefat" id="mce-EMAIL" placeholder="email address" required>
-			    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-			    <div style="position: absolute; left: -5000px;"><input type="text" name="b_3346cf42e4d8a3a195bc80579_98107e6ded" value=""></div>
-				<div class="clear"><input type="submit" value="<?php esc_attr_e( 'Get Early Access', 'gravity-forms-addons' ); ?>" name="subscribe" id="mc-embedded-subscribe" class="button button-large button-primary"></div>
-			</form>
+			<div class="aligncenter">
+				<a href="https://katz.co/gravityview/" title="<?php esc_attr_e( 'Go to GravityView Website', 'gravity-forms-addons' ); ?>" class="aligncenter"><img src= "<?php echo plugins_url( '/images/GravityView.png', __FILE__ ); ?>" alt="GravityView Logo" /></a>
+				<h3><?php _e('Better, simpler, and landing soon.', 'gravity-forms-addons'); ?></h3>
+				<p><?php _e('A brand-new Directory plugin is almost ready, and we need testers. Sign up below for early access.'); ?></p>
+				<iframe id='prefinery_iframe_inline' allowTransparency='true' width='100%' height='300' scrolling='no' frameborder='0' src="https://kws.prefinery.com/betas/4444/testers/new?display=inline&amp;version=2"></iframe>
+			</div>
 		</div>
 		<div class="clear"></div>
 		<?php } // End donate box ?>
