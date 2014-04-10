@@ -1,7 +1,7 @@
 === Gravity Forms Directory ===
 Tags: gravity forms, gravity form, forms, gravity, form, crm, directory, business, business directory, list, listings, sort, submissions, table, tables, member, contact, contacts, directorypress, business directory, directory plugin, wordpress directory, classifieds, captcha, cforms, contact, contact form, contact form 7, contact forms, CRM, email, enhanced wp contact form, feedback, form, forms, gravity, gravity form, gravity forms, secure form, simplemodal contact form, wp contact form, widget
 Requires at least: 3.3
-Tested up to: 3.8.1
+Tested up to: 3.8.2
 Stable tag: 3.6.1.2
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
@@ -220,10 +220,9 @@ To fix this issue, add this to your theme's `functions.php` file:
 <code>add_filter('kws_gf_display_all_fields', create_function('$content', 'return "";') );</code>
 
 == Changelog ==
-= 3.6.1.2 (April 4th, 2014) =
-* Fixed: Post Image wasn't showing on the single entry view.
 
-= 3.6.1.1 (April 2nd, 2014) =
+= 3.6.1.1 & 3.6.1.2 (April 10th, 2014) =
+* Fixed: Post Image wasn't showing on the single entry view.
 * Fixed: When updating an entry on the frontend, allow the update of conditional hidden fields with cascade conditions
 
 = 3.6.1 (March 31, 2014) =
@@ -506,10 +505,9 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
-= 3.6.1.2 (April 4th, 2014) =
-* Fixed: Post Image wasn't showing on the single entry view.
 
-= 3.6.1.1 (April 2nd, 2014) =
+= 3.6.1.1 & 3.6.1.2 (April 10th, 2014) =
+* Fixed: Post Image wasn't showing on the single entry view.
 * Fixed: When updating an entry on the frontend, allow the update of conditional hidden fields with cascade conditions
 
 = 3.6.1 (March 31, 2014) =
