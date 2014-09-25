@@ -5,16 +5,17 @@ Tested up to: 3.8.2
 Stable tag: 3.6.1.2
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
-Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Gravity%20Forms%20Addons&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
+Donate link:https://gravityview.co
 
 Add directory capabilities and other functionality to the great Gravity Forms plugin.
 
 == Description ==
 
-> __GravityView is landing soon.__
-> We're getting ready to release a totally re-written version of the Directory plugin!
+> #### [GravityView](https://gravityview.co/) is the best way to display Gravity Forms entries
 >
-> [Sign up for email updates](https://katz.co/gravityview/) to learn when it's released.
+> We're committed to improving the Directory plugin, but it will never match the functionality or ease of use of GravityView.
+>
+> GravityView was built from the ground up to be amazing. [Check it out](https://gravityview.co/) or [try a demo](http://demo.gravityview.co)!
 
 ### Turn Gravity Forms into a Directory plugin
 
@@ -220,6 +221,17 @@ To fix this issue, add this to your theme's `functions.php` file:
 <code>add_filter('kws_gf_display_all_fields', create_function('$content', 'return "";') );</code>
 
 == Changelog ==
+
+= 3.6.2 =
+* Added: Translation files - to contribute a translation, please go here.
+* Fixed: Solved PHP warnings ([see here](https://wordpress.org/support/topic/php-warning-38))
+* Fixed: Made IDs lightbox fit inside Gravity Forms' defined height/width settings on Forms page
+* Fixed: Sanitize usernames in Change Entry Creator
+* Fixed: Don't load lead approval scripts on single entry screen
+* Modified: Improved security for editing entries by improving nonce generation
+* Modified: Rewrote Change Entry Creator as class
+* Modified: Include the Change Entry Creator in core plugin
+* Tweak: Switched to dashicon for insert button icon
 
 = 3.6.1.1 & 3.6.1.2 (April 10th, 2014) =
 * Fixed: Post Image wasn't showing on the single entry view.
