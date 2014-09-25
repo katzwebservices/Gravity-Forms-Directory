@@ -769,6 +769,9 @@ EOD;
 				margin: 0;
 				margin-top: 10px;
 			}
+			#kws_gf_donate p, #kws_gf_donate li {
+				font-size: 1.1em;
+			}
 			#kws_gf_donate .email {
 				padding: 5px;
 				font-size: 15px;
@@ -813,20 +816,18 @@ EOD;
 
 				$('#kws_gf_instructions_button').click(function(e) {
 					e.preventDefault();
-					visible = $('#kws_gf_instructions').is(':visible');
-					if(!visible) { $('#kws_gf_donate').slideUp(150); }
+
 					$('#kws_gf_instructions').slideToggle(function() {
-						var $this = $(this);
 						var $that = $('#kws_gf_instructions_button');
 						$that.text(function() {
-							if(visible) {
-								$('#kws_gf_donate').slideDown(100);
-								return '<?php echo esc_js(__('Hide Instructions', 'gravity-forms-addons') ); ?>';
+							if($('#kws_gf_instructions').is(":visible")) {
+								return '<?php echo esc_js(__('Hide Directory Instructions', 'gravity-forms-addons') ); ?>';
 							} else {
 								return '<?php echo esc_js(__('View Directory Instructions', 'gravity-forms-addons') ); ?>';
 							}
 						});
 					});
+
 					return false;
 				});
 
@@ -849,10 +850,30 @@ EOD;
 		?>
 		<div id="kws_gf_donate">
 			<div class="aligncenter">
-				<a href="https://katz.co/gravityview/" title="<?php esc_attr_e( 'Go to GravityView Website', 'gravity-forms-addons' ); ?>" class="aligncenter"><img src= "<?php echo plugins_url( '/images/GravityView.png', __FILE__ ); ?>" alt="GravityView Logo" /></a>
-				<h3><?php esc_html_e('Better, simpler, and out of this world.', 'gravity-forms-addons'); ?></h3>
-				<p><?php esc_html_e('A brand-new Directory plugin is here.'); ?></p>
-				<p><a href="#" class="button button-hero button-primary">Check out GravityView</a></p>
+				<a href="http://katz.si/gravityview/" title="<?php esc_attr_e( 'Go to the GravityView Website', 'gravity-forms-addons' ); ?>" class="aligncenter"><img src= "<?php echo plugins_url( '/images/GravityView.png', __FILE__ ); ?>" alt="GravityView Logo" /></a>
+				<h2><?php esc_html_e('Better, simpler, more powerful.', 'gravity-forms-addons'); ?></h2>
+
+				<h3><?php esc_html_e('A brand-new Directory plugin is here.', 'gravity-forms-addons');?></h3>
+
+				<?php
+
+
+				echo wpautop( sprintf( esc_html__('%sGravityView%s is the best way to display Gravity Forms entries on your website.', 'gravity-forms-addons' ), '<a href="http://katz.si/gravityview/">', '</a>' ) );
+
+				?>
+
+				<ul class="ul-square">
+					<li><?php esc_html_e('Drag & Drop interface', 'gravity-forms-addons'); ?></li>
+					<li><?php esc_html_e('Different layout types - display entries as a table or profiles', 'gravity-forms-addons'); ?></li>
+					<li><?php esc_html_e('Preset templates make it easy to get started', 'gravity-forms-addons'); ?></li>
+					<li><?php esc_html_e('Great support', 'gravity-forms-addons'); ?></li>
+				</ul>
+
+				<?php
+
+				echo wpautop( sprintf( esc_html__('We re-wrote the Directory plugin from the ground up to be more simple and more powerful. If you like the Directory plugin, you&rsquo;ll %slove%s GravityView.', 'gravity-forms-addons'),  '<em>', '</em>' ) ); ?>
+
+				<p><a href="http://katz.si/gravityview/" class="button button-hero button-primary"><?php esc_html_e('Check out GravityView', 'gravity-forms-addons'); ?></a></p>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -881,7 +902,7 @@ EOD;
 					<li><?php esc_html_e('Go to the post or page where you would like to add the directory.', 'gravity-forms-addons'); ?></li>
 					<li><?php esc_html_e('Click the "Add Directory" button above the content area.', 'gravity-forms-addons'); ?></li>
 					<li><?php esc_html_e('Choose a form from the drop-down menu and configure settings as you would like them.', 'gravity-forms-addons'); ?></li>
-					<li><?php pritnf( esc_html__('Click "Insert Directory". A "shortcode" should appear in the content editor that looks similar to %s[directory form="#"]%s', 'gravity-forms-addons'), '<code style="font-size:1em;">', '</code>' ); ?></li>
+					<li><?php printf( esc_html__('Click "Insert Directory". A "shortcode" should appear in the content editor that looks similar to %s[directory form="#"]%s', 'gravity-forms-addons'), '<code style="font-size:1em;">', '</code>' ); ?></li>
 					<li><?php esc_html_e('Save the post or page', 'gravity-forms-addons'); ?></li>
 				</ol>
 

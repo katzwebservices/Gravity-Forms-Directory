@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gravity Forms Directory & Addons\n"
-"POT-Creation-Date: 2014-09-25 10:52-0700\n"
-"PO-Revision-Date: 2014-09-25 10:52-0700\n"
+"POT-Creation-Date: 2014-09-25 11:30-0700\n"
+"PO-Revision-Date: 2014-09-25 11:30-0700\n"
 "Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
 "Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
 "Language: en_US\n"
@@ -72,7 +72,7 @@ msgstr ""
 msgid "Edit this entry"
 msgstr ""
 
-#: admin.php:183 edit-form.php:62 gravity-forms-addons.php:895
+#: admin.php:183 edit-form.php:62 gravity-forms-addons.php:880
 msgid "Edit"
 msgstr ""
 
@@ -495,161 +495,192 @@ msgstr ""
 msgid "Settings saved."
 msgstr ""
 
-#: admin.php:824
-msgid "Hide Instructions"
-msgstr ""
-
-#: admin.php:826 admin.php:868
-msgid "View Directory Instructions"
-msgstr ""
-
-#: admin.php:841
-msgid "Gravity Forms Directory Add-on"
-msgstr ""
-
-#: admin.php:852
-msgid "Go to GravityView Website"
-msgstr ""
-
-#: admin.php:853
-msgid "Better, simpler, and out of this world."
-msgstr ""
-
-#: admin.php:854
-msgid "A brand-new Directory plugin is here."
-msgstr ""
-
-#: admin.php:866
-msgid "Need help getting started?"
-msgstr ""
-
-#: admin.php:870
+#: admin.php:824 admin.php:891
 msgid "Hide Directory Instructions"
 msgstr ""
 
-#: admin.php:879
+#: admin.php:826 admin.php:889
+msgid "View Directory Instructions"
+msgstr ""
+
+#: admin.php:842
+msgid "Gravity Forms Directory Add-on"
+msgstr ""
+
+#: admin.php:853
+msgid "Go to the GravityView Website"
+msgstr ""
+
+#: admin.php:854
+msgid "Better, simpler, more powerful."
+msgstr ""
+
+#: admin.php:856
+msgid "A brand-new Directory plugin is here."
+msgstr ""
+
+#: admin.php:861
+#, php-format
+msgid ""
+"%sGravityView%s is the best way to display Gravity Forms entries on your "
+"website."
+msgstr ""
+
+#: admin.php:866
+msgid "Drag & Drop interface"
+msgstr ""
+
+#: admin.php:867
+msgid "Different layout types - display entries as a table or profiles"
+msgstr ""
+
+#: admin.php:868
+msgid "Preset templates make it easy to get started"
+msgstr ""
+
+#: admin.php:869
+msgid "Great support"
+msgstr ""
+
+#: admin.php:874
+#, php-format
+msgid ""
+"We re-wrote the Directory plugin from the ground up to be more simple and "
+"more powerful. If you like the Directory plugin, you&rsquo;ll %slove%s "
+"GravityView."
+msgstr ""
+
+#: admin.php:876
+msgid "Check out GravityView"
+msgstr ""
+
+#: admin.php:887
+msgid "Need help getting started?"
+msgstr ""
+
+#: admin.php:900
 msgid "To integrate a form with Directory:"
 msgstr ""
 
-#: admin.php:881
+#: admin.php:902
 msgid "Go to the post or page where you would like to add the directory."
 msgstr ""
 
-#: admin.php:882
+#: admin.php:903
 msgid "Click the \"Add Directory\" button above the content area."
 msgstr ""
 
-#: admin.php:883
+#: admin.php:904
 msgid ""
 "Choose a form from the drop-down menu and configure settings as you would "
 "like them."
 msgstr ""
 
-#: admin.php:884
+#: admin.php:905
 #, php-format
 msgid ""
 "Click \"Insert Directory\". A \"shortcode\" should appear in the content "
 "editor that looks similar to %s[directory form=\"#\"]%s"
 msgstr ""
 
-#: admin.php:885
+#: admin.php:906
 msgid "Save the post or page"
 msgstr ""
 
-#: admin.php:888
+#: admin.php:909
 msgid "Configuring Fields & Columns"
 msgstr ""
 
-#: admin.php:890
+#: admin.php:911
 msgid ""
 "When editing a form, click on a field to expand the field. Next, click the "
 "\"Directory\" tab. There, you will find options to:"
 msgstr ""
 
-#: admin.php:893
+#: admin.php:914
 msgid ""
 "Choose whether you would like the field to be a link to the Single Entry "
 "View;"
 msgstr ""
 
-#: admin.php:894
+#: admin.php:915
 msgid "Hide the field in Directory View; and"
 msgstr ""
 
-#: admin.php:895
+#: admin.php:916
 msgid "Hide the field in Single Entry View"
 msgstr ""
 
-#: admin.php:898
+#: admin.php:919
 msgid "Configuring Column Visibility & Order"
 msgstr ""
 
-#: admin.php:900 admin.php:903
+#: admin.php:921 admin.php:924
 msgid ""
 "When editing a form in Gravity Forms, click the link near the top-center of "
 "the page named \"Directory Columns\""
 msgstr ""
 
-#: admin.php:904
+#: admin.php:925
 msgid ""
 "Drag and drop columns from the right (\"Hidden Columns\") side to the left "
 "(\"Visible Columns\") side."
 msgstr ""
 
-#: admin.php:905
+#: admin.php:926
 msgid "Click the \"Save\" button"
 msgstr ""
 
-#: admin.php:916
+#: admin.php:937
 msgid "Gravity Forms Directory"
 msgstr ""
 
-#: admin.php:918
+#: admin.php:939
 msgid "Enable Gravity Forms Directory capabilities"
 msgstr ""
 
-#: admin.php:924
+#: admin.php:945
 msgid "Directory Default Settings"
 msgstr ""
 
-#: admin.php:925
+#: admin.php:946
 msgid "These defaults can be over-written when inserting a directory."
 msgstr ""
 
-#: admin.php:934
+#: admin.php:955
 msgid "Add Referrer Data to Emails"
 msgstr ""
 
-#: admin.php:936
+#: admin.php:957
 msgid ""
 "Adds referrer data to entries, including the path the user took to get to "
 "the form before submitting."
 msgstr ""
 
-#: admin.php:940
+#: admin.php:961
 msgid "Modify Gravity Forms Admin"
 msgstr ""
 
-#: admin.php:943
+#: admin.php:964
 msgid "Show option to expand Form Editor Field boxes"
 msgstr ""
 
-#: admin.php:945
+#: admin.php:966
 msgid ""
 "When clicking Form Editor Field boxes, toggle open and closed instead of "
 "\"accordion mode\" (closing all except the clicked box)."
 msgstr ""
 
-#: admin.php:947
+#: admin.php:968
 #, php-format
 msgid "Makes possible direct editing of entries from %sEntries list view%s"
 msgstr ""
 
-#: admin.php:949
+#: admin.php:970
 msgid "Adds a link in the Forms list view to view form IDs"
 msgstr ""
 
-#: admin.php:954
+#: admin.php:975
 msgid "Save Settings"
 msgstr ""
 
@@ -831,117 +862,117 @@ msgstr ""
 msgid "Form Preview"
 msgstr ""
 
-#: gravity-forms-addons.php:442
+#: gravity-forms-addons.php:439
 msgid "Disapproved the lead"
 msgstr ""
 
-#: gravity-forms-addons.php:460
+#: gravity-forms-addons.php:457
 msgid "Approved the lead"
 msgstr ""
 
-#: gravity-forms-addons.php:491
+#: gravity-forms-addons.php:488
 #, php-format
 msgid "%sYou do not have permission to edit this form.%s"
 msgstr ""
 
-#: gravity-forms-addons.php:518
+#: gravity-forms-addons.php:515
 #, php-format
 msgid "%sThere were errors with the edit you made.%s%s"
 msgstr ""
 
-#: gravity-forms-addons.php:530
+#: gravity-forms-addons.php:527
 #, php-format
 msgid "%sThe entry was successfully updated.%s"
 msgstr ""
 
-#: gravity-forms-addons.php:568
+#: gravity-forms-addons.php:553
 #, php-format
 msgid "You can edit post details from the %1$spost page%2$s."
 msgstr ""
 
-#: gravity-forms-addons.php:590
+#: gravity-forms-addons.php:575
 msgid "Update Entry"
 msgstr ""
 
-#: gravity-forms-addons.php:597
+#: gravity-forms-addons.php:582
 #, php-format
 msgid "%sThe link to edit this entry is not valid; it may have expired.%s"
 msgstr ""
 
-#: gravity-forms-addons.php:661
+#: gravity-forms-addons.php:646
 #, php-format
 msgid ""
 "(Admin-only notice) Field #%d not shown: \"Hide This Field in Single Entry "
 "View\" was selected."
 msgstr ""
 
-#: gravity-forms-addons.php:794
+#: gravity-forms-addons.php:779
 msgid "Order"
 msgstr ""
 
-#: gravity-forms-addons.php:806
+#: gravity-forms-addons.php:791
 msgid "Product"
 msgstr ""
 
-#: gravity-forms-addons.php:807
+#: gravity-forms-addons.php:792
 msgid "Qty"
 msgstr ""
 
-#: gravity-forms-addons.php:808
+#: gravity-forms-addons.php:793
 msgid "Unit Price"
 msgstr ""
 
-#: gravity-forms-addons.php:809
+#: gravity-forms-addons.php:794
 msgid "Price"
 msgstr ""
 
-#: gravity-forms-addons.php:869
+#: gravity-forms-addons.php:854
 msgid "Total"
 msgstr ""
 
-#: gravity-forms-addons.php:888
+#: gravity-forms-addons.php:873
 msgid "Edit Entry"
 msgstr ""
 
-#: gravity-forms-addons.php:890
+#: gravity-forms-addons.php:875
 msgid "Edit Your Entry"
 msgstr ""
 
-#: gravity-forms-addons.php:1433
+#: gravity-forms-addons.php:1418
 msgid "Search Entries:"
 msgstr ""
 
-#: gravity-forms-addons.php:1441
+#: gravity-forms-addons.php:1426
 msgid "Search"
 msgstr ""
 
-#: gravity-forms-addons.php:1462 gravity-forms-addons.php:1602
+#: gravity-forms-addons.php:1447 gravity-forms-addons.php:1587
 #, php-format
 msgid "Displaying %d - %d of %d"
 msgstr ""
 
-#: gravity-forms-addons.php:1811
+#: gravity-forms-addons.php:1796
 msgid "Settings"
 msgstr ""
 
-#: gravity-forms-addons.php:1850
+#: gravity-forms-addons.php:1835
 msgid "You don't have adequate permission to uninstall Directory Add-On."
 msgstr ""
 
-#: gravity-forms-addons.php:2295
+#: gravity-forms-addons.php:2280
 msgid "Map It"
 msgstr ""
 
-#: gravity-forms-addons.php:2680
+#: gravity-forms-addons.php:2665
 msgid "You don't have adequate permission to edit entries."
 msgstr ""
 
-#: gravity-forms-lead-creator.php:57
+#: gravity-forms-lead-creator.php:60
 #, php-format
 msgid "Changed lead creator from %s to %s"
 msgstr ""
 
-#: gravity-forms-lead-creator.php:80
+#: gravity-forms-lead-creator.php:83
 msgid "Change Entry Creator:"
 msgstr ""
 
