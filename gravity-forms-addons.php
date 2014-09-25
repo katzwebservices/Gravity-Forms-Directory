@@ -1,11 +1,15 @@
 <?php
 /*
-Plugin Name: Gravity Forms Directory & Addons
-Plugin URI: http://katz.co/gravity-forms-addons/
-Description: Turn <a href="http://katz.si/gravityforms" rel="nofollow">Gravity Forms</a> into a great WordPress directory...and more!
-Author: Katz Web Services, Inc.
-Version: 3.6.1.2
-Author URI: http://www.katzwebservices.com
+Plugin Name: 	Gravity Forms Directory & Addons
+Plugin URI: 	http://katz.co/gravity-forms-addons/
+Description: 	Turn <a href="http://katz.si/gravityforms">Gravity Forms</a> into a great WordPress directory...and more!
+Author: 		Katz Web Services, Inc.
+Version: 		3.6.2
+Author URI:		http://www.katzwebservices.com
+Text Domain:    gravity-forms-addons
+License:		GPLv2 or later
+License URI: 	http://www.gnu.org/licenses/gpl-2.0.html
+Domain Path:	/languages
 
 Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
 
@@ -32,7 +36,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.6.1.2";
+	private static $version = "3.6.2";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -261,7 +265,14 @@ class GFDirectory {
 		// This was messing up the wp menu links
 		if(did_action('wp_head')) { return $permalink; }
 
-		global $post; $post->permalink = $permalink; $url = add_query_arg(array());
+		global $post;
+
+		if( is_object( $post ) ) {
+			$post->permalink = $permalink;
+		}
+
+		$url = add_query_arg(array());
+
 		$sentPostID = is_object($sentPost) ? $sentPost->ID : $sentPost;
 		// $post->ID === $sentPostID is so that add_query_arg match doesn't apply to prev/next posts; just current
 		preg_match('/('.sanitize_title(apply_filters('kws_gf_directory_endpoint', 'entry')).'\/([0-9]+)(?:\/|-)([0-9]+)\/?)/ism',$url, $matches);
@@ -312,8 +323,11 @@ class GFDirectory {
 
 			list($urlformid, $urlleadid) = self::get_form_and_lead_ids();
 			if(isset($_GET['edit']) && !empty($urlformid) && isset($urlleadid)) {
-				wp_enqueue_script('gform_gravityforms');
-				$kws_gf_scripts[] = 'gform_gravityforms';
+
+				$edit_scripts = array( 'jquery', 'gform_json', 'gform_placeholder', 'sack','plupload-all' );
+				wp_enqueue_script('gform_gravityforms', $edit_scripts );
+
+				$kws_gf_scripts[] = array_merge( $kws_gf_scripts, $edit_scripts );
 			}
     	}
     }
@@ -471,7 +485,7 @@ class GFDirectory {
 			(!empty($options['adminedit']) && self::has_access("gravityforms_directory")) === true)
 		) {
 			// Kick them out.
-			_e(sprintf('%sYou do not have permission to edit this form.%s', '<div class="error">', '</div>'), 'gravity-forms-addons');
+			printf( esc_html_e( '%sYou do not have permission to edit this form.%s', 'gravity-forms-addons') , '<div class="error">', '</div>');
 			return;
 		}
 
@@ -498,7 +512,7 @@ class GFDirectory {
 	    	}
 	    	if(!empty($validation_message)) {
 	        	$validation_message = '<ul>'.$validation_message.'</ul>';
-	        	_e(apply_filters('kws_gf_directory_lead_error_message', sprintf("%sThere were errors with the edit you made.%s%s", "<div class='error' id='message' style='padding:.5em .75em; background-color:#ffffcc; border:1px solid #ccc;'><p>", "</p>", $validation_message.'</div>'), $lead, $Form), 'gravity-forms-addons');
+	        	echo esc_html( apply_filters('kws_gf_directory_lead_error_message', sprintf( __("%sThere were errors with the edit you made.%s%s", 'gravity-forms-addons'), "<div class='error' id='message' style='padding:.5em .75em; background-color:#ffffcc; border:1px solid #ccc;'><p>", "</p>", $validation_message.'</div>'), $lead, $Form) );
 	    	}
 
 	    	// So the form submission always throws an error even though there's no problem.
@@ -510,20 +524,23 @@ class GFDirectory {
 	            $lead = RGFormsModel::get_lead($lead["id"]);
 
 	            do_action('kws_gf_directory_post_update_lead', $lead, $Form);
-	            _e(apply_filters('kws_gf_directory_lead_updated_message', sprintf("%sThe entry was successfully updated.%s", "<p class='updated' id='message' style='padding:.5em .75em; background-color:#ffffcc; border:1px solid #ccc;'>", "</p>"), $lead, $Form), 'gravity-forms-addons');
+	           echo apply_filters('kws_gf_directory_lead_updated_message', sprintf( esc_html__("%sThe entry was successfully updated.%s", 'gravity-forms-addons'), "<p class='updated' id='message' style='padding:.5em .75em; background-color:#ffffcc; border:1px solid #ccc;'>", "</p>"), $lead, $Form);
 	            return $lead;
             }
 		}
 
-		if((isset($_GET['edit']) && wp_verify_nonce($_GET['edit'], 'edit')) || !empty($validation_message)) {
+		if((isset($_GET['edit']) && wp_verify_nonce($_GET['edit'], 'edit'.$lead['id'].$Form["id"])) || !empty($validation_message)) {
+
+			// The ID of the form needs to be `gform_{form_id}` for the pluploader
 		?>
-			<form method="post" id="entry_form" enctype="multipart/form-data" action="<?php echo remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg(array()));?>">
+			<form method="post" id="gform_<?php echo esc_attr( $Form['id'] ); ?>" enctype="multipart/form-data" action="<?php echo remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg(array()));?>">
 		<?php
 	            wp_nonce_field('gforms_save_entry', 'gforms_save_entry');
 	    ?>
 	            <input type="hidden" name="action" id="action" value="update"/>
 	            <input type="hidden" name="screen_mode" id="screen_mode" value="edit" />
 	            <?php
+
 	            	$form_without_products = $Form;
                     $post_message_shown = false;
                     $product_fields = array();
@@ -533,7 +550,7 @@ class GFDirectory {
                            is_numeric($lead["post_id"]) && GFCommon::is_post_field($field)
                         ){
                             if(is_numeric($lead["post_id"]) && GFCommon::is_post_field($field) && !$message_shown ) {
-                                echo apply_filters('kws_gf_directory_edit_post_details_text', sprintf('You can edit post details from the %1$spost page%2$s.', '<a href="'.admin_url('post.php?action=edit&post='.$lead["post_id"]).'">', '</a>'), $field, $lead, $lead['post_id']);
+                                echo apply_filters('kws_gf_directory_edit_post_details_text', sprintf( esc_html__('You can edit post details from the %1$spost page%2$s.', 'gravity-forms-addons'), '<a href="'.admin_url('post.php?action=edit&post='.$lead["post_id"]).'">', '</a>'), $field, $lead, $lead['post_id']);
                                 $message_shown = true;
                             }
 
@@ -555,14 +572,14 @@ class GFDirectory {
 
 	            	require_once(GFCommon::get_base_path() . "/entry_detail.php");
 	            	GFEntryDetail::lead_detail_edit(apply_filters( 'kws_gf_directory_form_being_edited', $form_without_products, $lead), apply_filters( 'kws_gf_directory_lead_being_edited', $lead_without_products, $form_without_products));
-					_e('<input class="button-primary" type="submit" tabindex="4" value="'.apply_filters('kws_gf_directory_update_lead_button_text', __('Update Entry', 'gravity-forms-addons')).'" name="save" />');
+					echo '<input class="button-primary" type="submit" tabindex="4" value="'.esc_attr( apply_filters('kws_gf_directory_update_lead_button_text', __('Update Entry', 'gravity-forms-addons') ) ).'" name="save" />';
 				?>
 			</form>
 			<?php
 			do_action('kws_gf_directory_post_after_edit_lead_form', $lead, $Form);
 			return false;
 		} elseif((isset($_GET['edit']) && !wp_verify_nonce($_GET['edit'], 'edit'))) {
-			_e(apply_filters('kws_gf_directory_edit_access_error_message', sprintf("%sThe link to edit this entry is not valid; it may have expired.%s", "<p class='error' id='message' style='padding:.5em .75em; background-color:#ffffcc; border:1px solid #ccc;'>", "</p>"), $lead, $Form), 'gravity-forms-addons');
+			echo apply_filters('kws_gf_directory_edit_access_error_message', sprintf( esc_html__("%sThe link to edit this entry is not valid; it may have expired.%s", 'gravity-forms-addons'), "<p class='error' id='message' style='padding:.5em .75em; background-color:#ffffcc; border:1px solid #ccc;'>", "</p>"), $lead, $Form);
 		}
 
 		return $lead;
@@ -620,13 +637,13 @@ class GFDirectory {
 					$count = 0;
 					$has_product_fields = false;
 					$field_count = sizeof($Form["fields"]);
-
+					$display_value = '';
 					foreach($Form["fields"] as $field){
 
 						// Don't show fields defined as hide in single.
 						if(!empty($field['hideInSingle'])) {
 							if(self::has_access("gravityforms_directory")) {
-								echo "\n\t\t\t\t\t\t\t\t\t".'<!-- '.__(sprintf('(Admin-only notice) Field #%d not shown: "Hide This Field in Single Entry View" was selected.', $field['id']), 'gravity-forms-addons').' -->'."\n\n";
+								echo "\n\t\t\t\t\t\t\t\t\t".'<!-- '.sprintf(esc_html__('(Admin-only notice) Field #%d not shown: "Hide This Field in Single Entry View" was selected.', 'gravity-forms-addons'), $field['id']).' -->'."\n\n";
 							}
 							continue;
 						}
@@ -759,7 +776,7 @@ class GFDirectory {
                     if(!empty($products["products"])){
                         ?>
                         <tr>
-                            <td colspan="2" class="entry-view-field-name"><?php echo apply_filters("gform_order_label_{$Form["id"]}", apply_filters("gform_order_label", __("Order", "gravityforms"), $Form["id"]), $Form["id"]) ?></td>
+                            <td colspan="2" class="entry-view-field-name"><?php  echo apply_filters("gform_order_label_{$Form["id"]}", apply_filters("gform_order_label", __("Order", "gravityforms"), $Form["id"]), $Form["id"]) ?></td>
                         </tr>
                         <tr>
                             <td colspan="2" class="entry-view-field-value lastrow">
@@ -771,10 +788,10 @@ class GFDirectory {
                                           <col class="entry-products-col4">
                                     </colgroup>
                                     <thead>
-                                        <th scope="col"><?php echo apply_filters("gform_product_{$form_id}", apply_filters("gform_product", __("Product", "gravityforms"), $form_id), $form_id) ?></th>
-                                        <th scope="col" class="textcenter"><?php echo apply_filters("gform_product_qty_{$form_id}", apply_filters("gform_product_qty", __("Qty", "gravityforms"), $form_id), $form_id) ?></th>
-                                        <th scope="col"><?php echo apply_filters("gform_product_unitprice_{$form_id}", apply_filters("gform_product_unitprice", __("Unit Price", "gravityforms"), $form_id), $form_id) ?></th>
-                                        <th scope="col"><?php echo apply_filters("gform_product_price_{$form_id}", apply_filters("gform_product_price", __("Price", "gravityforms"), $form_id), $form_id) ?></th>
+                                        <th scope="col"><?php echo apply_filters("gform_product_{$Form['id']}", apply_filters("gform_product", __("Product", "gravityforms"), $Form['id']), $Form['id']) ?></th>
+                                        <th scope="col" class="textcenter"><?php echo apply_filters("gform_product_qty_{$Form['id']}", apply_filters("gform_product_qty", __("Qty", "gravityforms"), $Form['id']), $Form['id']) ?></th>
+                                        <th scope="col"><?php echo apply_filters("gform_product_unitprice_{$Form['id']}", apply_filters("gform_product_unitprice", __("Unit Price", "gravityforms"), $Form['id']), $Form['id']) ?></th>
+                                        <th scope="col"><?php echo apply_filters("gform_product_price_{$Form['id']}", apply_filters("gform_product_price", __("Price", "gravityforms"), $Form['id']), $Form['id']) ?></th>
                                     </thead>
                                     <tbody>
                                     <?php
@@ -834,7 +851,7 @@ class GFDirectory {
                                             <?php
                                             }
                                             ?>
-                                            <td class="textright grandtotal"><?php _e("Total", "gravityforms") ?></td>
+                                            <td class="textright grandtotal"><?php esc_html_e("Total", "gravityforms") ?></td>
                                             <td class="grandtotal_amount"><?php echo GFCommon::to_money($total, $lead["currency"])?></td>
                                         </tr>
                                     </tfoot>
@@ -860,8 +877,8 @@ class GFDirectory {
 
 					?>
 						<tr>
-							<th scope="row" class="entry-view-field-name"><?php _e(apply_filters('kws_gf_directory_edit_entry_th', "Edit"), "gravity-forms-addons"); ?></th>
-							<td class="entry-view-field-value useredit"><a href="<?php echo add_query_arg(array('edit' => wp_create_nonce('edit'))); ?>"><?php _e($editbuttontext); ?></a></td>
+							<th scope="row" class="entry-view-field-name"><?php echo esc_html( apply_filters('kws_gf_directory_edit_entry_th', __( "Edit", "gravity-forms-addons" ) ) ); ?></th>
+							<td class="entry-view-field-value useredit"><a href="<?php echo add_query_arg(array('edit' => wp_create_nonce('edit'.$lead['id'].$Form["id"]))); ?>"><?php echo $editbuttontext; ?></a></td>
 						</tr>
 					<?php
 					}
@@ -1398,7 +1415,7 @@ class GFDirectory {
 					?>
 					<p class="search-box">
 						<?php if( $search ) : ?>
-							<label class="hidden" for="lead_search"><?php _e("Search Entries:", "gravity-forms-addons"); ?></label>
+							<label class="hidden" for="lead_search"><?php esc_html_e("Search Entries:", "gravity-forms-addons"); ?></label>
 							<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query ?>"<?php if( $searchtabindex ) { echo ' tabindex="'.intval( $searchtabindex ).'"'; } ?> />
 						<?php endif; ?>
 						<?php
@@ -1406,7 +1423,7 @@ class GFDirectory {
 							echo !empty($_GET['p']) ? '<input name="p" type="hidden" value="'.esc_html( $_GET['p'] ).'" />' : '';
 							echo !empty($_GET['page_id']) ? '<input name="page_id" type="hidden" value="'.esc_html($_GET['page_id']).'" />' : '';
 						?>
-						<input type="submit" class="button" id="lead_search_button" value="<?php _e("Search", "gravity-forms-addons") ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex++).'"'; } ?> />
+						<input type="submit" class="button" id="lead_search_button" value="<?php esc_attr_e("Search", "gravity-forms-addons") ?>"<?php if($searchtabindex) { echo ' tabindex="'.intval($searchtabindex++).'"'; } ?> />
 					</p>
 				</form>
 
