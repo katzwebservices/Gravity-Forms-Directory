@@ -1,11 +1,11 @@
 === Gravity Forms Directory ===
-Tags: gravity forms, gravity form, forms, gravity, form, crm, directory, business, business directory, list, listings, sort, submissions, table, tables, member, contact, contacts, directorypress, business directory, directory plugin, wordpress directory, classifieds, captcha, cforms, contact, contact form, contact form 7, contact forms, CRM, email, enhanced wp contact form, feedback, form, forms, gravity, gravity form, gravity forms, secure form, simplemodal contact form, wp contact form, widget
+Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 3.3
-Tested up to: 3.8.2
-Stable tag: 3.6.1.2
+Tested up to: 4.0
+Stable tag: 3.6.2
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
-Donate link:https://gravityview.co
+Donate link: https://gravityview.co
 
 Add directory capabilities and other functionality to the great Gravity Forms plugin.
 
@@ -13,9 +13,9 @@ Add directory capabilities and other functionality to the great Gravity Forms pl
 
 > #### [GravityView](https://gravityview.co/) is the best way to display Gravity Forms entries
 >
-> We're committed to improving the Directory plugin, but it will never match the functionality or ease of use of GravityView.
->
-> GravityView was built from the ground up to be amazing. [Check it out](https://gravityview.co/) or [try a demo](http://demo.gravityview.co)!
+> We set out to make a better Directory plugin, and we did it: GravityView is a brand-new plugin that takes displaying your form entries to the next level. It is easier, more powerful and more customizable than the Directory plugin. If you like the Directory plugin, you'll *love* GravityView.
+> 
+> [Check out GravityView](https://gravityview.co/) or [try a demo](http://demo.gravityview.co) today!
 
 ### Turn Gravity Forms into a Directory plugin
 
@@ -109,6 +109,10 @@ To enable a field as a search filter, view "How do I add a field as a Directory 
 1. Click the "Directory" tab
 1. Check the box that says "Use this field as a search filter"
 1. Click "Update Form" to save the form
+
+= How can I translate the plugin? =
+
+The plugin is fully translatable. [Go here to contribute a translation](https://www.transifex.com/projects/p/gravity-forms-directory/) and we will include it in the next update!
 
 = How do I turn off lightbox grouping? =
 Add the following to your theme's `functions.php` file:
@@ -222,8 +226,8 @@ To fix this issue, add this to your theme's `functions.php` file:
 
 == Changelog ==
 
-= 3.6.2 =
-* Added: Translation files - to contribute a translation, please go here.
+= 3.6.2 (on September 25, 2014) =
+* Added: Translation files - the plugin's now fully translation-ready. [Go here to contribute a translation](https://www.transifex.com/projects/p/gravity-forms-directory/)
 * Fixed: Solved PHP warnings ([see here](https://wordpress.org/support/topic/php-warning-38))
 * Fixed: Made IDs lightbox fit inside Gravity Forms' defined height/width settings on Forms page
 * Fixed: Sanitize usernames in Change Entry Creator
@@ -517,6 +521,17 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+
+= 3.6.2 (September 25, 2014) =
+* Added: Translation files - to contribute a translation, please go here.
+* Fixed: Solved PHP warnings ([see here](https://wordpress.org/support/topic/php-warning-38))
+* Fixed: Made IDs lightbox fit inside Gravity Forms' defined height/width settings on Forms page
+* Fixed: Sanitize usernames in Change Entry Creator
+* Fixed: Don't load lead approval scripts on single entry screen
+* Modified: Improved security for editing entries by improving nonce generation
+* Modified: Rewrote Change Entry Creator as class
+* Modified: Include the Change Entry Creator in core plugin
+* Tweak: Switched to dashicon for insert button icon
 
 = 3.6.1.1 & 3.6.1.2 (April 10th, 2014) =
 * Fixed: Post Image wasn't showing on the single entry view.
