@@ -2,7 +2,7 @@
 Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 3.6.2
+Stable tag: 3.6.3
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
 Donate link: https://gravityview.co
