@@ -224,7 +224,20 @@ To fix this issue, add this to your theme's `functions.php` file:
 
 <code>add_filter('kws_gf_display_all_fields', create_function('$content', 'return "";') );</code>
 
+= I don't want the values to be formatted =
+
+Since 3.6.3, the Directory plugin displays formatted values (like currency). To disable that, add the code below to your theme's `functions.php` file:
+
+`add_filter('kws_gf_directory_format_value', '__return_false' );`
+
+
 == Changelog ==
+
+= 3.6.3 (on October 3, 2014) =
+* Modified: Values now using Gravity Forms formatting by default. Most field types won't change, but some will look different, including pricing fields
+* Modified: Removed `wpautop` and `fulltext` parameters - full text, styled using paragraphs is always used
+* Fixed: "Too Few Arguments" PHP warning [reported here](https://wordpress.org/support/topic/php-error-107)
+* Fixed: Error on activating the plugin, [reported here](https://wordpress.org/support/topic/fatal-error-wp-get-current-user-capabilitiesphp)
 
 = 3.6.2 (on September 25, 2014) =
 * Added: Translation files - the plugin's now fully translation-ready. [Go here to contribute a translation](https://www.transifex.com/projects/p/gravity-forms-directory/)
@@ -521,6 +534,12 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+
+= 3.6.3 (on October 3, 2014) =
+* Modified: Values now using Gravity Forms formatting by default. Most field types won't change, but some will look different, including pricing fields
+* Modified: Removed `wpautop` and `fulltext` parameters - full text, styled using paragraphs is always used
+* Fixed: "Too Few Arguments" PHP warning [reported here](https://wordpress.org/support/topic/php-error-107)
+* Fixed: Error on activating the plugin, [reported here](https://wordpress.org/support/topic/fatal-error-wp-get-current-user-capabilitiesphp)
 
 = 3.6.2 (September 25, 2014) =
 * Added: Translation files - to contribute a translation, please go here.

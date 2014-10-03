@@ -413,14 +413,14 @@ EOD;
 
 			$content = array(
 			        array('checkbox', 'entry' ,  true, esc_html__("If there's a displayed Entry ID column, add link to each full entry", 'gravity-forms-addons')),
-					array('checkbox',  'wpautop'  ,  true, sprintf( esc_html__( "Convert bulk paragraph text to paragraphs (using the WordPress function %s)", 'gravity-forms-addons'), "<code><a href='http://codex.wordpress.org/Function_Reference/wpautop'>wpautop()</a></code>" )),
+					#array('checkbox',  'wpautop'  ,  true, sprintf( esc_html__( "Convert bulk paragraph text to paragraphs (using the WordPress function %s)", 'gravity-forms-addons'), "<code><a href='http://codex.wordpress.org/Function_Reference/wpautop'>wpautop()</a></code>" )),
 					array('checkbox',  'getimagesize'  ,  false, esc_html__( "Calculate image sizes (Warning: this may slow down the directory loading speed!)", 'gravity-forms-addons')),
 					array('radio'	, 'postimage' , array(
 							array('label' =>'<img src="'.GFCommon::get_base_url().'/images/doctypes/icon_image.gif" /> '.esc_html__('Show image icon', 'gravity-forms-addons'), 'value'=>'icon', 'default'=>'1'),
 							array('label' => esc_html__('Show full image', 'gravity-forms-addons'), 'value'=>'image')
 						), esc_html__("How do you want images to appear in the directory?", 'gravity-forms-addons')
 					),
-					array('checkbox', 'fulltext' , true, esc_html__("Show full content of a textarea or post content field, rather than an excerpt", 'gravity-forms-addons')),
+					#array('checkbox', 'fulltext' , true, esc_html__("Show full content of a textarea or post content field, rather than an excerpt", 'gravity-forms-addons')),
 
 					array('date', 'start_date' ,  false, sprintf( esc_html__('Start date (in %sYYYY-MM-DD%s format)', 'gravity-forms-addons'), '<code>', '</code>') ),
 					array('date', 'end_date' ,  false, sprintf( esc_html__('End date (in %sYYYY-MM-DD%s format)', 'gravity-forms-addons'), '<code>', '</code>') ),

@@ -63,7 +63,7 @@ class GFDirectory {
 			'start_date' => '', // Added in 2.0
 			'end_date' => '', // Added in 2.0
 
-			'wpautop' => true, // Convert bulk paragraph text to...paragraphs
+			//'wpautop' => true, // Convert bulk paragraph text to...paragraphs. Deprecated 3.6.3
 			'page_size' => 20, // Number of entries to show at once
 			'startpage' => 1, // If you want to show page 8 instead of 1
 
@@ -75,7 +75,7 @@ class GFDirectory {
 			'next_text' => '&raquo;',
 			'prev_text' => '&laquo;',
 			'pagelinkstype' => 'plain', // 'plain' is just a string with the links separated by a newline character. The other possible values are either 'array' or 'list'.
-			'fulltext' => true, // If there's a textarea or post content field, show the full content or a summary?
+			//'fulltext' => true, // If there's a textarea or post content field, show the full content or a summary? Deprecated 3.6.3
 			'linkemail' => true, // Convert email fields to email mailto: links
 			'linkwebsite' => true, // Convert URLs to links
 			'linknewwindow' => false, // Open links in new window? (uses target="_blank")
