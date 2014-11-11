@@ -133,7 +133,6 @@
 								if(in_array('images', $lightboxsettings) || !empty($lightboxsettings['images'])) {
 									$lightboxclass .= ' rel="directory_all directory_images"';
 								}
-								$value = "<a href='{$url}'{$target}{$lightboxclass}>{$img['code']}</a>";
 							}
 						break;
 
