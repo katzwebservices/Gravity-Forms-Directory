@@ -206,7 +206,7 @@
 								$value = "<a href='{$href}'{$nofollow}{$target}{$linkClass}>{$value}</a>";
 							}
 							else {
-								$value = esc_html($value);
+								$value = $value;
 							}
 					}
 					if($is_first_column) { echo "\n"; }
