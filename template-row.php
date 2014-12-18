@@ -97,54 +97,36 @@
 						break;
 
 						case "fileupload" :
+
+							// Multi-file uploads are stored as JSON array. Single images are URLs
+							$images = json_decode( $value, true );
+
+							// Only one image, not array of JSON-encoded images
+							if( !is_array( $images ) ) {
+								$images = array( $value );
+							}
+
+							$image_output = array();
+							foreach ( $images as $key => $url ) {
+								if(!empty($url)){
+									$image_output[] = GFDirectory::render_image_link( $url, $lead, $options );
+								}
+							}
+
+							if( sizeof( $image_output ) > 1 ) {
+								$value = '<ul><li>'.implode('</li><li>', $image_output).'</li></ul>';
+							} else {
+								$value = implode('', $image_output);
+							}
+
+							break;
 						case "post_image" :
 							$valueArray = explode("|:|", $value);
 
 							@list($url, $title, $caption, $description) = $valueArray;
-							$size = '';
-							if(!empty($url)){
-								//displaying thumbnail (if file is an image) or an icon based on the extension
-								 $icon = GFEntryList::get_icon_url($url);
-								 if(!preg_match('/icon\_image\.gif/ism', $icon)) {
-								 	$src = $icon;
-								 	if(!empty($getimagesize)) {
-										$size = @getimagesize($src);
-										$img = "<img src='$src' {$size[3]}/>";
-									} else {
-										$size = false;
-										$img = "<img src='$src' />";
-									}
-								 } else { // No thickbox for non-images please
-								 	switch(strtolower(trim($postimage))) {
-								 		case 'image':
-								 			$src = $url;
-								 			break;
-								 		case 'icon':
-								 		default:
-								 			$src = $icon;
-								 			break;
-								 	}
-								 	if(!empty($getimagesize)) {
-										$size = @getimagesize($src);
-									} else {
-										$size = false;
-									}
-								 }
-								 $img = array(
-								 	'src' => $src,
-								 	'size' => $size,
-								 	'title' => $title,
-								 	'caption' => $caption,
-								 	'description' => $description,
-								 	'url' => esc_attr($url),
-								 	'code' => isset($size[3]) ? "<img src='$src' {$size[3]} />" : "<img src='$src' />"
-								 );
-								 $img = apply_filters('kws_gf_directory_lead_image', apply_filters('kws_gf_directory_lead_image_'.$postimage, apply_filters('kws_gf_directory_lead_image_'.$lead['id'], $img)));
 
-								if(in_array('images', $lightboxsettings) || !empty($lightboxsettings['images'])) {
-									$lightboxclass .= ' rel="directory_all directory_images"';
-								}
-								$value = "<a href='{$url}'{$target}{$lightboxclass}>{$img['code']}</a>";
+							if(!empty($url)){
+								$value = GFDirectory::render_image_link( $url, $lead, $options, $title, $caption, $description );
 							}
 						break;
 

@@ -676,60 +676,9 @@ class GFDirectory {
 								$valueArray = explode("|:|", $value);
 
 								@list($url, $title, $caption, $description) = $valueArray;
-								$size = '';
+
 								if(!empty($url)){
-									//displaying thumbnail (if file is an image) or an icon based on the extension
-									$icon = GFEntryList::get_icon_url($url);
-									if(!preg_match('/icon\_image\.gif/ism', $icon)) {
-									 	$lightboxclass = '';
-									 	$src = $icon;
-									 	if(!empty($getimagesize)) {
-											$size = @getimagesize($src);
-											$img = "<img src='$src' {$size[3]}/>";
-										} else {
-											$size = false;
-											$img = "<img src='$src' />";
-										}
-									} else { // No thickbox for non-images please
-									 	switch(strtolower(trim($postimage))) {
-									 		case 'image':
-									 			$src = $url;
-									 			break;
-									 		case 'icon':
-									 		default:
-									 			$src = $icon;
-									 			break;
-									 	}
-									 	if(!empty($getimagesize)) {
-											$size = @getimagesize($src);
-										} else {
-											$size = false;
-										}
-									}
-									$img = array(
-									 	'src' => $src,
-									 	'size' => $size,
-									 	'title' => $title,
-									 	'caption' => $caption,
-									 	'description' => $description,
-									 	'url' => esc_attr($url),
-									 	'code' => isset($size[3]) ? "<img src='$src' {$size[3]} />" : "<img src='$src' />"
-									);
-									$img = apply_filters('kws_gf_directory_lead_image', apply_filters('kws_gf_directory_lead_image_'.$postimage, apply_filters('kws_gf_directory_lead_image_'.$lead['id'], $img)));
-
-									//lightbox class
-									$lightboxclass = '';
-				 					if(!empty($lightboxsettings['images'])) {
-										if(wp_script_is('colorbox', 'registered')) {
-											$lightboxclass = ' class="colorbox lightbox"';
-										} else if(wp_script_is('thickbox', 'registered')) {
-											$lightboxclass = ' class="thickbox lightbox"';
-										}
-									}
-									// link target
-									$target = ($linknewwindow && empty($lightboxsettings['images'])) ? ' target="_blank"' : '';
-
-									$value = $display_value = "<a href='{$url}'{$target}{$lightboxclass}>{$img['code']}</a>";
+									$value = $display_value = self::render_image_link( $url, $lead, $options, $title, $caption, $description );
 								}
 							break;
 
@@ -1610,7 +1559,93 @@ class GFDirectory {
 		return $content; // Return it!
 	}
 
+	/**
+	 * Render image link HTML
+	 *
+	 * @since  3.7
+	 * @param  [type] $url         [description]
+	 * @param  string $title       [description]
+	 * @param  string $caption     [description]
+	 * @param  string $description [description]
+	 * @return [type]              [description]
+	 */
+	static private function render_image_link( $url, $lead, $options, $title = '', $caption = '', $description = '' ) {
 
+		extract($options);
+
+		$target = ($linknewwindow && empty($lightboxsettings['images'])) ? ' target="_blank"' : '';
+
+		$size = false;
+	 	if( !empty( $options['getimagesize'] )) {
+			$size = @getimagesize( $url );
+		}
+
+		//displaying thumbnail (if file is an image) or an icon based on the extension
+		 $icon = GFEntryList::get_icon_url($url);
+		 if(!preg_match('/icon\_image\.gif/ism', $icon)) {
+		 	$src = $icon;
+		 	if(!empty($size)) {
+				$img = "<img src='$src' {$size[3]}/>";
+			} else {
+				$img = "<img src='$src' />";
+			}
+		 } else { // No thickbox for non-images please
+		 	switch( strtolower( trim( $options['postimage'] ) ) ) {
+		 		case 'image':
+		 			$src = $url;
+		 			break;
+		 		case 'icon':
+		 		default:
+		 			$src = $icon;
+		 			break;
+		 	}
+		 }
+		 $img = array(
+		 	'src' => $src,
+		 	'size' => $size,
+		 	'title' => $title,
+		 	'caption' => $caption,
+		 	'description' => $description,
+		 	'url' => esc_url_raw( $url ),
+		 	'code' => isset($size[3]) ? "<img src='$src' {$size[3]} />" : "<img src='$src' />"
+		 );
+		 $img = apply_filters('kws_gf_directory_lead_image', apply_filters('kws_gf_directory_lead_image_'.$options['postimage'], apply_filters('kws_gf_directory_lead_image_'.$lead['id'], $img)));
+
+		$lightboxclass = '';
+
+		if(!empty($lightboxsettings['images']) && self::is_image_file( $url ) ) {
+			if(wp_script_is('colorbox', 'registered')) {
+				$lightboxclass = ' class="colorbox lightbox"';
+			} else if(wp_script_is('thickbox', 'registered')) {
+				$lightboxclass = ' class="thickbox lightbox"';
+			}
+
+			if(in_array('images', $lightboxsettings) || !empty($lightboxsettings['images'])) {
+				$lightboxclass .= ' rel="directory_all directory_images"';
+			}
+		}
+
+		$value = "<a href='{$url}'{$target}{$lightboxclass}>{$img['code']}</a>";
+
+		$value = apply_filters( 'kws_gf_directory_render_image_link', $value, $url, $lead, $options, $title, $caption, $description );
+
+		return $value;
+	}
+
+	/**
+	 * Verify that the src URL matches image patterns.
+	 *
+	 *
+	 * @return boolean     True: matches pattern; False: does not match pattern.
+	 */
+	public static function is_image_file( $src ) {
+
+		$info = pathinfo( $src );
+
+		$image_exts = apply_filters('kws_gf_directory_image_extensions', array( 'jpg', 'jpeg', 'jpe', 'gif', 'png', 'bmp', 'tif', 'tiff', 'ico' ));
+
+		return isset( $info['extension'] ) && in_array(strtolower( $info['extension'] ), $image_exts);
+	}
 
 	/**
 	 * render_search_dropdown function.
