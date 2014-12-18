@@ -198,9 +198,6 @@
 								}
 								$value = "<a href='{$href}'{$nofollow}{$target}{$linkClass}>{$value}</a>";
 							}
-							else {
-								$value = esc_html($value);
-							}
 					}
 					if($is_first_column) { echo "\n"; }
 					if($value !== NULL) {

@@ -235,6 +235,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 * Fixed: Restored single entry links
 * Fixed: Displaying IP address, other default entry values
+* Fixed: HTML links are no longer displayed as text
 * Fixed: Restored respecting settings for image upload formatting
 * Fixed: Lightboxes no longer work for non-image files
 	- Added `kws_gf_directory_image_extensions` filter to modify what image formats to support
