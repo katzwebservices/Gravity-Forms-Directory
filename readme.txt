@@ -235,6 +235,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 * Fixed: Restored single entry links
 * Fixed: Displaying IP address, other default entry values
+* Modified: Added support for future Business Hours field
 = 3.6.3 (on October 3, 2014) =
 * Modified: Values now using Gravity Forms formatting by default. Most field types won't change, but some will look different, including pricing fields
 * Modified: Removed `wpautop` and `fulltext` parameters - full text, styled using paragraphs is always used

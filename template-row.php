@@ -61,6 +61,10 @@
 
 					switch($input_type){
 
+						case "business_hours":
+							$value = $display_value;
+							break;
+
 						case "address" :
 						case "radio" :
 						case "checkbox" :
