@@ -39,23 +39,32 @@
 						}
 					}
 
-
 					$value = RGFormsModel::get_lead_field_value($lead, $field);
+					$display_value = $value;
 
 					/**
 					 * @since 3.6.3
 					 */
 					if( apply_filters('kws_gf_directory_format_value', true ) ) {
-						$value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
+						$display_value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
+						$display_value = apply_filters("gform_entry_field_value", $display_value, $field, $lead, $form);
 					}
 
-					if(GFCommon::is_post_field($columns[$field_id])) {
+					// `id`, `ip`, etc.
+					if( !is_numeric( $field_id ) ) {
+						$input_type = $field_id;
+					}
+					elseif( GFCommon::is_post_field($columns[$field_id])) {
 						$input_type = $field['type'];
 					} else {
 						$input_type = RGFormsModel::get_input_type($field);
 					}
 
 					switch($input_type){
+
+						case "business_hours":
+							$value = $display_value;
+							break;
 
 						case "address" :
 						case "radio" :
@@ -89,54 +98,37 @@
 						break;
 
 						case "fileupload" :
+
+							// Multi-file uploads are stored as JSON array. Single images are URLs
+							$images = json_decode( $value, true );
+
+							// Only one image, not array of JSON-encoded images
+							if( !is_array( $images ) ) {
+								$images = array( $value );
+							}
+
+							$image_output = array();
+							foreach ( $images as $key => $url ) {
+								if(!empty($url)){
+									$image_output[] = GFDirectory::render_image_link( $url, $lead, $options );
+								}
+							}
+
+							if( sizeof( $image_output ) > 1 ) {
+								$value = '<ul><li>'.implode('</li><li>', $image_output).'</li></ul>';
+							} else {
+								$value = implode('', $image_output);
+							}
+
+							break;
 						case "post_image" :
+
 							$valueArray = explode("|:|", $value);
 
 							@list($url, $title, $caption, $description) = $valueArray;
-							$size = '';
-							if(!empty($url)){
-								//displaying thumbnail (if file is an image) or an icon based on the extension
-								 $icon = GFEntryList::get_icon_url($url);
-								 if(!preg_match('/icon\_image\.gif/ism', $icon)) {
-								 	$src = $icon;
-								 	if(!empty($getimagesize)) {
-										$size = @getimagesize($src);
-										$img = "<img src='$src' {$size[3]}/>";
-									} else {
-										$size = false;
-										$img = "<img src='$src' />";
-									}
-								 } else { // No thickbox for non-images please
-								 	switch(strtolower(trim($postimage))) {
-								 		case 'image':
-								 			$src = $url;
-								 			break;
-								 		case 'icon':
-								 		default:
-								 			$src = $icon;
-								 			break;
-								 	}
-								 	if(!empty($getimagesize)) {
-										$size = @getimagesize($src);
-									} else {
-										$size = false;
-									}
-								 }
-								 $img = array(
-								 	'src' => $src,
-								 	'size' => $size,
-								 	'title' => $title,
-								 	'caption' => $caption,
-								 	'description' => $description,
-								 	'url' => esc_attr($url),
-								 	'code' => isset($size[3]) ? "<img src='$src' {$size[3]} />" : "<img src='$src' />"
-								 );
-								 $img = apply_filters('kws_gf_directory_lead_image', apply_filters('kws_gf_directory_lead_image_'.$postimage, apply_filters('kws_gf_directory_lead_image_'.$lead['id'], $img)));
 
-								if(in_array('images', $lightboxsettings) || !empty($lightboxsettings['images'])) {
-									$lightboxclass .= ' rel="directory_all directory_images"';
-								}
-								$value = "<a href='{$url}'{$target}{$lightboxclass}>{$img['code']}</a>";
+							if(!empty($url)){
+								$value = GFDirectory::render_image_link( $url, $lead, $options, $title, $caption, $description );
 							}
 						break;
 
@@ -190,9 +182,12 @@
 						break;
 
 						default:
-
 							$input_type = 'text';
-							if(is_email($value) && $linkemail) {$value = "<a href='mailto:$value'$nofollow>$value</a>"; }
+
+							if(is_email($value) && $linkemail) {
+								$value = "<a href='mailto:$value'$nofollow>$value</a>";
+							}
+
 							elseif(preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $value) && $linkwebsite) {
 								$href = $value;
 								if(!empty($lightboxsettings['images'])) {
@@ -208,9 +203,6 @@
 								}
 								$value = "<a href='{$href}'{$nofollow}{$target}{$linkClass}>{$value}</a>";
 							}
-							else {
-								$value = esc_html($value);
-							}
 					}
 					if($is_first_column) { echo "\n"; }
 					if($value !== NULL) {
@@ -224,6 +216,7 @@
 
 					 	$value = empty($value) ? '&nbsp;' : $value;
 
+					 	// If the current field is the ID
 						if(isset($entrylinkcolumns[floor($field_id)]) || isset($entrylinkcolumns['id']) && $input_type == 'id') {
 
 							if($input_type == 'id' && $entry) {

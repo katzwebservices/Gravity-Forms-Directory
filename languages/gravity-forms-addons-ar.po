@@ -1,22 +1,22 @@
+# 
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: Gravity Forms Directory & Addons\n"
+"Project-Id-Version: Gravity Forms Directory\n"
 "POT-Creation-Date: 2014-12-17 22:24-0700\n"
-"PO-Revision-Date: 2014-12-17 22:24-0700\n"
-"Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
-"Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
-"Language: en_US\n"
+"PO-Revision-Date: 2014-12-18 05:24+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"Language-Team: Arabic (http://www.transifex.com/projects/p/gravity-forms-directory/language/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 "X-Generator: Poedit 1.7.1\n"
 "X-Poedit-Basepath: ..\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: admin.php:52
 #, php-format
@@ -49,12 +49,9 @@ msgstr ""
 msgid ""
 "%sGravity Forms cannot be found%s\n"
 "\n"
-"\t\t\t\tThe %sGravity Forms plugin%s must be installed and activated for the "
-"Gravity Forms Addons plugin to work.\n"
+"\t\t\t\tThe %sGravity Forms plugin%s must be installed and activated for the Gravity Forms Addons plugin to work.\n"
 "\n"
-"\t\t\t\tIf you haven't installed the plugin, you can %3$spurchase the plugin "
-"here%4$s. If you have, and you believe this notice is in error, %5$sstart a "
-"topic on the plugin support forum%4$s.\n"
+"\t\t\t\tIf you haven't installed the plugin, you can %3$spurchase the plugin here%4$s. If you have, and you believe this notice is in error, %5$sstart a topic on the plugin support forum%4$s.\n"
 "\n"
 "\t\t\t\t%6$s%7$sBuy Gravity Forms%4$s%8$s\n"
 "\t\t\t\t"
@@ -140,8 +137,8 @@ msgstr ""
 
 #: admin.php:398
 msgid ""
-"Automatically convert directory into Approved-only when an Approved field is "
-"detected."
+"Automatically convert directory into Approved-only when an Approved field is"
+" detected."
 msgstr ""
 
 #: admin.php:399
@@ -262,15 +259,15 @@ msgstr ""
 
 #: admin.php:464
 msgid ""
-"Show each page number (eg: 1 2 3 4 5 6 7 8) instead of summary (eg: 1 2 "
-"3 ... 8 &raquo;)"
+"Show each page number (eg: 1 2 3 4 5 6 7 8) instead of summary (eg: 1 2 3 "
+"... 8 &raquo;)"
 msgstr ""
 
 #: admin.php:465
 #, php-format
 msgid ""
-"Use JavaScript for sorting (otherwise, %slinks%s will be used for sorting by "
-"column)"
+"Use JavaScript for sorting (otherwise, %slinks%s will be used for sorting by"
+" column)"
 msgstr ""
 
 #: admin.php:466
@@ -326,8 +323,9 @@ msgstr ""
 #: admin.php:484
 #, php-format
 msgid ""
-"The text displayed at the top of the entry details. Use %s%%%%formtitle%%%%"
-"%s and %s%%%%leadid%%%%%s as variables that will be replaced."
+"The text displayed at the top of the entry details. Use "
+"%s%%%%formtitle%%%%%s and %s%%%%leadid%%%%%s as variables that will be "
+"replaced."
 msgstr ""
 
 #: admin.php:485
@@ -464,8 +462,8 @@ msgstr ""
 
 #: admin.php:555
 msgid ""
-"Give credit to the plugin creator (who has spent over 300 hours on this free "
-"plugin!) with a link at the bottom of the directory"
+"Give credit to the plugin creator (who has spent over 300 hours on this free"
+" plugin!) with a link at the bottom of the directory"
 msgstr ""
 
 #: admin.php:709
@@ -809,8 +807,8 @@ msgid ""
 "directory view, even if it is visible in the %sDirectory Columns%s. If this "
 "field is Admin Only (set in the Advanced tab), it will be hidden in the "
 "directory view unless \"Show Admin-Only columns\" is enabled in the "
-"directory. Even if \"Show Admin-Only columns\" is enabled, checking this box "
-"will hide the column in the directory view."
+"directory. Even if \"Show Admin-Only columns\" is enabled, checking this box"
+" will hide the column in the directory view."
 msgstr ""
 
 #: edit-form.php:482
@@ -820,8 +818,8 @@ msgstr ""
 #: edit-form.php:483
 #, php-format
 msgid ""
-"%sHide in Single Entry View%sIf checked, this field will not be shown in the "
-"single entry view of the directory."
+"%sHide in Single Entry View%sIf checked, this field will not be shown in the"
+" single entry view of the directory."
 msgstr ""
 
 #: edit-form.php:484
@@ -829,8 +827,8 @@ msgstr ""
 msgid ""
 "%sDirectory Search Field%sIf checked, add search fields to the Directory "
 "search form. If this field is a text field, a text search input will be "
-"added that will search only this field. Otherwise, the field choices will be "
-"used to populate a dropdown menu search input. Example: if the field has "
+"added that will search only this field. Otherwise, the field choices will be"
+" used to populate a dropdown menu search input. Example: if the field has "
 "choices \"A\", \"B\", and \"C\", the search dropdown will have those items "
 "as choices in a dropdown search field."
 msgstr ""
