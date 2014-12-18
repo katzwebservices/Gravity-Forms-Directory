@@ -39,14 +39,15 @@
 						}
 					}
 
-
 					$value = RGFormsModel::get_lead_field_value($lead, $field);
+					$display_value = $value;
 
 					/**
 					 * @since 3.6.3
 					 */
 					if( apply_filters('kws_gf_directory_format_value', true ) ) {
-						$value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
+						$display_value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
+						$display_value = apply_filters("gform_entry_field_value", $display_value, $field, $lead, $form);
 					}
 
 					// `id`, `ip`, etc.
@@ -121,6 +122,7 @@
 
 							break;
 						case "post_image" :
+
 							$valueArray = explode("|:|", $value);
 
 							@list($url, $title, $caption, $description) = $valueArray;
@@ -180,9 +182,12 @@
 						break;
 
 						default:
-
 							$input_type = 'text';
-							if(is_email($value) && $linkemail) {$value = "<a href='mailto:$value'$nofollow>$value</a>"; }
+
+							if(is_email($value) && $linkemail) {
+								$value = "<a href='mailto:$value'$nofollow>$value</a>";
+							}
+
 							elseif(preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $value) && $linkwebsite) {
 								$href = $value;
 								if(!empty($lightboxsettings['images'])) {
@@ -211,6 +216,7 @@
 
 					 	$value = empty($value) ? '&nbsp;' : $value;
 
+					 	// If the current field is the ID
 						if(isset($entrylinkcolumns[floor($field_id)]) || isset($entrylinkcolumns['id']) && $input_type == 'id') {
 
 							if($input_type == 'id' && $entry) {

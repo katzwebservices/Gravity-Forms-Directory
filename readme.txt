@@ -233,6 +233,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 == Changelog ==
 
+= 3.7 on December 17 = 
 * Fixed: Restored single entry links
 * Fixed: Displaying IP address, other default entry values
 * Fixed: HTML links are no longer displayed as text
@@ -544,6 +545,17 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+
+= 3.7 on December 17 = 
+* Fixed: Restored single entry links
+* Fixed: Displaying IP address, other default entry values
+* Fixed: HTML links are no longer displayed as text
+* Fixed: Restored respecting settings for image upload formatting
+* Fixed: Lightboxes no longer work for non-image files
+	- Added `kws_gf_directory_image_extensions` filter to modify what image formats to support
+* Added: Improved support for multiple file uploads
+* Modified: Added support for future Business Hours field
+* Modified: Refactored code; created `render_image_link()` method to render images
 
 = 3.6.3 (on October 3, 2014) =
 * Modified: Values now using Gravity Forms formatting by default. Most field types won't change, but some will look different, including pricing fields
