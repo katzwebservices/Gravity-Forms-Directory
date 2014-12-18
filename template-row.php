@@ -26,7 +26,9 @@
 				$is_first_column = true;
 
 				foreach($field_ids as $field_id) {
-					$field = $columns[$field_id];
+
+					$field = RGFormsModel::get_field($form, $field_id);
+
 					$lightboxclass = '';
 
 					if(!empty($lightboxsettings['images'])) {
@@ -37,7 +39,15 @@
 						}
 					}
 
-					$value = isset($lead[$field_id]) ? $lead[$field_id] : '';
+
+					$value = RGFormsModel::get_lead_field_value($lead, $field);
+
+					/**
+					 * @since 3.6.3
+					 */
+					if( apply_filters('kws_gf_directory_format_value', true ) ) {
+						$value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
+					}
 
 					if(GFCommon::is_post_field($columns[$field_id])) {
 						$input_type = $field['type'];
@@ -53,12 +63,8 @@
 						case "name":
 							$value = "";
 
-							// If you want to display all checked responses
-							if(floatval($field_id) === floor(floatval($field_id))) {
-								$field = RGFormsModel::get_field($form, $field_id);
-								$value = RGFormsModel::get_lead_field_value($lead, $field);
-								$value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
-							} else {
+							// Displaying just one input, not a complex field value
+							if(floatval($field_id) !== floor(floatval($field_id))) {
 								// We're appending this to the end.
 								if($input_type === 'address' && $appendaddress) {
 									$address['id'] = floor((int)$field_id);
@@ -156,24 +162,10 @@
 						case "textarea" :
 						case "post_content" :
 						case "post_excerpt" :
-							if($fulltext) {
-								$long_text = $value = "";
-
-								if(isset($lead[$field_id]) && strlen($lead[$field_id]) >= GFORMS_MAX_FIELD_LENGTH) {
-								   $long_text = RGFormsModel::get_lead_field_value($lead, RGFormsModel::get_field($form, $field_id));
-								}
-								if(isset($lead[$field_id])) {
-									$value = !empty($long_text) ? $long_text : $lead[$field_id];
-								}
-
-							} else {
-								$value = esc_html($value);
-							}
-							if($wpautop) { $value = wpautop($value); };
+							$value = wpautop($value);
 						break;
 
 						case "post_category":
-							$value = GFCommon::get_lead_field_display($field, $lead[$field_id]);
 							$value = GFCommon::prepare_post_category_value($lead[$field_id], $field);
 						break;
 
@@ -182,7 +174,6 @@
 						break;
 
 						case "date" :
-							$field = RGFormsModel::get_field($form, $field_id);
 							if($dateformat) {
 								 $value = GFCommon::date_display($value, $dateformat);
 							 } else {
@@ -195,7 +186,6 @@
 						break;
 
 						case "list":
-							$field = RGFormsModel::get_field($form, $field_id);
 							$value = GFCommon::get_lead_field_display($field, $value);
 						break;
 
@@ -218,7 +208,9 @@
 								}
 								$value = "<a href='{$href}'{$nofollow}{$target}{$linkClass}>{$value}</a>";
 							}
-							else { $value = esc_html($value); }
+							else {
+								$value = esc_html($value);
+							}
 					}
 					if($is_first_column) { echo "\n"; }
 					if($value !== NULL) {
@@ -250,7 +242,8 @@
 						}
 
 					 	$value = apply_filters('kws_gf_directory_value', apply_filters('kws_gf_directory_value_'.$input_type, apply_filters('kws_gf_directory_value_'.$field_id, $value)));
-					 echo $value;
+
+					 	echo $value;
 
 					?></td><?php
 						echo "\n";
