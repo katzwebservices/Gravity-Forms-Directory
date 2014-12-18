@@ -49,7 +49,11 @@
 						$value = GFCommon::get_lead_field_display($field, $value, $lead["currency"]);
 					}
 
-					if(GFCommon::is_post_field($columns[$field_id])) {
+					// `id`, `ip`, etc.
+					if( !is_numeric( $field_id ) ) {
+						$input_type = $field_id;
+					}
+					elseif( GFCommon::is_post_field($columns[$field_id])) {
 						$input_type = $field['type'];
 					} else {
 						$input_type = RGFormsModel::get_input_type($field);
