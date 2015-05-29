@@ -4,14 +4,14 @@ Plugin Name: 	Gravity Forms Directory & Addons
 Plugin URI: 	http://katz.co/gravity-forms-addons/
 Description: 	Turn <a href="http://katz.si/gravityforms">Gravity Forms</a> into a great WordPress directory...and more!
 Author: 		Katz Web Services, Inc.
-Version: 		3.7.1
+Version: 		3.7.2
 Author URI:		http://www.katzwebservices.com
 Text Domain:    gravity-forms-addons
 License:		GPLv2 or later
 License URI: 	http://www.gnu.org/licenses/gpl-2.0.html
 Domain Path:	/languages
 
-Copyright 2014 Katz Web Services, Inc.  (email: info@katzwebservices.com)
+Copyright 2015 Katz Web Services, Inc.  (email: info@katzwebservices.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "3.7.1";
+	private static $version = "3.7.2";
 	private static $min_gravityforms_version = "1.5";
 
 	public static function directory_defaults($args = array()) {
@@ -259,7 +259,7 @@ class GFDirectory {
 		} elseif(isset($_REQUEST['leadid']) && isset($_REQUEST['form'])) {
 			$link = wp_nonce_url(add_query_arg(array('leadid'=>(int)$_REQUEST['leadid'], 'form'=>(int)$_REQUEST['form']), $link), sprintf('view-%d-%d', $_REQUEST['leadid'], $_REQUEST['form']), 'view');
 		}
-		return $link;
+		return esc_url_raw( $link );
 	}
 
 	static public function directory_canonical($permalink, $sentPost = '', $leavename = '') {
@@ -284,7 +284,7 @@ class GFDirectory {
 			if($matches)  { $leadid = $matches[2]; $form = $matches[1]; }
 			else { $leadid = $_REQUEST['leadid']; $form = $_REQUEST['form']; }
 
-			return wp_nonce_url(add_query_arg(array('leadid' =>$leadid, 'form'=>$form), trailingslashit($permalink)), sprintf('view-%d-%d', $leadid, $form), 'view');
+			return esc_url_raw( wp_nonce_url(add_query_arg(array('leadid' =>$leadid, 'form'=>$form), trailingslashit($permalink)), sprintf('view-%d-%d', $leadid, $form), 'view') );
 		}
 		return $permalink;
 	}
@@ -535,7 +535,7 @@ class GFDirectory {
 
 			// The ID of the form needs to be `gform_{form_id}` for the pluploader
 		?>
-			<form method="post" id="gform_<?php echo esc_attr( $Form['id'] ); ?>" enctype="multipart/form-data" action="<?php echo remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg(array()));?>">
+			<form method="post" id="gform_<?php echo esc_attr( $Form['id'] ); ?>" enctype="multipart/form-data" action="<?php echo esc_url( remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg(array())) );?>">
 		<?php
 	            wp_nonce_field('gforms_save_entry', 'gforms_save_entry');
 	    ?>
@@ -829,7 +829,7 @@ class GFDirectory {
 					?>
 						<tr>
 							<th scope="row" class="entry-view-field-name"><?php echo esc_html( apply_filters('kws_gf_directory_edit_entry_th', __( "Edit", "gravity-forms-addons" ) ) ); ?></th>
-							<td class="entry-view-field-value useredit"><a href="<?php echo add_query_arg(array('edit' => wp_create_nonce('edit'.$lead['id'].$Form["id"]))); ?>"><?php echo $editbuttontext; ?></a></td>
+							<td class="entry-view-field-value useredit"><a href="<?php echo esc_url( add_query_arg(array('edit' => wp_create_nonce('edit'.$lead['id'].$Form["id"])))); ?>"><?php echo $editbuttontext; ?></a></td>
 						</tr>
 					<?php
 					}
@@ -872,7 +872,7 @@ class GFDirectory {
 
 		$formid = $leadid = null;
 
-		$url = isset($wp->request) ? $wp->request : add_query_arg(array());
+		$url = isset($wp->request) ? $wp->request : add_query_arg(array(), home_url() );
 
 		if(
 			// If permalinks is turned on
@@ -904,7 +904,7 @@ class GFDirectory {
 		$options = self::directory_defaults();
 
 		if(isset($_GET['edit'])) {
-			return '<p class="entryback"><a href="'.add_query_arg(array(), remove_query_arg(array('edit'))).'">'.esc_html(__(apply_filters('kws_gf_directory_edit_entry_cancel', "&larr; Cancel Editing"), "gravity-forms-addons")).'</a></p>';
+			return '<p class="entryback"><a href="'.esc_url( add_query_arg(array(), remove_query_arg(array('edit'))) ).'">'.esc_html(__(apply_filters('kws_gf_directory_edit_entry_cancel', "&larr; Cancel Editing"), "gravity-forms-addons")).'</a></p>';
 		}
 
 		list($formid, $leadid) = self::get_form_and_lead_ids();
@@ -931,6 +931,8 @@ class GFDirectory {
 				$href = preg_replace('/('.sanitize_title(apply_filters('kws_gf_directory_endpoint', 'entry')).'\/(?:[0-9]+)(?:\/|-)(?:[0-9]+)\/?)/ism', '', $href);
 			}
         }
+
+		$href = esc_url_raw( $href );
 
         $url = parse_url(add_query_arg(array(), $href));
         if(!empty($url['query']) && !empty($permalink)) { $href .= '?'.$url['query']; }
@@ -1168,7 +1170,7 @@ class GFDirectory {
 		$first_item_index = $page_index * $page_size;
 		$link_params = array();
 		if(!empty($page_index)) { $link_params['pagenum'] = $page_index; }
-		$formaction = remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg($link_params));
+		$formaction = esc_url_raw( remove_query_arg(array('gf_search','sort','dir', 'pagenum', 'edit'), add_query_arg($link_params)) );
 		$tableclass .= !empty($jstable) ? sprintf(' tablesorter tablesorter-%s', apply_filters('kws_gf_tablesorter_theme', 'blue', $form)) : '';
 		$title = $form["title"];
 		$sort_field_meta = RGFormsModel::get_field($form, $sort_field);
@@ -1268,7 +1270,7 @@ class GFDirectory {
 
 
 			$page_links = array(
-				'base' =>  @add_query_arg('pagenum','%#%'),// get_permalink().'%_%',
+				'base' =>  esc_url_raw( @add_query_arg('pagenum','%#%') ),// get_permalink().'%_%',
 				'format' => '&pagenum=%#%',
 				'add_args' => $args,
 				'prev_text' => $prev_text,
@@ -2421,7 +2423,7 @@ class GFDirectory {
 				if(isset($post->ID)) {
 					$url = get_permalink($post->ID);
 				} else {
-					$url = parse_url(add_query_arg(array()));
+					$url = parse_url(add_query_arg(array(), home_url()));
 					$url = $url['path'];
 				}
 				$href = trailingslashit($url).sanitize_title(apply_filters('kws_gf_directory_endpoint', 'entry')).'/'.$form_id.apply_filters('kws_gf_directory_endpoint_separator', '/').$lead_id.'/';
@@ -2441,7 +2443,7 @@ class GFDirectory {
 			}
 		}
 
-		$value = '<a href="'.$href.'"'.$linkClass.' title="'.$entrytitle.'">'.$entrylink.'</a>';
+		$value = '<a href="'. esc_url( $href ) .'"'.$linkClass.' title="'.$entrytitle.'">'.$entrylink.'</a>';
 		return $value;
 	}
 

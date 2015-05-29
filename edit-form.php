@@ -244,7 +244,7 @@ class GFDirectory_EditForm {
 		    	}
 
 		    	$('td:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
-		    	$('th.check-column:eq(1)').after('<th class="manage-column column-cb check-column"><a href="<?php echo add_query_arg(array('sort' => $_gform_directory_approvedcolumn)); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" style="text-align:center; margin:0 auto; display:block;" title="<?php echo esc_js( __('Show entry in directory view?', 'gravity-forms-addons')); ?>" /></span></a></th>');
+		    	$('th.check-column:eq(1)').after('<th class="manage-column column-cb check-column"><a href="<?php echo esc_url( add_query_arg(array('sort' => $_gform_directory_approvedcolumn)) ); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" style="text-align:center; margin:0 auto; display:block;" title="<?php echo esc_js( __('Show entry in directory view?', 'gravity-forms-addons')); ?>" /></span></a></th>');
 
 		    	$('tr:has(input.lead_approved)').addClass('lead_approved').find('a.toggleApproved').prop('title', unapproveTitle).text('O');
 
@@ -261,7 +261,7 @@ class GFDirectory_EditForm {
 		 if($position === -1) : ?>
 			</ul>
 			</div>
-			<div id="gform_tab_3">
+			<div id="gform_tab_directory">
 				<ul>
 					<li class="use_as_entry_link gf_directory_setting field_setting">
 						<label for="field_use_as_entry_link">
@@ -340,11 +340,11 @@ class GFDirectory_EditForm {
 	    	jQuery(document).ready(function($) {
 
 	    		// instead of simply .tabs('add')...
-	    		$('<li><a href="#gform_tab_3"><?php echo esc_js( __('Directory', 'gravity-forms-addons')); ?></a></li>' ).appendTo('#field_settings .ui-tabs-nav');
-				$('#gform_tab_3').appendTo( "#field_settings" );
+	    		$('<li><a href="#gform_tab_directory"><?php echo esc_js( __('Directory', 'gravity-forms-addons')); ?></a></li>' ).appendTo('#field_settings .ui-tabs-nav');
+				$('#gform_tab_directory').appendTo( "#field_settings" );
 	    		$( '#field_settings' ).tabs( "refresh" );
 
-	    		$('a[href="#gform_tab_3"]').parent('li').css({'width':'100px', 'padding':'0'});
+	    		$('a[href="#gform_tab_directory"]').parent('li').css({'width':'100px', 'padding':'0'});
 
 		        for (var key in fieldSettings) {
 		        	fieldSettings[key] += ", .gf_directory_setting";
@@ -356,7 +356,7 @@ class GFDirectory_EditForm {
 		  			}
 		  		});
 
-				$("input:checkbox, input:radio",$('#gform_tab_3')).click(function() {
+				$("input:checkbox, input:radio",$('#gform_tab_directory')).click(function() {
 					var $li = $(this).parents('#field_settings');
 					var entrylink = false;
 
