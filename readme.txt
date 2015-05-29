@@ -233,6 +233,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 == Changelog ==
 
+* Fixed: Conflict with the Directory tab in the Form Editor when using Gravity Forms 1.9+
 = 3.7 and 3.7.1 on December 17 = 
 * Fixed: Add `load_plugin_textdomain()` for translations
 * Fixed: Restored single entry links

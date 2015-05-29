@@ -261,7 +261,7 @@ class GFDirectory_EditForm {
 		 if($position === -1) : ?>
 			</ul>
 			</div>
-			<div id="gform_tab_3">
+			<div id="gform_tab_directory">
 				<ul>
 					<li class="use_as_entry_link gf_directory_setting field_setting">
 						<label for="field_use_as_entry_link">
@@ -340,11 +340,11 @@ class GFDirectory_EditForm {
 	    	jQuery(document).ready(function($) {
 
 	    		// instead of simply .tabs('add')...
-	    		$('<li><a href="#gform_tab_3"><?php echo esc_js( __('Directory', 'gravity-forms-addons')); ?></a></li>' ).appendTo('#field_settings .ui-tabs-nav');
-				$('#gform_tab_3').appendTo( "#field_settings" );
+	    		$('<li><a href="#gform_tab_directory"><?php echo esc_js( __('Directory', 'gravity-forms-addons')); ?></a></li>' ).appendTo('#field_settings .ui-tabs-nav');
+				$('#gform_tab_directory').appendTo( "#field_settings" );
 	    		$( '#field_settings' ).tabs( "refresh" );
 
-	    		$('a[href="#gform_tab_3"]').parent('li').css({'width':'100px', 'padding':'0'});
+	    		$('a[href="#gform_tab_directory"]').parent('li').css({'width':'100px', 'padding':'0'});
 
 		        for (var key in fieldSettings) {
 		        	fieldSettings[key] += ", .gf_directory_setting";
@@ -356,7 +356,7 @@ class GFDirectory_EditForm {
 		  			}
 		  		});
 
-				$("input:checkbox, input:radio",$('#gform_tab_3')).click(function() {
+				$("input:checkbox, input:radio",$('#gform_tab_directory')).click(function() {
 					var $li = $(this).parents('#field_settings');
 					var entrylink = false;
 
