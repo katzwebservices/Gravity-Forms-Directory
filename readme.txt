@@ -236,6 +236,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 = 3.8 =
 * Fixed: Gravity Forms 1.9.15 Entries screen conflict
 * Fixed: Post Category display included category ID
+* Fixed: Display of full Name, full Address, Checkbox, and Radio fields
 * Tested with WordPress 4.4
 
 = 3.7.2 and 3.7.3 on May 29 =

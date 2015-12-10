@@ -74,7 +74,8 @@ if ( is_array( $leads ) && ! empty( $leads ) && sizeof( $leads ) > 0 && $lead_co
 						case "radio" :
 						case "checkbox" :
 						case "name":
-							$value = "";
+
+							$value = $display_value;
 
 							// Displaying just one input, not a complex field value
 							if ( floatval( $field_id ) !== floor( floatval( $field_id ) ) ) {
