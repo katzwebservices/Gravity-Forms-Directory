@@ -1,7 +1,7 @@
 === Gravity Forms Directory ===
 Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 3.3
-Tested up to: 4.2.2
+Tested up to: 4.4
 Stable tag: 3.7.2
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
@@ -11,11 +11,11 @@ Add directory capabilities and other functionality to the great Gravity Forms pl
 
 == Description ==
 
-> #### [GravityView](https://gravityview.co/) is the best way to display Gravity Forms entries
+> #### [GravityView](https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=readme) is the best way to display Gravity Forms entries
 >
 > We set out to make a better Directory plugin, and we did it: GravityView is a brand-new plugin that takes displaying your form entries to the next level. It is easier, more powerful and more customizable than the Directory plugin. If you like the Directory plugin, you'll *love* GravityView.
 > 
-> [Check out GravityView](https://gravityview.co/) or [try a demo](http://demo.gravityview.co) today!
+> [Check out GravityView](https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=readme) or [try a demo](http://demo.gravityview.co?utm_source=wordpress&utm_medium=readme&utm_campaign=readme) today!
 
 ### Turn Gravity Forms into a Directory plugin
 
@@ -232,6 +232,12 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 
 == Changelog ==
+
+= 3.8 on December 10, 2015 =
+* Fixed: Gravity Forms 1.9.15 Entries screen conflict
+* Fixed: Post Category display included category ID
+* Fixed: Display of full Name, full Address, Checkbox, and Radio fields
+* Tested with WordPress 4.4
 
 = 3.7.2 and 3.7.3 on May 29 =
 * Fixed: Security issue with `add_query_arg()` function. **Please update!** [Learn about the issue](https://make.wordpress.org/plugins/2015/04/20/fixing-add_query_arg-and-remove_query_arg-usage/)
