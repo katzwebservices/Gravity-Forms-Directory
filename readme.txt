@@ -11,11 +11,11 @@ Add directory capabilities and other functionality to the great Gravity Forms pl
 
 == Description ==
 
-> #### [GravityView](https://gravityview.co/) is the best way to display Gravity Forms entries
+> #### [GravityView](https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=readme) is the best way to display Gravity Forms entries
 >
 > We set out to make a better Directory plugin, and we did it: GravityView is a brand-new plugin that takes displaying your form entries to the next level. It is easier, more powerful and more customizable than the Directory plugin. If you like the Directory plugin, you'll *love* GravityView.
 > 
-> [Check out GravityView](https://gravityview.co/) or [try a demo](http://demo.gravityview.co) today!
+> [Check out GravityView](https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=readme) or [try a demo](http://demo.gravityview.co?utm_source=wordpress&utm_medium=readme&utm_campaign=readme) today!
 
 ### Turn Gravity Forms into a Directory plugin
 
@@ -233,7 +233,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 == Changelog ==
 
-= 3.8 =
+= 3.8 on December 10, 2015 =
 * Fixed: Gravity Forms 1.9.15 Entries screen conflict
 * Fixed: Post Category display included category ID
 * Fixed: Display of full Name, full Address, Checkbox, and Radio fields
