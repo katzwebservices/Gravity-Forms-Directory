@@ -58,7 +58,7 @@ if ( is_array( $leads ) && ! empty( $leads ) && sizeof( $leads ) > 0 && $lead_co
 					// `id`, `ip`, etc.
 					if ( ! is_numeric( $field_id ) ) {
 						$input_type = $field_id;
-					} elseif ( GFCommon::is_post_field( $columns[ $field_id ] ) ) {
+					} elseif ( GFCommon::is_post_field( $field ) ) {
 						$input_type = $field['type'];
 					} else {
 						$input_type = RGFormsModel::get_input_type( $field );
