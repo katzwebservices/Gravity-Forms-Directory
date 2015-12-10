@@ -164,7 +164,9 @@ if ( is_array( $leads ) && ! empty( $leads ) && sizeof( $leads ) > 0 && $lead_co
 							break;
 
 						case "post_category":
-							$value = GFCommon::prepare_post_category_value( $lead[ $field_id ], $field );
+							if( $value ) {
+								$value = GFCommon::prepare_post_category_value( $value, $field, 'entry_list' );
+							}
 							break;
 
 						case "date_created" :
