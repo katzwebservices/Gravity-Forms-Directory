@@ -1,7 +1,7 @@
 === Gravity Forms Directory ===
 Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 3.3
-Tested up to: 4.2.2
+Tested up to: 4.4
 Stable tag: 3.7.2
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
@@ -232,6 +232,10 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 
 == Changelog ==
+
+= 3.8 =
+* Fixed: Gravity Forms 1.9.15 Entries screen conflict
+* Tested with WordPress 4.4
 
 = 3.7.2 and 3.7.3 on May 29 =
 * Fixed: Security issue with `add_query_arg()` function. **Please update!** [Learn about the issue](https://make.wordpress.org/plugins/2015/04/20/fixing-add_query_arg-and-remove_query_arg-usage/)

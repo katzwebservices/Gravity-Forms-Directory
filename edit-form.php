@@ -157,7 +157,9 @@ class GFDirectory_EditForm {
 		        mysack.setVar( "form_id", formID);
 		        mysack.setVar( "approved", approved);
 		        mysack.encVar( "cookie", document.cookie, false );
-		        mysack.onError = function() { console.log('<?php echo esc_js(__("Ajax error while setting lead approval", "gravity-forms-addons")) ?>' )};
+		        mysack.onError = function() {
+		            console.log('<?php echo esc_js(__("Ajax error while setting lead approval", "gravity-forms-addons")) ?>' );
+		        };
 		        mysack.runAJAX();
 
 		        return true;
@@ -245,8 +247,11 @@ class GFDirectory_EditForm {
 					});
 		    	}
 
-		    	$('td:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
-		    	$('th.check-column:eq(1)').after('<th class="manage-column column-cb check-column"><a href="<?php echo esc_url( add_query_arg(array('sort' => $_gform_directory_approvedcolumn)) ); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" style="text-align:center; margin:0 auto; display:block;" title="<?php echo esc_js( __('Show entry in directory view?', 'gravity-forms-addons')); ?>" /></span></a></th>');
+				// Add the header column
+		    	$('thead th.check-column:eq(1), tfoot th.check-column:eq(1)').after('<th class="manage-column column-cb check-column"><a href="<?php echo esc_url( add_query_arg(array('sort' => $_gform_directory_approvedcolumn)) ); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" style="text-align:center; margin:0 auto; display:block;" title="<?php echo esc_js( __('Show entry in directory view?', 'gravity-forms-addons')); ?>" /></span></a></th>');
+
+				// Add to each row
+		    	$('tbody td:has(img[src*="star"]), tbody th:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
 
 		    	$('tr:has(input.lead_approved)').addClass('lead_approved').find('a.toggleApproved').prop('title', unapproveTitle).text('O');
 
