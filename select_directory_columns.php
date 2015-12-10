@@ -314,9 +314,7 @@ class GFDirectorySelectColumns {
 											) ) )
 									) {
 										?>
-										<li id="<?php echo $input["id"] ?>"><?php echo esc_html( GFDirectory::get_label( $field, $input["id"] ) ) ?>
-											<span class="description">(<?php echo esc_html( rgar( $field, "label" ) ) ?>
-												)</span></li>
+										<li id="<?php echo $input["id"] ?>"><?php echo esc_html( GFDirectory::get_label( $field, $input["id"] ) ) ?><span class="description">(<?php echo esc_html( rgar( $field, "label" ) ) ?>)</span></li>
 										<?php
 									}
 								}
