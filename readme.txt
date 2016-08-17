@@ -2,7 +2,7 @@
 Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 3.3
 Tested up to: 4.4
-Stable tag: 3.7.2
+Stable tag: 3.8
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
 Donate link: https://gravityview.co
@@ -557,6 +557,12 @@ Note: This update has only been tested with WordPress 3.2 and Gravity Forms 1.5.
 
 
 == Upgrade Notice ==
+
+= 3.8 on December 10, 2015 =
+* Fixed: Gravity Forms 1.9.15 Entries screen conflict
+* Fixed: Post Category display included category ID
+* Fixed: Display of full Name, full Address, Checkbox, and Radio fields
+* Tested with WordPress 4.4
 
 = 3.7 and 3.7.1 on December 17 = 
 * Fixed: Add `load_plugin_textdomain()` for translations
