@@ -106,7 +106,7 @@ class GFDirectory_EditForm {
 
 		// Entries screen shows first form's entries by default, if not specified
 		if( isset( $_GET['id'] ) ) {
-			$formID = $_GET['id'];
+			$formID = intval( $_GET['id'] );
 		} else {
 			if( class_exists('RGFormsModel') ) {
 				$forms = RGFormsModel::get_forms(NULL, "title");

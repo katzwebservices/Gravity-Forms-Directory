@@ -25,7 +25,7 @@ class GFDirectorySelectColumns {
 
 	public static function select_columns_page() {
 
-		$form_id = $_GET["id"];
+		$form_id = intval( $_GET["id"] );
 		if ( empty( $form_id ) ) {
 			echo esc_html__( "Oops! We could not locate your form. Please try again.", "gravity-forms-addons" );
 			exit;
@@ -261,7 +261,7 @@ class GFDirectorySelectColumns {
 			?>
 			<div class="panel-instructions">
 				<p><?php esc_html_e( "Drag & drop to order and select which columns are displayed in the Gravity Forms Directory.", "gravity-forms-addons" ) ?></p>
-				<p><?php echo sprintf( esc_html__( "Embed the Directory on a post or a page using %s ", "gravity-forms-addons" ), '<code>[directory form="' . $_GET['id'] . '"]</code>' ); ?></p>
+				<p><?php echo sprintf( esc_html__( "Embed the Directory on a post or a page using %s ", "gravity-forms-addons" ), '<code>[directory form="' . $form_id . '"]</code>' ); ?></p>
 			</div>
 			<div class="clear"></div>
 			<div class="gcolumn_wrapper">
