@@ -19,7 +19,13 @@ class GFDirectory_EditForm {
 			if( isset($_REQUEST['id'] ) ) {
 				add_filter('gform_tooltips', array(&$this, 'directory_tooltips')); //Filter to add a new tooltip
 				add_action("gform_editor_js", array(&$this, "editor_script")); //Action to inject supporting script to the form editor page
-				add_action("admin_head", array(&$this, "toolbar_links")); //Action to inject supporting script to the form editor page
+
+				// No need to add via JS any more.
+				if( class_exists( 'GFForms' ) && version_compare( GFForms::$version, '2.0', '>=' ) ) {
+					add_filter( 'gform_toolbar_menu', array( $this, 'toolbar_menu_item' ), 10, 2 );
+				} else {
+					add_action("admin_head", array(&$this, "toolbar_links")); //Action to inject supporting script to the form editor page
+				}
 				add_action("gform_field_advanced_settings", array(&$this,"use_as_entry_link_settings"), 10, 2);
 				add_filter("gform_add_field_buttons", array(&$this,"add_field_buttons"));
 				add_action('gform_editor_js_set_default_values', array(&$this,'directory_add_default_values'));
@@ -323,12 +329,49 @@ class GFDirectory_EditForm {
 		<?php endif;
 	}
 
+	/**
+     * Add "Directory Columns" item to GF toolbar in GF 2.0+
+     *
+	 * @param array $menu_items Menu items in GF toolbar
+	 * @param int $form_id Form ID
+	 *
+	 * @return array
+	 */
+	function toolbar_menu_item( $menu_items = array(), $form_id = 0 ) {
+
+		wp_enqueue_style( 'thickbox' );
+
+		$entries_capabilities = array(
+			'gravityforms_view_entries',
+			'gravityforms_edit_entries',
+			'gravityforms_delete_entries'
+		);
+
+		$menu_items['directory_columns'] = array(
+			'label'        => __('Directory Columns', 'gravity-forms-addons'),
+			'icon'         => '<i class="dashicons dashicons-welcome-widgets-menus" style="line-height:17px"></i>',
+			'title'        => __('Modify Gravity Forms Directory Columns', 'gravity-forms-addons'),
+			'url'          => sprintf( '?gf_page=directory_columns&id=%d&add=entry&TB_iframe=true&height=600&width=700', $form_id ),
+			'menu_class'   => 'gf_form_toolbar_directory',
+			'link_class'   => 'thickbox',
+			'capabilities' => $entries_capabilities,
+			'priority'     => 200,
+		);
+
+		return $menu_items;
+	}
+
+	/**
+	* Add "Directory Columns" link to GF toolbar. No longer used after 2.0
+    * @see toolbar_menu_item
+    * @return void
+	*/
 	public function toolbar_links() {
 		wp_enqueue_style( 'thickbox' );
 	?>
 	    <script type='text/javascript'>
 	    	jQuery(document).ready(function($) {
-	    		var url = '<?php echo add_query_arg(array('gf_page' => 'directory_columns', 'id' => @$_GET['id'], 'TB_iframe' => 'true', 'height' => 600, 'width' => 700), admin_url()); ?>';
+	    		var url = '<?php echo esc_url_raw( add_query_arg(array('gf_page' => 'directory_columns', 'id' => intval( $_GET['id'] ), 'TB_iframe' => 'true', 'height' => 600, 'width' => 700), admin_url()) ); ?>';
 	    		$link = $('<li class="gf_form_toolbar_preview gf_form_toolbar_directory" id="gf_form_toolbar_directory"><a href="'+url+'" class="thickbox" title="<?php echo esc_js(__('Modify Gravity Forms Directory Columns', 'gravity-forms-addons')); ?>"><i class="dashicons dashicons-welcome-widgets-menus" style="line-height:17px"></i> <?php echo esc_js( __('Directory Columns', 'gravity-forms-addons')); ?></a></li>');
 	    		$('#gf_form_toolbar_links').append($link);
 	    	});
