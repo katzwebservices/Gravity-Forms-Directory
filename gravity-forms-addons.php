@@ -2040,7 +2040,7 @@ class GFDirectory {
 				$_gform_directory_approvedcolumn = self::globals_get_approved_column( $forms[0]->id );
 			}
 			if ( self::check_approval( $lead, $_gform_directory_approvedcolumn ) ) {
-				echo '<td style="display:none;"><input type="hidden" class="lead_approved" id="lead_approved_' . $lead['id'] . '" value="true" /></td>';
+				echo '<span style="display:none;"><input type="hidden" class="lead_approved" id="lead_approved_' . $lead['id'] . '" value="true" /></span>';
 			}
 		}
 

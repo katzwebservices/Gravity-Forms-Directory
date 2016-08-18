@@ -235,6 +235,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
     - The "Directory Columns" menu returns to the toolbar
     - Show the "Directory Columns" link when displaying the default form in the admin
+    - The "Approved" checkbox now does not break entries layout
 = 3.8 on December 10, 2015 =
 * Fixed: Gravity Forms 1.9.15 Entries screen conflict
 * Fixed: Post Category display included category ID
