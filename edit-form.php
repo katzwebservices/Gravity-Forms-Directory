@@ -16,7 +16,7 @@ class GFDirectory_EditForm {
 
 			add_filter('admin_head', array(&$this,'directory_admin_head'));
 
-			if( isset($_REQUEST['id'] ) ) {
+			if( isset($_REQUEST['id'] ) || self::is_gravity_page('gf_entries') ) {
 				add_filter('gform_tooltips', array(&$this, 'directory_tooltips')); //Filter to add a new tooltip
 				add_action("gform_editor_js", array(&$this, "editor_script")); //Action to inject supporting script to the form editor page
 
