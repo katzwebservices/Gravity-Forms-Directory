@@ -289,7 +289,11 @@ class GFDirectorySelectColumns {
 
 						$approvedcolumn = GFDirectory::get_approved_column( $form );
 						foreach ( $form["fields"] as $field ) {
+							if ( is_array( $field ) && ! isset( $field['type'] ) ) {
+								continue;
+							}
 							if (
+								( $field instanceof GF_Field || is_array( $field ) && ! isset( $field['type'] ) ) &&
 								in_array( RGFormsModel::get_input_type( $field ), array(
 									"checkbox",
 									'address',
@@ -308,7 +312,7 @@ class GFDirectorySelectColumns {
 							is_array( rgar( $field, "inputs" ) )
 							) {
 								foreach ( $field["inputs"] as $input ) {
-									if ( ! in_array( $input["id"], $field_ids ) && ! ( $field["type"] == "creditcard" && in_array( $input["id"], array(
+									if ( ! in_array( $input["id"], $field_ids ) && ! ( rgar( $field, 'type' ) === "creditcard" && in_array( $input["id"], array(
 												floatval( "{$field["id"]}.2" ),
 												floatval( "{$field["id"]}.3" ),
 											) ) )
