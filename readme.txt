@@ -233,6 +233,7 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 == Changelog ==
 
+* Fixed: Compatibility with Gravity Forms 2.0 Entries screen
     - The "Directory Columns" menu returns to the toolbar
     - Show the "Directory Columns" link when displaying the default form in the admin
     - The "Approved" checkbox now does not break entries layout

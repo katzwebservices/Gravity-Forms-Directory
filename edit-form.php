@@ -5,7 +5,7 @@ add_action('init', array('GFDirectory_EditForm', 'initialize'));
 class GFDirectory_EditForm {
 
 	static public function initialize() {
-		$GFDirectory_EditForm = new GFDirectory_EditForm();
+		new self;
 	}
 
 	function __construct() {
@@ -114,7 +114,13 @@ class GFDirectory_EditForm {
 			}
 		}
 
-		if( !( self::is_gravity_page('gf_entries') && isset( $formID ) && !self::is_gravity_page('gf_edit_forms') ) ) { return; }
+		if( !( self::is_gravity_page('gf_entries') && !self::is_gravity_page('gf_edit_forms') ) ) {
+			return;
+		}
+
+		if( ! isset( $formID ) ) {
+			return;
+		}
 
 		// Don't display on single entry view.
 		if( !empty( $_GET['view'] ) && $_GET['view'] === 'entry' ) {
@@ -367,7 +373,9 @@ class GFDirectory_EditForm {
     * @return void
 	*/
 	public function toolbar_links() {
+
 		wp_enqueue_style( 'thickbox' );
+		
 	?>
 	    <script type='text/javascript'>
 	    	jQuery(document).ready(function($) {

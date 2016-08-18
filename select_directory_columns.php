@@ -42,10 +42,6 @@ class GFDirectorySelectColumns {
 			wp_print_scripts( array( "jquery", "sack", "jquery-ui-sortable" ) );
 			?>
 			<style type="text/css">
-				body {
-					font-family: "Lucida Grande", Verdana, Arial, sans-serif;
-				}
-
 				#wrapper {
 					padding: 10px;
 				}
