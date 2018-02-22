@@ -314,9 +314,9 @@ class GFDirectorySelectColumns {
 			</div>
 
 			<div class="panel-buttons">
-				<input type="button" value="<?php esc_attr_e( "Save", "gravity-forms-addons" ); ?>  "
 				       class="button-primary" onclick="SelectColumns();"/>&nbsp;
 				<input type="button" value="<?php esc_html_e( "Cancel", "gravity-forms-addons" ); ?>" class="button"
+				<input type="button" value="<?php esc_attr_e( "Save", "gravity-forms-addons" ); ?>"
 				       onclick="self.parent.tb_remove();"/>
 			</div>
 		</div>
