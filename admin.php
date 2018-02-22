@@ -39,6 +39,8 @@ class GFDirectory_Admin {
 			add_action( 'admin_head', array( &$this, 'admin_head' ), 1 );
 		}
 
+		add_action( 'gform_entries_first_column_actions', array( $this, 'add_edit_entry_link' ), 10, 5 );
+
 		self::process_bulk_update();
 	}
 
@@ -179,38 +181,41 @@ class GFDirectory_Admin {
 
 				$( 'ul.menu' ).addClass( 'noaccordion' );
 				<?php
-				}
-
-				if(isset( $_REQUEST['page'] ) && $_REQUEST['page'] == 'gf_entries' && ! empty( $settings['modify_admin']['edit'] )) {
-				?>
-				// Changed from :contains('Delete') to :last-child to work with 1.6
-				$( ".row-actions span:last-child" ).each( function () {
-					var editLink = $( this ).parents( 'tr' ).find( '.column-title a' ).attr( 'href' );
-					editLink = editLink + '&screen_mode=edit';
-					//alert();
-					$( this ).after( '<span class="edit">| <a title="<?php echo esc_js( __( "Edit this entry", "gravity-forms-addons" ) ); ?>" href="' + editLink + '"><?php echo esc_js( __( "Edit", "gravity-forms-addons" ) ); ?></a></span>' );
-				} );
-				<?php
-				}
-
-				else if(isset( $_REQUEST['page'] ) && $_REQUEST['page'] == 'gf_edit_forms' && ! empty( $settings['modify_admin']['ids'] )) {
-				?>
-				// Changed from :contains('Delete') to :last-child for future-proofing
-				$( ".row-actions .trash" ).each( function () {
-					var formID = $( this ).parents( 'tr' ).find( '.column-id' ).text();
-
-					var title = '<?php echo esc_js( __( "Fields for Form ID %s", "gravity-forms-addons" ) ); ?>';
-					title = title.replace( '%s', formID );
-
-					$( this ).after( '<span class="edit"> | <a title="' + title + '" href="<?php echo plugins_url( "field-ids.php", __FILE__ ); ?>?id=' + formID + '&amp;show_field_ids=true&amp;TB_iframe=true&amp;height=295&amp;width=370" class="thickbox form_ids"><?php echo esc_js( __( "IDs", "gravity-forms-addons" ) ); ?></a></span>' );
-				} );
-				<?php } ?>
+				} ?>
 			} );
 		</script>
 		<?php
 	}
 
+	function add_edit_entry_link( $form_id, $field_id, $value, $entry, $query_string ) {
+
+        $settings = GFDirectory::get_settings();
+
+		if( ! empty( $settings['modify_admin']['ids'] ) ) {
+
+            $field_id_url = plugins_url( "field-ids.php", __FILE__ );
+			$field_id_url = add_query_arg( array(
+			        'id' => $form_id,
+			        'show_field_ids' => 'true',
+                    'TB_iframe' => 'true',
+                    'height' => 295,
+                    'width' => 370
+            ), $field_id_url );
+			?>
+            <span class="edit"> | <a title="<?php esc_attr( printf( __( "Fields for Form ID %s", "gravity-forms-addons" ), $form_id ) ); ?>" href="<?php echo esc_url( $field_id_url ) ; ?>" class="thickbox form_ids"><?php echo esc_js( __( "IDs", "gravity-forms-addons" ) ); ?></a></span>
+		<?php
+        }
+
 	static function show_field_ids( $form = array() ) {
+		if( ! empty( $settings['modify_admin']['edit'] ) ) {
+
+			$edit_entry_link = admin_url( 'admin.php' ) . '?screen_mode=edit&' . $query_string;
+		    ?>
+            <span class="edit"> | <a title="<?php esc_attr_e( "Edit this entry", "gravity-forms-addons" ); ?>" href="<?php echo esc_url( $edit_entry_link ) ; ?>"><?php esc_attr_e( "Edit", "gravity-forms-addons" ); ?></a></span>
+        <?php
+		}
+    }
+
 		if ( isset( $_REQUEST['show_field_ids'] ) ) {
 			$form = RGFormsModel::get_form_meta( $_GET["id"] );
 			$form = RGFormsModel::add_default_properties( $form );
