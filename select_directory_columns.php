@@ -340,17 +340,3 @@ class GFDirectorySelectColumns {
 }
 
 $SelectColumns = new GFDirectorySelectColumns();
-
-function rg_has_field_id( $id, $field_ids ) {
-	foreach ( $field_ids as $field_id ) {
-		if ( is_numeric( $id ) && is_numeric( $field_id ) && intval( $id ) == intval( $field_id ) ) {
-			return true;
-		}
-		if ( $id == $field_id ) {
-			return true;
-		}
-
-	}
-
-	return false;
-}
