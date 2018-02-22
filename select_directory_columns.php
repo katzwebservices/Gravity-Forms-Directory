@@ -1,21 +1,5 @@
 <?php
 
-//For backwards compatibility, load wordpress if it hasn't been loaded yet
-//Will be used if this file is being called directly
-if ( ! class_exists( "RGForms" ) ) {
-	for ( $i = 0; $i < $depth = 10; $i ++ ) {
-		$wp_root_path = str_repeat( '../', $i );
-
-		if ( file_exists( "{$wp_root_path}wp-load.php" ) ) {
-			require_once( "{$wp_root_path}wp-load.php" );
-			require_once( "{$wp_root_path}wp-admin/includes/admin.php" );
-			break;
-		}
-	}
-
-	auth_redirect();
-}
-
 class GFDirectorySelectColumns {
 
 	public function __construct() {
