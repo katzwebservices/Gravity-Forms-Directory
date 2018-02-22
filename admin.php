@@ -206,7 +206,6 @@ class GFDirectory_Admin {
 		<?php
         }
 
-	static function show_field_ids( $form = array() ) {
 		if( ! empty( $settings['modify_admin']['edit'] ) ) {
 
 			$edit_entry_link = admin_url( 'admin.php' ) . '?screen_mode=edit&' . $query_string;
@@ -216,9 +215,14 @@ class GFDirectory_Admin {
 		}
     }
 
-		if ( isset( $_REQUEST['show_field_ids'] ) ) {
-			$form = RGFormsModel::get_form_meta( $_GET["id"] );
-			$form = RGFormsModel::add_default_properties( $form );
+	/**
+	 * @param array $form
+	 *
+	 * @return array|mixed|null
+	 */
+	public static function show_field_ids( $form = array() ) {
+		if ( isset( $_REQUEST['show_field_ids'] ) && isset( $_GET["id"] ) && is_numeric( $_GET["id"] ) ) {
+			$form = GFAPI::get_form( $_GET["id"] );
 
 			echo <<<EOD
 		<style>
