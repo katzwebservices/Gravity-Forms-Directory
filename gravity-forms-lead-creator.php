@@ -1,25 +1,11 @@
 <?php
 
-if ( class_exists( 'KWS_GF_Change_Lead_Creator' ) ) {
-	return;
-}
-
-
 /**
  * @since 3.6.2
  */
 class KWS_GF_Change_Lead_Creator {
 
 	function __construct() {
-
-		add_action( 'plugins_loaded', array( $this, 'load' ) );
-	}
-
-	/**
-	 * @since  3.6.3
-	 * @return void
-	 */
-	function load() {
 
 		// Does GF exist? Can the user edit entries?
 		if ( ! class_exists( 'GFCommon' ) ) {
@@ -47,14 +33,12 @@ class KWS_GF_Change_Lead_Creator {
 	/**
 	 * Allows for edit links to work with a link instead of a form (GET instead of POST)
 	 *
-	 * @return [type] [description]
+	 * @return void
 	 */
 	function set_screen_mode() {
-
-		if ( ! empty( $_REQUEST["screen_mode"] ) ) {
+		if ( ! empty( $_REQUEST["screen_mode"] ) && class_exists( 'GFCommon' ) && GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
 			$_POST["screen_mode"] = esc_attr( $_REQUEST["screen_mode"] );
 		}
-
 	}
 
 	/**
