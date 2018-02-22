@@ -701,7 +701,7 @@ class GFDirectory {
 		}
 
 		global $current_user, $_gform_directory_approvedcolumn;
-		get_currentuserinfo();
+		wp_get_current_user();
 
 		$display_empty_fields       = '';
 		$allow_display_empty_fields = true;
@@ -2291,7 +2291,7 @@ class GFDirectory {
 
 	static function is_current_user( $lead = array() ) {
 		global $current_user;
-		get_currentuserinfo();
+		wp_get_current_user();
 
 		return ( (int) $current_user->ID === (int) $lead["created_by"] );
 	}
@@ -2371,7 +2371,7 @@ class GFDirectory {
 
 
 		if ( $limituser ) {
-			get_currentuserinfo();
+			wp_get_current_user();
 			if ( (int) $current_user->ID !== 0 || ( $current_user->ID === 0 && apply_filters( 'kws_gf_show_entries_if_not_logged_in', apply_filters( 'kws_gf_treat_not_logged_in_as_user', true ) ) ) ) {
 				$where = empty( $search_filter ) ? "WHERE" : "AND";
 				if ( (int) $current_user->ID === 0 ) {
@@ -2506,7 +2506,7 @@ class GFDirectory {
 
 		$user_filter = '';
 		if ( $limituser ) {
-			get_currentuserinfo();
+			wp_get_current_user();
 			if ( (int) $current_user->ID !== 0 || ( $current_user->ID === 0 && apply_filters( 'kws_gf_show_entries_if_not_logged_in', apply_filters( 'kws_gf_treat_not_logged_in_as_user', true ) ) ) ) {
 				if ( (int) $current_user->ID === 0 ) {
 					$user_filter = $wpdb->prepare( " AND (created_by IS NULL OR created_by=%d)", $current_user->ID );
@@ -2816,7 +2816,7 @@ class GFDirectory {
 
 		$user_filter = '';
 		if ( $limituser ) {
-			get_currentuserinfo();
+			wp_get_current_user();
 			if ( (int) $current_user->ID !== 0 || ( $current_user->ID === 0 && apply_filters( 'kws_gf_show_entries_if_not_logged_in', apply_filters( 'kws_gf_treat_not_logged_in_as_user', true ) ) ) ) {
 				if ( ! empty( $current_user->ID ) ) {
 					$user_filter = $wpdb->prepare( " AND l.created_by=%d ", $current_user->ID );
