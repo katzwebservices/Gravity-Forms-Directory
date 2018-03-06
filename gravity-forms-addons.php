@@ -2040,24 +2040,36 @@ class GFDirectory {
 	}
 
 	static public function get_approved_column( $form ) {
-		if ( ! is_array( $form ) ) {
+
+	    if ( ! is_array( $form ) || ! is_array( $form['fields'] ) ) {
 			return false;
 		}
 
-		foreach ( @$form['fields'] as $key => $col ) {
-			if ( isset( $col['inputs'] ) && is_array( $col['inputs'] ) ) {
-				foreach ( $col['inputs'] as $key2 => $input ) {
-					if ( strtolower( $input['label'] ) == 'approved' && $col['type'] == 'checkbox' && ! empty( $col['adminOnly'] ) ) {
-						return $input['id'];
+		$approved_strings = array( __( 'Approved', 'gravity-forms-addons' ), __("Approved?", "gravity-forms-addons"), __("Approved? (Admin-only)", "gravity-forms-addons") );
+
+		/** @var GF_Field_Checkbox $field */
+		foreach ( $form['fields'] as $field ) {
+
+			if ( ! is_a( $field, 'GF_Field' ) ) {
+                continue;
+			}
+
+            if ( 'checkbox' === $field->type && $field->adminOnly ) {
+
+				if ( $field->gf_directory_approval || in_array( $field->label, $approved_strings ) || in_array( $field->adminLabel, $approved_strings ) ) {
+					foreach ( $field->inputs as $input ) {
+						if ( in_array( $input['label'], $approved_strings ) || in_array( $input['value'], $approved_strings ) ) {
+							return $input['id'];
+						}
 					}
 				}
 			}
 		}
 
-		foreach ( @$form['fields'] as $key => $col ) {
-			if ( isset( $col['label'] ) && strtolower( $col['label'] ) == 'approved' && $col['type'] == 'checkbox' ) {
-				if ( isset( $col['inputs'][0]['id'] ) ) {
-					return $key;
+				foreach ( $field->inputs as $input ) {
+					if ( in_array( $input['label'], $approved_strings ) || ( isset( $input['value'] ) && in_array( $input['value'], $approved_strings ) ) ) {
+						return $input['id'];
+					}
 				}
 			}
 		}
