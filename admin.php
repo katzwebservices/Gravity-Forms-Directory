@@ -97,17 +97,16 @@ class GFDirectory_Admin {
 	}
 
 	static private function directory_update_bulk( $leads, $approved, $form_id ) {
-		global $_gform_directory_approvedcolumn;
 
 		if ( empty( $leads ) || ! is_array( $leads ) ) {
 			return false;
 		}
 
-		$_gform_directory_approvedcolumn = empty( $_gform_directory_approvedcolumn ) ? self::globals_get_approved_column( $_POST['form_id'] ) : $_gform_directory_approvedcolumn;
+		$approvedcolumn = GFDirectory::globals_get_approved_column( $form_id );
 
 		$approved = empty( $approved ) ? 0 : 'Approved';
 		foreach ( $leads as $lead_id ) {
-			GFDirectory::directory_update_approved( $lead_id, $approved, $form_id );
+			GFDirectory::directory_update_approved( $lead_id, $approved, $form_id, $approvedcolumn );
 		}
 	}
 
