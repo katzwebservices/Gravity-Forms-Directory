@@ -1068,12 +1068,27 @@ class GFDirectory {
 				$adminonlycolumns = self::get_admin_only( $form );
 			}
 
+			$approved = self::check_approval( $lead, $approvedcolumn );
+
 			//since 3.5
 			$lead = self::remove_hidden_fields( array( $lead ), $adminonlycolumns, $approvedcolumn, true, true, $showadminonly, $form );
 			$lead = $lead[0];
 
 			ob_start(); // Using ob_start() allows us to filter output
-			self::lead_detail( $form, $lead, false, $inline, $options );
+
+			if( ! $approved && ! GFCommon::current_user_can_any( array( 'gravityforms_view_entries', 'gravityforms_edit_entries' ) ) ) {
+                esc_html_e( 'You are not allowed to view this content.', 'gravity-forms-addons' );
+                return false;
+            }
+
+			if ( ! $approved && empty( $_GET['edit'] ) ) {
+			    echo '<div class="error" style="border: 1px solid #ccc; padding: 1em; margin: .5em 0 1em;">';
+				esc_html_e( 'This entry is not approved, but you are logged-in and have permission to see it.', 'gravity-forms-addons' );
+				echo '</div>';
+			}
+
+            self::lead_detail( $form, $lead, false, $inline, $options );
+
 			$content = ob_get_contents(); // Get the output
 			ob_end_clean(); // Clear the buffer
 
