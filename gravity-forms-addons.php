@@ -2569,7 +2569,7 @@ class GFDirectory {
 	}
 
 	static function check_approval( $lead, $column ) {
-		return self::check_meta_approval( $lead['id'] );
+		return self::check_meta_approval( $lead['id'] ) || ! empty( $lead[ $column ] );
 	}
 
 	static function hide_in_directory( $form, $field_id ) {
