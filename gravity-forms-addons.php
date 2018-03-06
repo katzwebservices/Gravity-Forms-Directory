@@ -177,9 +177,6 @@ class GFDirectory {
 		include_once( plugin_dir_path( __FILE__ ) . '/admin.php' );
 		include_once( plugin_dir_path( __FILE__ ) . '/gravity-forms-lead-creator.php' );
 
-		if ( in_array( RG_CURRENT_PAGE, array( "gf_entries", "admin.php", "admin-ajax.php" ) ) ) {
-			self::globals_get_approved_column();
-		}
 		if ( self::is_gravity_page() ) {
 			self::load_functionality();
 		}
@@ -496,17 +493,7 @@ class GFDirectory {
 	}
 
 	static function directory_update_approved( $lead_id = 0, $approved = 0, $form_id = 0, $approvedcolumn = 0 ) {
-		global $wpdb, $_gform_directory_approvedcolumn, $current_user;
-		$current_user = wp_get_current_user();
-		$user_data    = get_userdata( $current_user->ID );
-
-		if ( ! empty( $approvedcolumn ) ) {
-			$_gform_directory_approvedcolumn = $approvedcolumn;
-		}
-
-		if ( empty( $_gform_directory_approvedcolumn ) ) {
-			return false;
-		}
+		global $wpdb;
 
 		$lead_detail_table = RGFormsModel::get_lead_details_table_name();
 
@@ -551,11 +538,10 @@ class GFDirectory {
 	}
 
 	static public function edit_lead_detail( $Form, $lead, $options ) {
-		global $current_user, $_gform_directory_approvedcolumn;
+		global $current_user;
 		require_once( GFCommon::get_base_path() . "/form_display.php" );
-		if ( empty( $_gform_directory_approvedcolumn ) ) {
-			$_gform_directory_approvedcolumn = self::get_approved_column( $Form );
-		}
+
+		$_gform_directory_approvedcolumn = self::get_approved_column( $Form );
 
 		// We fetch this again, since it may have had some admin-only columns taken out.
 		#$lead = RGFormsModel::get_lead($lead["id"]);
@@ -700,7 +686,7 @@ class GFDirectory {
 			require_once( GFCommon::get_base_path() . "/entry_list.php" );
 		}
 
-		global $current_user, $_gform_directory_approvedcolumn;
+		global $current_user;
 		wp_get_current_user();
 
 		$display_empty_fields       = '';
@@ -2031,14 +2017,17 @@ class GFDirectory {
 
 
 	static public function add_lead_approved_hidden_input( $value, $lead, $field = '' ) {
-		global $_gform_directory_processed_meta, $_gform_directory_approvedcolumn;
 
-		if ( ! in_array( $lead['id'], $_gform_directory_processed_meta ) ) {
-			$_gform_directory_processed_meta[] = $lead['id'];
-			if ( empty( $_gform_directory_approvedcolumn ) ) {
-				$forms                           = RGFormsModel::get_forms( NULL, "title" );
-				$_gform_directory_approvedcolumn = self::globals_get_approved_column( $forms[0]->id );
-			}
+		if ( ! isset( $processed_meta ) ) {
+            static $processed_meta = array();
+		}
+
+		if ( ! in_array( $lead['id'], $processed_meta ) ) {
+			$processed_meta[] = $lead['id'];
+
+			$forms                           = RGFormsModel::get_forms( NULL, "title" );
+            $_gform_directory_approvedcolumn = self::globals_get_approved_column( $forms[0]->id );
+
 			if ( self::check_approval( $lead, $_gform_directory_approvedcolumn ) ) {
 				echo '<span style="display:none;"><input type="hidden" class="lead_approved" id="lead_approved_' . $lead['id'] . '" value="true" /></span>';
 			}
@@ -2048,29 +2037,21 @@ class GFDirectory {
 	}
 
 
-	static public function globals_get_approved_column( $formID = 0 ) {
-		global $_gform_directory_processed_meta, $_gform_directory_approvedcolumn, $_gform_directory_activeform;
+	static public function globals_get_approved_column( $form_id = 0 ) {
 
-		$_gform_directory_processed_meta = array();
+		$form_id = empty( $form_id ) ? rgget( "id" ) : $form_id;
 
-		if ( empty( $formID ) ) {
-			$formID = RGForms::get( "id" );
-
-			if ( empty( $formID ) ) {
-				$forms  = RGFormsModel::get_forms( NULL, "title" );
-				$formID = $forms[0]->id;
+		if ( empty( $form_id ) ) {
+			// If there's no 'id' query string, grab the first form available
+			if ( self::is_gravity_page('gf_entries') ) {
+				$forms   = RGFormsModel::get_forms( NULL, "title" );
+				$form_id = $forms[0]->id;
 			}
 		}
 
-		if ( ! empty( $formID ) ) {
-			$_gform_directory_activeform = RGFormsModel::get_form_meta( $formID );
-		} else if ( isset( $_GET['id'] ) ) {
-			$_gform_directory_activeform = RGFormsModel::get_form_meta( $_GET['id'] );
-		}
+        $active_form = RGFormsModel::get_form_meta( $form_id );
 
-		$_gform_directory_approvedcolumn = self::get_approved_column( $_gform_directory_activeform );
-
-		return $_gform_directory_approvedcolumn;
+		return self::get_approved_column( $active_form );
 	}
 
 	static public function get_approved_column( $form ) {
@@ -2101,10 +2082,9 @@ class GFDirectory {
 
 
 	static public function directory_update_approved_hook() {
-		global $_gform_directory_approvedcolumn;
 		check_ajax_referer( 'rg_update_approved', 'rg_update_approved' );
 		if ( ! empty( $_POST["lead_id"] ) ) {
-			$_gform_directory_approvedcolumn = empty( $_gform_directory_approvedcolumn ) ? self::globals_get_approved_column( $_POST['form_id'] ) : $_gform_directory_approvedcolumn;
+			$_gform_directory_approvedcolumn = self::globals_get_approved_column( $_POST['form_id'] );
 			self::directory_update_approved( (int) $_POST["lead_id"], $_POST["approved"], (int) $_POST['form_id'], $_gform_directory_approvedcolumn );
 		}
 	}
