@@ -587,12 +587,16 @@ class GFDirectory {
 			// So the form submission always throws an error even though there's no problem.
 			// Product fields can't be edited, so that doesn't really matter.
 			if ( ! empty( $is_valid ) || ( empty( $is_valid ) && empty( $validation_message ) ) ) {
-				do_action( 'kws_gf_directory_pre_update_lead', $lead, $Form );
-				// since @3.6.1 to enable conditional fields' updates.
+
+			    do_action( 'kws_gf_directory_pre_update_lead', $lead, $Form );
+
+			    // since @3.6.1 to enable conditional fields' updates.
 				self::save_lead( $Form, $lead );
+
 				$lead = RGFormsModel::get_lead( $lead["id"] );
 
 				do_action( 'kws_gf_directory_post_update_lead', $lead, $Form );
+
 				echo apply_filters( 'kws_gf_directory_lead_updated_message', sprintf( esc_html__( "%sThe entry was successfully updated.%s", 'gravity-forms-addons' ), "<p class='updated' id='message' style='padding:.5em .75em; background-color:#ffffcc; border:1px solid #ccc;'>", "</p>" ), $lead, $Form );
 
 				return $lead;
@@ -619,7 +623,6 @@ class GFDirectory {
 				<?php
 
 				$form_without_products = $Form;
-				$post_message_shown    = false;
 				$product_fields        = array();
 				foreach ( $Form['fields'] as $key => $field ) {
 					if (
@@ -958,10 +961,11 @@ class GFDirectory {
 		return $adminOnly;
 	}
 
-	/*
-	* 	Get the form and lead IDs from the URL or from $_REQUEST
-	*	@return array|null $formid, $leadid if found. Null if not.
-	*/
+	/**
+	 * Get the form and lead IDs from the URL or from $_REQUEST
+	 *
+	 * @return array|null $formid, $leadid if found. Null if not.
+	 */
 	static private function get_form_and_lead_ids() {
 		global $wp, $wp_rewrite;
 
@@ -2309,6 +2313,14 @@ class GFDirectory {
 		return $leads;
 	}
 
+	/**
+     * Modify how the anchor text is displayed based on filters
+     *
+     * @param string $value Original anchor text (eg: "https://www.example.com?query=string")
+     *
+     * @return string Modified anchor text (eg: "example.com")
+     */
+	static function directory_anchor_text( $value = '' ) {
 
 		if ( apply_filters( 'kws_gf_directory_anchor_text_striphttp', true ) ) {
 			$value = str_replace( 'http://', '', $value );
@@ -2646,7 +2658,7 @@ class GFDirectory {
 	 * @param bool $show_admin_only (default: false)
 	 * @param mixed $form
 	 *
-	 * @return void
+	 * @return array
 	 */
 	static function remove_hidden_fields( $leads, $admin_only, $approved, $is_leads, $is_single = false, $show_admin_only = false, $form ) {
 
