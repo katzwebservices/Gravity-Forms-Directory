@@ -1298,9 +1298,9 @@ class GFDirectory {
 
 		$form_id = $form;
 
-		$form = RGFormsModel::get_form_meta( $form_id );
+		$form = GFAPI::get_form( $form_id );
 
-		if ( empty( $form ) ) {
+		if ( ! $form ) {
 			return;
 		}
 
