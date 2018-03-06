@@ -41,51 +41,72 @@ class GFDirectory_Admin {
 
 		add_action( 'gform_entries_first_column_actions', array( $this, 'add_edit_entry_link' ), 10, 5 );
 
+		add_action( 'gform_entry_list_bulk_actions', array( $this, 'add_bulk_actions' ), 10, 2 );
+
 		self::process_bulk_update();
 	}
+
+	/**
+     * Add Approve and Disapprove bulk actions to the entries dropdown
+	 * @param array $actions
+	 * @param int $form_id
+	 *
+	 * @return array
+	 */
+	public function add_bulk_actions( $actions = array(), $form_id = 0 ) {
+
+		$actions['approve-' . $form_id ] = esc_html__('Approve', 'gravity-forms-addons');
+		$actions['unapprove-' . $form_id ] = esc_html__('Disapprove', 'gravity-forms-addons');
+
+	    return $actions;
+    }
 
 	public static function process_bulk_update() {
 		global $process_bulk_update_message;
 
-		if ( RGForms::post( "action" ) === 'bulk' ) {
-			check_admin_referer( 'gforms_entry_list', 'gforms_entry_list' );
-
-			$bulk_action = ! empty( $_POST["bulk_action"] ) ? $_POST["bulk_action"] : $_POST["bulk_action2"];
-			$leads       = $_POST["lead"];
-
-			$entry_count = count( $leads ) > 1 ? sprintf( __( "%d entries", "gravityforms" ), count( $leads ) ) : __( "1 entry", "gravityforms" );
-
-			$bulk_action = explode( '-', $bulk_action );
-			if ( ! isset( $bulk_action[1] ) || empty( $leads ) ) {
-				return false;
-			}
-
-			switch ( $bulk_action[0] ) {
-				case "approve":
-					self::directory_update_bulk( $leads, 1, $bulk_action[1] );
-					$process_bulk_update_message = sprintf( __( "%s approved.", "gravity-forms-addons" ), $entry_count );
-					break;
-
-				case "unapprove":
-					self::directory_update_bulk( $leads, 0, $bulk_action[1] );
-					$process_bulk_update_message = sprintf( __( "%s disapproved.", "gravity-forms-addons" ), $entry_count );
-					break;
-			}
+		if ( empty( $_POST['action'] ) && empty( $_POST['action2'] ) || empty( $_POST['gforms_entry_list'] ) ) {
+            return;
 		}
+
+		$bulk_action = ! empty( $_POST["action"] ) ? $_POST["action"] : $_POST["action2"];
+
+		$bulk_action = explode( '-', $bulk_action );
+		if ( !in_array( $bulk_action[0], array( 'approve', 'unapprove' ) ) || ! isset( $bulk_action[1] ) || ! is_numeric( $bulk_action[1] ) ) {
+		    return;
+		}
+
+        check_admin_referer( 'gforms_entry_list', 'gforms_entry_list' );
+
+		$leads = isset( $_POST["lead"] ) ? $_POST["lead"] : $_POST["entry"];
+
+		$leads = array_map( 'intval', $leads );
+
+        $entry_count = count( $leads ) > 1 ? sprintf( __( "%d entries", "gravityforms" ), count( $leads ) ) : __( "1 entry", "gravityforms" );
+
+        switch ( $bulk_action[0] ) {
+            case "approve":
+                self::directory_update_bulk( $leads, 1, $bulk_action[1] );
+                $process_bulk_update_message = sprintf( __( "%s approved.", "gravity-forms-addons" ), $entry_count );
+                break;
+
+            case "unapprove":
+                self::directory_update_bulk( $leads, 0, $bulk_action[1] );
+                $process_bulk_update_message = sprintf( __( "%s disapproved.", "gravity-forms-addons" ), $entry_count );
+                break;
+        }
 	}
 
 	static private function directory_update_bulk( $leads, $approved, $form_id ) {
-		global $_gform_directory_approvedcolumn;
 
 		if ( empty( $leads ) || ! is_array( $leads ) ) {
 			return false;
 		}
 
-		$_gform_directory_approvedcolumn = empty( $_gform_directory_approvedcolumn ) ? self::globals_get_approved_column( $_POST['form_id'] ) : $_gform_directory_approvedcolumn;
+		$approvedcolumn = GFDirectory::globals_get_approved_column( $form_id );
 
 		$approved = empty( $approved ) ? 0 : 'Approved';
 		foreach ( $leads as $lead_id ) {
-			GFDirectory::directory_update_approved( $lead_id, $approved, $form_id );
+			GFDirectory::directory_update_approved( $lead_id, $approved, $form_id, $approvedcolumn );
 		}
 	}
 
@@ -109,7 +130,7 @@ class GFDirectory_Admin {
 				If you haven\'t installed the plugin, you can %3$spurchase the plugin here%4$s. If you have, and you believe this notice is in error, %5$sstart a topic on the plugin support forum%4$s.
 
 				%6$s%7$sBuy Gravity Forms%4$s%8$s
-				', 'gravity-forms-addons' ), '<strong>', '</strong>', "<a href='http://katz.si/gravityforms'>", '</a>', '<a href="http://wordpress.org/tags/gravity-forms-addons?forum_id=10#postform">', '<p class="submit">', "<a href='http://katz.si/gravityforms' style='color:white!important' class='button button-primary'>", '</p>' );
+				', 'gravity-forms-addons' ), '<strong>', '</strong>', "<a href='https://katz.si/gravityforms'>", '</a>', '<a href="https://wordpress.org/tags/gravity-forms-addons?forum_id=10#postform">', '<p class="submit">', "<a href='https://katz.si/gravityforms' style='color:white!important' class='button button-primary'>", '</p>' );
 			}
 		}
 		if ( ! empty( $message ) ) {
@@ -125,10 +146,8 @@ class GFDirectory_Admin {
 	}
 
 	public function add_activation_notice() {
-#		if(!get_option("gf_addons_settings")) {
-		$message = sprintf( esc_html__( 'Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %sGo to the settings page%s to read usage instructions and configure the plugin default settings. %sGo to settings page%s', 'gravity-forms-addons' ), '<a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) . '">', '</a>', '<p class="submit"><a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) . '" class="button button-secondary">', '</a></p>' );
+		$message = sprintf( esc_html__( 'Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %sGo to the settings page%s to read usage instructions and configure the plugin default settings. %sGo to settings page%s', 'gravity-forms-addons' ), '<a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) . '">', '</a>', '<p class="submit"><a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '" class="button button-secondary">', '</a></p>' );
 		set_transient( 'kws_gf_activation_notice', $message, 60 * 60 );
-#		}
 	}
 
 	public function admin_head( $settings = array() ) {
@@ -150,8 +169,8 @@ class GFDirectory_Admin {
 			}
 		}
 
-		if ( isset( $_REQUEST['page'] ) && ( $_REQUEST['page'] == 'gf_edit_forms' || $_REQUEST['page'] == 'gf_entries' ) ) {
-			echo self::add_edit_js( isset( $_REQUEST['id'] ), $settings );
+		if ( GFDirectory::is_gravity_page('gf_entries') || GFDirectory::is_gravity_page('gf_edit_forms') ) {
+			self::add_edit_js( isset( $_REQUEST['id'] ), $settings );
 		}
 	}
 
@@ -160,6 +179,16 @@ class GFDirectory_Admin {
 		<script>
 			// Edit link for Gravity Forms entries
 			jQuery( document ).ready( function ( $ ) {
+
+				$('select[id^=bulk-action-selector-]').each(function() {
+					var $optgroup = $('<optgroup label="<?php esc_attr_e('Directory', 'gravity-forms-addons' ); ?>"></optgroup>');
+
+					$('option[value^="approve-"]', $( this ) ).remove().appendTo( $optgroup );
+					$('option[value^="unapprove-"]', $( this ) ).remove().appendTo( $optgroup );
+
+					$( this ).append( $optgroup );
+                });
+
 				<?php    if(! empty( $settings['modify_admin']['expand'] ) && $edit_forms) { ?>
 				var onScrollScript = window.onscroll;
 				$( 'div.gforms_edit_form #add_fields #floatMenu' ).prepend( '<div class="gforms_expend_all_menus_form"><label for="expandAllMenus"><input type="checkbox" id="expandAllMenus" value="1" /> Expand All Menus</label></div>' );
@@ -202,7 +231,7 @@ class GFDirectory_Admin {
                     'width' => 370
             ), $field_id_url );
 			?>
-            <span class="edit"> | <a title="<?php esc_attr( printf( __( "Fields for Form ID %s", "gravity-forms-addons" ), $form_id ) ); ?>" href="<?php echo esc_url( $field_id_url ) ; ?>" class="thickbox form_ids"><?php echo esc_js( __( "IDs", "gravity-forms-addons" ) ); ?></a></span>
+            <span class="edit"> | <a title="<?php esc_attr( printf( __( "Fields for Form ID %s", "gravity-forms-addons" ), $form_id ) ); ?>" href="<?php echo esc_url( $field_id_url ) ; ?>" class="thickbox form_ids"><?php esc_attr_e( "IDs", "gravity-forms-addons" ); ?></a></span>
 		<?php
         }
 
@@ -470,7 +499,6 @@ EOD;
 				true,
 				esc_html__( "If there's a displayed Entry ID column, add link to each full entry", 'gravity-forms-addons' ),
 			),
-			#array('checkbox',  'wpautop'  ,  true, sprintf( esc_html__( "Convert bulk paragraph text to paragraphs (using the WordPress function %s)", 'gravity-forms-addons'), "<code><a href='http://codex.wordpress.org/Function_Reference/wpautop'>wpautop()</a></code>" )),
 			array(
 				'checkbox',
 				'getimagesize',
@@ -1167,7 +1195,7 @@ EOD;
 						        src="http<?php echo is_ssl() ? 's' : ''; ?>://www.youtube.com/embed/PMI7Jb-RP2I?hd=1"
 						        frameborder="0" allowfullscreen></iframe>
 					</div>
-					<h3 style="padding-top:1em;"><?php esc_html_e( 'To integrate a form with Directory:', 'gravity-forms-addons' ); ?></h3>
+					<h3 style="padding-top:1em; line-height: 1"><?php esc_html_e( 'To integrate a form with Directory:', 'gravity-forms-addons' ); ?></h3>
 					<ol class="ol-decimal">
 						<li><?php esc_html_e( 'Go to the post or page where you would like to add the directory.', 'gravity-forms-addons' ); ?></li>
 						<li><?php esc_html_e( 'Click the "Add Directory" button above the content area.', 'gravity-forms-addons' ); ?></li>
