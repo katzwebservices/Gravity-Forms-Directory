@@ -1401,10 +1401,10 @@ class GFDirectory {
 		$show_search_filters = apply_filters( 'kws_gf_directory_search_filters', $show_search_filters, $form );
 		$search_criteria     = array();
 		foreach ( $show_search_filters as $key ) {
-			if ( ! empty( $_GET[ 'filter_' . $key ] ) ) {
+			if ( '' !== rgget('filter_' . $key ) ) {
 				$search_criteria['field_filters'][] = array(
                   'key' => $key,
-                  'value' => $_GET[ 'filter_' . $key ],
+                  'value' => rgget('filter_' . $key ),
                 );
 			}
 		}

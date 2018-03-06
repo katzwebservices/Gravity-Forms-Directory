@@ -243,6 +243,7 @@ A big update to make Gravity Forms Directory compatible with Gravity Forms 2.3, 
 - The ability to see the IDs for each field in an entry
 - Bulk Approve and Bulk Disapprove
 - Allow users with `gravityforms_edit_entries` capabilities to edit entries (previously, only users with `gravityforms_directory` capability)
+- Searching for `0` values
 
 ** Improvements **
 
