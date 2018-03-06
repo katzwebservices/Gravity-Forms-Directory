@@ -1957,8 +1957,8 @@ class GFDirectory {
 
 
 	static public function get_credit_link( $columns = 1, $options = array() ) {
-		global $post;// prevents calling before <HTML>
-		if ( empty( $post ) || is_admin() ) {
+
+		if ( ! did_action('wp_head') || is_admin() ) {
 			return;
 		}
 
@@ -1967,53 +1967,19 @@ class GFDirectory {
 		// Only show credit link if the user has saved settings;
 		// this prevents existing directories adding a link without user action.
 		if ( isset( $settings['version'] ) ) {
-			echo "<tr><th colspan='{$columns}'>" . self::attr( $options ) . "</th></tr>";
+
+			$plugin_name = esc_html__( 'Gravity Forms Directory', 'gravity-forms-addon' );
+			$link = '<a href="https://katz.co/gravity-forms-addons/">' . $plugin_name . '</a>';
+		    $attribution_text = sprintf( esc_html__('Powered by %s', 'gravity-forms-addon' ), $link );
+			$attribution_html = '<span class="kws_gf_credit" style="font-weight:normal; text-align:center; display:block; margin:0 auto;">'. $attribution_text . '</span>';
+
+			echo "<tr><th colspan='{$columns}'>" . $attribution_html . "</th></tr>";
 		}
 	}
 
 	static public function get_version() {
 		return self::$version;
 	}
-
-	static public function return_7776000() {
-		return 7776000; // extend the cache to 90 days
-	}
-
-	static public function attr( $options, $default = '<span class="kws_gf_credit" style="font-weight:normal; text-align:center; display:block; margin:0 auto;">Powered by <a href="http://katz.co/gravity-forms-addons/">Gravity Forms Directory</a></span>' ) {
-		include_once( ABSPATH . WPINC . '/feed.php' );
-		add_filter( 'wp_feed_cache_transient_lifetime', array( 'GFDirectory', 'return_7776000' ) );
-		$rss = fetch_feed( add_query_arg( array(
-			'site'    => htmlentities( substr( get_bloginfo( 'url' ), is_ssl() ? 8 : 7 ) ),
-			'from'    => 'kws_gf_addons',
-			'version' => self::$version,
-			'credit'  => ! empty( $options['credit'] ),
-		), 'http://www.katzwebservices.com/development/attribution.php' ) );
-		remove_filter( 'wp_feed_cache_transient_lifetime', array( 'GFDirectory', 'return_7776000' ) );
-		if ( $rss && ! is_wp_error( $rss ) ) {
-			// We want to strip all tags except for 'style', 'id', and 'class' so that the return value is always safe for the site.
-			$strip = array(
-				'bgsound',
-				'expr',
-				'onclick',
-				'onerror',
-				'onfinish',
-				'onmouseover',
-				'onmouseout',
-				'onfocus',
-				'onblur',
-				'lowsrc',
-				'dynsrc',
-			);
-			$rss->strip_attributes( $strip );
-			$rss_items = $rss->get_items( 0, 1 );
-			foreach ( $rss_items as $item ) {
-				return str_replace( array( "\n", "\r" ), ' ', $item->get_description() );
-			}
-		}
-
-		return $default;
-	}
-
 
 	static public function add_lead_approved_hidden_input( $value, $lead, $field = '' ) {
 
