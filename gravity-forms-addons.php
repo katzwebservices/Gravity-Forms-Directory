@@ -1402,7 +1402,10 @@ class GFDirectory {
 		$search_criteria     = array();
 		foreach ( $show_search_filters as $key ) {
 			if ( ! empty( $_GET[ 'filter_' . $key ] ) ) {
-				$search_criteria[ $key ] = $_GET[ 'filter_' . $key ];
+				$search_criteria['field_filters'][] = array(
+                  'key' => $key,
+                  'value' => $_GET[ 'filter_' . $key ],
+                );
 			}
 		}
 		if( $smartapproval && $enable_smart_approval ) {
