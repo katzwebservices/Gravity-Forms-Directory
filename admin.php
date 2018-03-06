@@ -130,7 +130,7 @@ class GFDirectory_Admin {
 				If you haven\'t installed the plugin, you can %3$spurchase the plugin here%4$s. If you have, and you believe this notice is in error, %5$sstart a topic on the plugin support forum%4$s.
 
 				%6$s%7$sBuy Gravity Forms%4$s%8$s
-				', 'gravity-forms-addons' ), '<strong>', '</strong>', "<a href='http://katz.si/gravityforms'>", '</a>', '<a href="http://wordpress.org/tags/gravity-forms-addons?forum_id=10#postform">', '<p class="submit">', "<a href='http://katz.si/gravityforms' style='color:white!important' class='button button-primary'>", '</p>' );
+				', 'gravity-forms-addons' ), '<strong>', '</strong>', "<a href='https://katz.si/gravityforms'>", '</a>', '<a href="https://wordpress.org/tags/gravity-forms-addons?forum_id=10#postform">', '<p class="submit">', "<a href='https://katz.si/gravityforms' style='color:white!important' class='button button-primary'>", '</p>' );
 			}
 		}
 		if ( ! empty( $message ) ) {
@@ -146,10 +146,8 @@ class GFDirectory_Admin {
 	}
 
 	public function add_activation_notice() {
-#		if(!get_option("gf_addons_settings")) {
-		$message = sprintf( esc_html__( 'Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %sGo to the settings page%s to read usage instructions and configure the plugin default settings. %sGo to settings page%s', 'gravity-forms-addons' ), '<a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) . '">', '</a>', '<p class="submit"><a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) . '" class="button button-secondary">', '</a></p>' );
+		$message = sprintf( esc_html__( 'Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %sGo to the settings page%s to read usage instructions and configure the plugin default settings. %sGo to settings page%s', 'gravity-forms-addons' ), '<a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) . '">', '</a>', '<p class="submit"><a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '" class="button button-secondary">', '</a></p>' );
 		set_transient( 'kws_gf_activation_notice', $message, 60 * 60 );
-#		}
 	}
 
 	public function admin_head( $settings = array() ) {
@@ -233,7 +231,7 @@ class GFDirectory_Admin {
                     'width' => 370
             ), $field_id_url );
 			?>
-            <span class="edit"> | <a title="<?php esc_attr( printf( __( "Fields for Form ID %s", "gravity-forms-addons" ), $form_id ) ); ?>" href="<?php echo esc_url( $field_id_url ) ; ?>" class="thickbox form_ids"><?php echo esc_js( __( "IDs", "gravity-forms-addons" ) ); ?></a></span>
+            <span class="edit"> | <a title="<?php esc_attr( printf( __( "Fields for Form ID %s", "gravity-forms-addons" ), $form_id ) ); ?>" href="<?php echo esc_url( $field_id_url ) ; ?>" class="thickbox form_ids"><?php esc_attr_e( "IDs", "gravity-forms-addons" ); ?></a></span>
 		<?php
         }
 
@@ -501,7 +499,6 @@ EOD;
 				true,
 				esc_html__( "If there's a displayed Entry ID column, add link to each full entry", 'gravity-forms-addons' ),
 			),
-			#array('checkbox',  'wpautop'  ,  true, sprintf( esc_html__( "Convert bulk paragraph text to paragraphs (using the WordPress function %s)", 'gravity-forms-addons'), "<code><a href='http://codex.wordpress.org/Function_Reference/wpautop'>wpautop()</a></code>" )),
 			array(
 				'checkbox',
 				'getimagesize',
@@ -1198,7 +1195,7 @@ EOD;
 						        src="http<?php echo is_ssl() ? 's' : ''; ?>://www.youtube.com/embed/PMI7Jb-RP2I?hd=1"
 						        frameborder="0" allowfullscreen></iframe>
 					</div>
-					<h3 style="padding-top:1em;"><?php esc_html_e( 'To integrate a form with Directory:', 'gravity-forms-addons' ); ?></h3>
+					<h3 style="padding-top:1em; line-height: 1"><?php esc_html_e( 'To integrate a form with Directory:', 'gravity-forms-addons' ); ?></h3>
 					<ol class="ol-decimal">
 						<li><?php esc_html_e( 'Go to the post or page where you would like to add the directory.', 'gravity-forms-addons' ); ?></li>
 						<li><?php esc_html_e( 'Click the "Add Directory" button above the content area.', 'gravity-forms-addons' ); ?></li>
