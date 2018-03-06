@@ -85,6 +85,7 @@ class GFDirectory_EditForm {
 
 				field.choices = null;
 		        field.inputs = null;
+		        field.gf_directory_approval = true;
 
 		        if(!field.choices)
 		            field.choices = new Array(new Choice("<?php echo esc_js( __("Approved", "gravity-forms-addons")); ?>"));
