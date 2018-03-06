@@ -1388,12 +1388,12 @@ class GFDirectory {
 			}
 		}
 
+		$total_count = 0;
 
 		//
 		// Or start to generate the directory
 		//
-		$leads = GFDirectory::get_leads( $form_id, $sort_field, $sort_direction, $search_query, $first_item_index, $page_size, $star, $read, $is_numeric, $start_date, $end_date, 'active', $approvedcolumn, $limituser, $search_criteria );
-
+		$leads = GFDirectory::get_leads( $form_id, $sort_field, $sort_direction, $search_query, $first_item_index, $page_size, $star, $read, $is_numeric, $start_date, $end_date, 'active', $approvedcolumn, $limituser, $search_criteria, $total_count );
 
 		// Allow lightbox to determine whether showadminonly is valid without passing a query string in URL
 		if ( $entry === true && ! empty( $lightboxsettings['entry'] ) ) {
@@ -1426,8 +1426,7 @@ class GFDirectory {
 				$lead_count = count( $leads );
 				$leads      = array_slice( $leads, $first_item_index, $page_size );
 			} else {
-				$lead_count = self::get_lead_count( $form_id, $search_query, $star, $read, $approvedcolumn, $approved, $leads, $start_date, $end_date, $limituser, $search_criteria );
-
+				$lead_count = $total_count;
 			}
 
 
@@ -2238,93 +2237,49 @@ class GFDirectory {
 	 * @param string $status (default: 'active')
 	 * @param mixed $approvedcolumn (default: null)
 	 * @param bool $limituser (default: false)
-	 * @param array $search_criterias , since 3.5
+	 * @param array $search_criteria , since 3.5
 	 *
 	 * @return array Leads results
 	 */
-	public static function get_leads( $form_id, $sort_field_number = 0, $sort_direction = 'DESC', $search = '', $offset = 0, $page_size = 30, $star = NULL, $read = NULL, $is_numeric_sort = false, $start_date = NULL, $end_date = NULL, $status = 'active', $approvedcolumn = NULL, $limituser = false, $search_criterias ) {
+	public static function get_leads( $form_id, $sort_field_number = 0, $sort_direction = 'DESC', $search = '', $offset = 0, $page_size = 30, $star = NULL, $read = NULL, $is_numeric_sort = false, $start_date = NULL, $end_date = NULL, $status = 'active', $approvedcolumn = NULL, $limituser = false, $search_criteria = array(), &$total_count = null ) {
 
-		global $wpdb;
+		$search_criteria['status'] = $status;
 
-		if ( $sort_field_number == 0 ) {
+		if ( 0 === $sort_field_number ) {
 			$sort_field_number = "date_created";
 		}
 
-		//since 3.5
-		if ( empty( $search_criterias ) ) {
-			$search_criterias = array();
+		$sorting = array(
+            'direction' => $sort_direction,
+            'key' => $sort_field_number,
+        );
+
+		$paging = array(
+            'page_size' => $page_size,
+            'offset' => $offset,
+        );
+
+		$search_criteria['field_filters'] = rgar( $search_criteria, 'field_filters', array() );
+
+		if ( '' !== $search ) {
+			$search_criteria['field_filters'][] = array(
+				'key' => 0,
+				'value' => $search,
+			);
 		}
 
-		// Retrieve the leads based on whether it's sorted or not.
-		if ( is_numeric( $sort_field_number ) ) {
-			$sql = self::sort_by_custom_field_query( $form_id, $sort_field_number, $sort_direction, $search, $search_criterias, $offset, $page_size, $star, $read, $is_numeric_sort, $status, $approvedcolumn, $limituser );
-		} else {
-			$sql = self::sort_by_default_field_query( $form_id, $sort_field_number, $sort_direction, $search, $search_criterias, $offset, $page_size, $star, $read, $is_numeric_sort, $start_date, $end_date, $status, $approvedcolumn, $limituser );
+		if ( ! is_null( $star ) ) {
+			$search_criteria['field_filters'][] = array(
+	            'key' => 'is_starred',
+                'value' => (int) $star,
+            );
 		}
 
-		//initializing rownum
-		$wpdb->query( "select @rownum:=0" );
-
-		//getting results
-
-		$results = $wpdb->get_results( $sql );
-
-
-		$return = '';
-		if ( function_exists( 'gform_get_meta' ) ) {
-			$return = RGFormsModel::build_lead_array( $results ); // This is a private function until 1.6
-		}
-
-		// Used by at least the show_only_user_entries() method
-		$return = apply_filters( 'kws_gf_directory_lead_filter', $return, compact( "approved", "sort_field_number", "sort_direction", "search_query", "search_criterias", "first_item_index", "page_size", "star", "read", "is_numeric", "start_date", "end_date", "status", "approvedcolumn", "limituser" ) );
-
-		return $return;
-	}
-
-	static function is_current_user( $lead = array() ) {
-		global $current_user;
-		wp_get_current_user();
-
-		return ( (int) $current_user->ID === (int) $lead["created_by"] );
-	}
-
-	static function show_only_user_entries( $leads = array(), $settings = array() ) {
-		if ( empty( $settings['limituser'] ) ) {
-			return $leads;
-		}
-
-		return array_filter( $leads, array( 'GFDirectory', 'is_current_user' ) );
-	}
-
-
-	/**
-	 * sort_by_custom_field_query function.
-	 *
-	 * A copy of the Gravity Forms method, but adding $approvedcolumns and $limituser args
-	 *
-	 * @access private
-	 * @static
-	 *
-	 * @param mixed $form_id
-	 * @param int $sort_field_number (default: 0)
-	 * @param string $sort_direction (default: 'DESC')
-	 * @param string $search (default: '')
-	 * @param array $search_criterias , since 3.5
-	 * @param int $offset (default: 0)
-	 * @param int $page_size (default: 30)
-	 * @param mixed $star (default: null)
-	 * @param mixed $read (default: null)
-	 * @param bool $is_numeric_sort (default: false)
-	 * @param string $status (default: 'active')
-	 * @param mixed $approvedcolumn (default: null)
-	 * @param bool $limituser (default: false)
-	 *
-	 * @return void
-	 */
-	private static function sort_by_custom_field_query( $form_id, $sort_field_number = 0, $sort_direction = 'DESC', $search = '', $search_criterias, $offset = 0, $page_size = 30, $star = NULL, $read = NULL, $is_numeric_sort = false, $status = 'active', $approvedcolumn = NULL, $limituser = false ) {
-		global $wpdb, $current_user;
-		if ( ! is_numeric( $form_id ) || ! is_numeric( $sort_field_number ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
-			return "";
+		if ( ! is_null( $read ) ) {
+			$search_criteria['field_filters'][] = array(
+				'key' => 'is_read',
+				'value' => (int) $read,
+			);
 		}
 
 		$lead_detail_table_name = RGFormsModel::get_lead_details_table_name();
@@ -2350,205 +2305,52 @@ class GFDirectory {
 			$search_filter .= $wpdb->prepare( "$where status=%s ", $status );
 		}
 
-		// new search criterias since 3.5
-		$in_search_criteria = '';
-		if ( ! empty( $search_criterias ) ) {
-			foreach ( $search_criterias as $field_id => $value ) {
-				$value = "%$value%";
-				$in_search_criteria .= $wpdb->prepare( " l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number = %s AND value LIKE %s) AND ", $field_id, $value );
-			}
+		if ( $end_date ) {
+			$search_criteria['end_date'] = $end_date;
 		}
-		$where              = empty( $search_filter ) ? "WHERE " : "AND ";
-		$in_search_criteria = ( ! empty( $in_search_criteria ) ) ? $where . substr( $in_search_criteria, 0, - 4 ) : ''; // to add where/and and remove the last AND
-
 
 		if ( $limituser ) {
-			wp_get_current_user();
-			if ( (int) $current_user->ID !== 0 || ( $current_user->ID === 0 && apply_filters( 'kws_gf_show_entries_if_not_logged_in', apply_filters( 'kws_gf_treat_not_logged_in_as_user', true ) ) ) ) {
-				$where = empty( $search_filter ) ? "WHERE" : "AND";
-				if ( (int) $current_user->ID === 0 ) {
-					$search_filter .= $wpdb->prepare( "$where (created_by IS NULL OR created_by=%d)", $current_user->ID );
-				} else {
-					$search_filter .= $wpdb->prepare( "$where l.created_by=%d ", $current_user->ID );
-				}
-			} else {
-				return false;
-			}
+			$current_user = wp_get_current_user();
+
+			$search_criteria['field_filters'][] = array(
+                'key' => 'created_by',
+                'operator' => 'is',
+                'value' => $current_user->ID,
+            );
 		}
 
-		$field_number_min = $sort_field_number - 0.001;
-		$field_number_max = $sort_field_number + 0.001;
+		if ( $approvedcolumn ) {
+			$search_criteria['field_filters'][] = array(
+				'key' => $approvedcolumn,
+				'operator' => 'is',
+				'value' => 'Approved'
+			);
 
-		$in_filter = "";
-		if ( ! empty( $approvedcolumn ) ) {
-			$in_filter = $wpdb->prepare( "WHERE l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number BETWEEN %f AND %f)", $approvedcolumn - 0.001, $approvedcolumn + 0.001 );
-			// This will work once all the fields are converted to the meta_key after 1.6
-			#$search_filter .= $wpdb->prepare(" AND m.meta_key = 'is_approved' AND m.meta_value = %s", 1);
+			$search_criteria['field_filters']['mode'] = 'all';
 		}
 
-		$limit_filter = ''; //paging is done later since 3.5 to allow multisort
-		if ( ! apply_filters( 'kws_gf_directory_want_multisort', false ) ) {
-			if ( $page_size > 0 ) {
-				$limit_filter = "LIMIT $offset,$page_size";
-			}
-		}
+		$return = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging, $total_count );
 
-		$sql = "
-			SELECT filtered.sort, l.*, d.field_number, d.value
-			FROM $lead_table_name l
-			INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-			INNER JOIN (
-				SELECT distinct sorted.sort, l.id
-				FROM $lead_table_name l
-				INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-				INNER JOIN (
-					SELECT @rownum:=@rownum+1 as sort, id FROM (
-						SELECT 0 as query, lead_id as id, value
-						FROM $lead_detail_table_name
-						WHERE form_id=$form_id
-						AND field_number between $field_number_min AND $field_number_max
+		// Used by at least the show_only_user_entries() method
+		$return = apply_filters( 'kws_gf_directory_lead_filter', $return, compact( "approved", "sort_field_number", "sort_direction", "search_query", "search_criteria", "first_item_index", "page_size", "star", "read", "is_numeric", "start_date", "end_date", "status", "approvedcolumn", "limituser" ) );
 
-						UNION ALL
-
-						SELECT 1 as query, l.id, d.value
-						FROM $lead_table_name l
-						LEFT OUTER JOIN $lead_detail_table_name d ON d.lead_id = l.id AND field_number between $field_number_min AND $field_number_max
-						WHERE l.form_id=$form_id
-						AND d.lead_id IS NULL
-
-					) sorted1
-				   $orderby
-				) sorted ON d.lead_id = sorted.id
-				$search_filter
-				$in_search_criteria
-				$limit_filter
-			) filtered ON filtered.id = l.id
-			$in_filter
-			ORDER BY filtered.sort";
-
-		return $sql;
+		return $return;
 	}
-
 
 	/**
-	 * sort_by_default_field_query function.
+     * Is the entry `created_by` equal to the current WP User ID?
+     *
+	 * @param array $lead Entry array
 	 *
-	 * A copy of the Gravity Forms method, but adding $approvedcolumns and $limituser args
-	 *
-	 * @access private
-	 * @static
-	 *
-	 * @param mixed $form_id
-	 * @param mixed $sort_field
-	 * @param string $sort_direction (default: 'DESC')
-	 * @param string $search (default: '')
-	 * @param array $search_criterias - since 3.5
-	 * @param int $offset (default: 0)
-	 * @param int $page_size (default: 30)
-	 * @param mixed $star (default: null)
-	 * @param mixed $read (default: null)
-	 * @param bool $is_numeric_sort (default: false)
-	 * @param mixed $start_date (default: null)
-	 * @param mixed $end_date (default: null)
-	 * @param string $status (default: 'active')
-	 * @param mixed $approvedcolumn (default: null)
-	 * @param bool $limituser (default: false)
-	 *
-	 * @return void
+	 * @return bool true: same user; false: nope!
 	 */
-	private static function sort_by_default_field_query( $form_id, $sort_field, $sort_direction = 'DESC', $search = '', $search_criterias, $offset = 0, $page_size = 30, $star = NULL, $read = NULL, $is_numeric_sort = false, $start_date = NULL, $end_date = NULL, $status = 'active', $approvedcolumn = NULL, $limituser = false ) {
-		global $wpdb, $current_user;
 
-		if ( ! is_numeric( $form_id ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
-			return "";
+		if ( empty( $lead["created_by"] ) ) {
+            return false;
 		}
 
-		$lead_detail_table_name = RGFormsModel::get_lead_details_table_name();
-		$lead_table_name        = RGFormsModel::get_lead_table_name();
 
-		$search_term   = "%$search%";
-		$search_filter = empty( $search ) ? "" : $wpdb->prepare( " AND value LIKE %s", $search_term );
 
-		// new search criterias since 3.5
-		$in_search_criteria = '';
-		if ( ! empty( $search_criterias ) ) {
-			foreach ( $search_criterias as $field_id => $value ) {
-				$value = "%$value%";
-				$in_search_criteria .= $wpdb->prepare( " AND l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number = %s AND value LIKE %s)", $field_id, $value );
-			}
-		}
-
-		$star_filter = $star !== NULL && $status == 'active' ? $wpdb->prepare( " AND is_starred=%d AND status='active' ", $star ) : "";
-		$read_filter = $read !== NULL && $status == 'active' ? $wpdb->prepare( " AND is_read=%d AND status='active' ", $read ) : "";
-		if ( function_exists( 'gform_get_meta' ) ) {
-			$status_filter = $wpdb->prepare( " AND status=%s ", $status );
-		} else {
-			$status_filter = '';
-		}
-
-		$start_date_filter = empty( $start_date ) ? "" : " AND datediff(date_created, '$start_date') >=0";
-		$end_date_filter   = empty( $end_date ) ? "" : " AND datediff(date_created, '$end_date') <=0";
-
-		$in_filter = "";
-		if ( ! empty( $approvedcolumn ) ) {
-			$in_filter = $wpdb->prepare( "l.id IN (SELECT lead_id from $lead_detail_table_name WHERE field_number BETWEEN %f AND %f) AND", $approvedcolumn - 0.001, $approvedcolumn + 0.001 );
-			// This will work once all the fields are converted to the meta_key after 1.6
-			#$search_filter .= $wpdb->prepare(" AND m.meta_key = 'is_approved' AND m.meta_value = %s", 1);
-		}
-
-		$user_filter = '';
-		if ( $limituser ) {
-			wp_get_current_user();
-			if ( (int) $current_user->ID !== 0 || ( $current_user->ID === 0 && apply_filters( 'kws_gf_show_entries_if_not_logged_in', apply_filters( 'kws_gf_treat_not_logged_in_as_user', true ) ) ) ) {
-				if ( (int) $current_user->ID === 0 ) {
-					$user_filter = $wpdb->prepare( " AND (created_by IS NULL OR created_by=%d)", $current_user->ID );
-				} else {
-					$user_filter = $wpdb->prepare( " AND created_by=%d ", $current_user->ID );
-				}
-			} else {
-				return false;
-			}
-		}
-
-		$limit_filter = ''; //paging is done later since 3.5 to allow multisort
-		if ( ! apply_filters( 'kws_gf_directory_want_multisort', false ) ) {
-			if ( $page_size > 0 ) {
-				$limit_filter = "LIMIT $offset,$page_size";
-			}
-		}
-
-		$sql = "
-			SELECT filtered.sort, l.*, d.field_number, d.value
-			FROM $lead_table_name l
-			INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-			INNER JOIN
-			(
-				SELECT @rownum:=@rownum + 1 as sort, id
-				FROM
-				(
-					SELECT distinct l.id
-					FROM $lead_table_name l
-					INNER JOIN $lead_detail_table_name d ON d.lead_id = l.id
-					WHERE $in_filter
-					l.form_id=$form_id
-					$search_filter
-					$in_search_criteria
-					$star_filter
-					$read_filter
-					$user_filter
-					$status_filter
-					$start_date_filter
-					$end_date_filter
-					ORDER BY $sort_field $sort_direction
-					$limit_filter
-				) page
-			) filtered ON filtered.id = l.id
-			ORDER BY filtered.sort";
-
-		return $sql;
-	}
-
-	static function directory_anchor_text( $value = NULL ) {
 
 		if ( apply_filters( 'kws_gf_directory_anchor_text_striphttp', true ) ) {
 			$value = str_replace( 'http://', '', $value );
@@ -2779,73 +2581,6 @@ class GFDirectory {
 		if ( ! is_numeric( $form_id ) ) {
 			return "";
 		}
-
-		$detail_table_name = RGFormsModel::get_lead_details_table_name();
-		$lead_table_name   = RGFormsModel::get_lead_table_name();
-
-		$star_filter = $star !== NULL ? $wpdb->prepare( "AND is_starred=%d ", $star ) : "";
-		$read_filter = $read !== NULL ? $wpdb->prepare( "AND is_read=%d ", $read ) : "";
-		if ( function_exists( 'gform_get_meta' ) ) {
-			$status_filter = $wpdb->prepare( " AND status=%s ", 'active' );
-		} else {
-			$status_filter = '';
-		}
-		$start_date_filter = empty( $start_date ) ? "" : " AND datediff(date_created, '$start_date') >=0";
-		$end_date_filter   = empty( $end_date ) ? "" : " AND datediff(date_created, '$end_date') <=0";
-
-		$search_term   = "%$search%";
-		$search_filter = empty( $search ) ? "" : $wpdb->prepare( "AND ld.value LIKE %s", $search_term );
-
-		// new search criterias since 3.5
-		$in_search_criteria = '';
-		if ( ! empty( $search_criterias ) ) {
-			foreach ( $search_criterias as $field_id => $value ) {
-				$value = "%$value%";
-				$in_search_criteria .= $wpdb->prepare( " AND l.id IN (SELECT lead_id from $detail_table_name WHERE field_number = %s AND value LIKE %s)", $field_id, $value );
-			}
-		}
-
-
-		$user_filter = '';
-		if ( $limituser ) {
-			wp_get_current_user();
-			if ( (int) $current_user->ID !== 0 || ( $current_user->ID === 0 && apply_filters( 'kws_gf_show_entries_if_not_logged_in', apply_filters( 'kws_gf_treat_not_logged_in_as_user', true ) ) ) ) {
-				if ( ! empty( $current_user->ID ) ) {
-					$user_filter = $wpdb->prepare( " AND l.created_by=%d ", $current_user->ID );
-				} else {
-					$user_filter = $wpdb->prepare( " AND (created_by IS NULL OR created_by=%d)", $current_user->ID );
-				}
-			} else {
-				return false;
-			}
-
-		}
-
-		$in_filter = "";
-		if ( $approved ) {
-			$in_filter = $wpdb->prepare( "l.id IN (SELECT lead_id from $detail_table_name WHERE field_number BETWEEN %f AND %f) AND", $column - 0.001, $column + 0.001 );
-			// This will work once all the fields are converted to the meta_key after 1.6
-			#$search_filter .= $wpdb->prepare(" AND m.meta_key = 'is_approved' AND m.meta_value = %s", 1);
-		}
-
-		$sql = "SELECT count(distinct l.id) FROM $lead_table_name as l,
-				$detail_table_name as ld";
-#		$sql .= function_exists('gform_get_meta') ? " INNER JOIN wp_rg_lead_meta m ON l.id = m.lead_id " : ""; // After 1.6
-		$sql .= "
-				WHERE $in_filter
-				l.form_id=$form_id
-				AND ld.form_id=$form_id
-				AND l.id = ld.lead_id
-				$star_filter
-				$read_filter
-				$status_filter
-				$user_filter
-				$start_date_filter
-				$end_date_filter
-				$search_filter
-				$in_search_criteria";
-
-		return $wpdb->get_var( $sql );
 	}
 
 	static function check_meta_approval( $lead_id ) {
