@@ -214,8 +214,6 @@ class GFDirectory_EditForm {
 			    	displayMessage('<?php echo esc_js($process_bulk_update_message); ?>', 'updated', '#lead_form');
 			    <?php } ?>
 
-		    	$("#bulk_action,#bulk_action2").append('<optgroup label="Directory"><option value="approve-'+formID+'"><?php echo esc_js( __('Approve', 'gravity-forms-addons')); ?></option><option value="unapprove-'+formID+'"><?php echo esc_js( __('Disapprove', 'gravity-forms-addons')); ?></option></optgroup>');
-
 		    	var approveTitle = '<?php echo esc_js( __('Entry not approved for directory viewing. Click to approve this entry.', 'gravity-forms-addons')); ?>';
 		    	var unapproveTitle = '<?php echo esc_js( __('Entry approved for directory viewing. Click to disapprove this entry.', 'gravity-forms-addons')); ?>';
 

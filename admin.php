@@ -41,37 +41,59 @@ class GFDirectory_Admin {
 
 		add_action( 'gform_entries_first_column_actions', array( $this, 'add_edit_entry_link' ), 10, 5 );
 
+		add_action( 'gform_entry_list_bulk_actions', array( $this, 'add_bulk_actions' ), 10, 2 );
+
 		self::process_bulk_update();
 	}
+
+	/**
+     * Add Approve and Disapprove bulk actions to the entries dropdown
+	 * @param array $actions
+	 * @param int $form_id
+	 *
+	 * @return array
+	 */
+	public function add_bulk_actions( $actions = array(), $form_id = 0 ) {
+
+		$actions['approve-' . $form_id ] = esc_html__('Approve', 'gravity-forms-addons');
+		$actions['unapprove-' . $form_id ] = esc_html__('Disapprove', 'gravity-forms-addons');
+
+	    return $actions;
+    }
 
 	public static function process_bulk_update() {
 		global $process_bulk_update_message;
 
-		if ( RGForms::post( "action" ) === 'bulk' ) {
-			check_admin_referer( 'gforms_entry_list', 'gforms_entry_list' );
-
-			$bulk_action = ! empty( $_POST["bulk_action"] ) ? $_POST["bulk_action"] : $_POST["bulk_action2"];
-			$leads       = $_POST["lead"];
-
-			$entry_count = count( $leads ) > 1 ? sprintf( __( "%d entries", "gravityforms" ), count( $leads ) ) : __( "1 entry", "gravityforms" );
-
-			$bulk_action = explode( '-', $bulk_action );
-			if ( ! isset( $bulk_action[1] ) || empty( $leads ) ) {
-				return false;
-			}
-
-			switch ( $bulk_action[0] ) {
-				case "approve":
-					self::directory_update_bulk( $leads, 1, $bulk_action[1] );
-					$process_bulk_update_message = sprintf( __( "%s approved.", "gravity-forms-addons" ), $entry_count );
-					break;
-
-				case "unapprove":
-					self::directory_update_bulk( $leads, 0, $bulk_action[1] );
-					$process_bulk_update_message = sprintf( __( "%s disapproved.", "gravity-forms-addons" ), $entry_count );
-					break;
-			}
+		if ( empty( $_POST['action'] ) && empty( $_POST['action2'] ) || empty( $_POST['gforms_entry_list'] ) ) {
+            return;
 		}
+
+		$bulk_action = ! empty( $_POST["action"] ) ? $_POST["action"] : $_POST["action2"];
+
+		$bulk_action = explode( '-', $bulk_action );
+		if ( !in_array( $bulk_action[0], array( 'approve', 'unapprove' ) ) || ! isset( $bulk_action[1] ) || ! is_numeric( $bulk_action[1] ) ) {
+		    return;
+		}
+
+        check_admin_referer( 'gforms_entry_list', 'gforms_entry_list' );
+
+		$leads = isset( $_POST["lead"] ) ? $_POST["lead"] : $_POST["entry"];
+
+		$leads = array_map( 'intval', $leads );
+
+        $entry_count = count( $leads ) > 1 ? sprintf( __( "%d entries", "gravityforms" ), count( $leads ) ) : __( "1 entry", "gravityforms" );
+
+        switch ( $bulk_action[0] ) {
+            case "approve":
+                self::directory_update_bulk( $leads, 1, $bulk_action[1] );
+                $process_bulk_update_message = sprintf( __( "%s approved.", "gravity-forms-addons" ), $entry_count );
+                break;
+
+            case "unapprove":
+                self::directory_update_bulk( $leads, 0, $bulk_action[1] );
+                $process_bulk_update_message = sprintf( __( "%s disapproved.", "gravity-forms-addons" ), $entry_count );
+                break;
+        }
 	}
 
 	static private function directory_update_bulk( $leads, $approved, $form_id ) {
@@ -150,8 +172,8 @@ class GFDirectory_Admin {
 			}
 		}
 
-		if ( isset( $_REQUEST['page'] ) && ( $_REQUEST['page'] == 'gf_edit_forms' || $_REQUEST['page'] == 'gf_entries' ) ) {
-			echo self::add_edit_js( isset( $_REQUEST['id'] ), $settings );
+		if ( in_array( rgget( 'page' ), array( 'gf_entries', 'gf_edit_forms' ), true ) ) {
+			self::add_edit_js( isset( $_REQUEST['id'] ), $settings );
 		}
 	}
 
@@ -160,6 +182,16 @@ class GFDirectory_Admin {
 		<script>
 			// Edit link for Gravity Forms entries
 			jQuery( document ).ready( function ( $ ) {
+
+				$('select[id^=bulk-action-selector-]').each(function() {
+					var $optgroup = $('<optgroup label="<?php esc_attr_e('Directory', 'gravity-forms-addons' ); ?>"></optgroup>');
+
+					$('option[value^="approve-"]', $( this ) ).remove().appendTo( $optgroup );
+					$('option[value^="unapprove-"]', $( this ) ).remove().appendTo( $optgroup );
+
+					$( this ).append( $optgroup );
+                });
+
 				<?php    if(! empty( $settings['modify_admin']['expand'] ) && $edit_forms) { ?>
 				var onScrollScript = window.onscroll;
 				$( 'div.gforms_edit_form #add_fields #floatMenu' ).prepend( '<div class="gforms_expend_all_menus_form"><label for="expandAllMenus"><input type="checkbox" id="expandAllMenus" value="1" /> Expand All Menus</label></div>' );
