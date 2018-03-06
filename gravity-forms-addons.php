@@ -514,6 +514,8 @@ class GFDirectory {
 		    return;
         }
 
+		$approved = $approved ? $approved : '';
+
         GFAPI::update_entry_field( $lead_id, $approvedcolumn, $approved );
 
 		$message = empty( $approved ) ? __( 'Disapproved the lead', 'gravity-forms-addons' ) : __( 'Approved the lead', 'gravity-forms-addons' );
@@ -1072,7 +1074,7 @@ class GFDirectory {
 				$adminonlycolumns = self::get_admin_only( $form );
 			}
 
-			$approved = self::check_approval( $lead, $approvedcolumn );
+			$approved = self::check_approval( $lead, $approvedcolumn, rgar( $options, 'smartapproval', false ) );
 
 			//since 3.5
 			$lead = self::remove_hidden_fields( array( $lead ), $adminonlycolumns, $approvedcolumn, true, true, $showadminonly, $form );
@@ -1336,7 +1338,16 @@ class GFDirectory {
 
 		$approvedcolumn = NULL;
 
-		if ( true === $approved || ( $smartapproval && $approved === - 1 ) ) {
+		$smartapproval = ! empty( $smartapproval );
+		$enable_smart_approval = false;
+
+		// Approved is not enabled, and smart approval is enabled
+		if ( - 1 === $approved && $smartapproval ) {
+		    $enable_smart_approval = true;
+            $approved = true;
+		}
+
+		if ( true === $approved ) {
 			$approvedcolumn = self::get_approved_column( $form );
 		}
 
@@ -1391,6 +1402,23 @@ class GFDirectory {
 				$search_criteria[ $key ] = $_GET[ 'filter_' . $key ];
 			}
 		}
+		if( $smartapproval && $enable_smart_approval ) {
+
+			$search_criteria['field_filters'][] = array(
+				'key' => 'is_approved',
+				'operator' => 'isnot',
+				'value' => ''
+			);
+
+			$search_criteria['field_filters'][] = array(
+				'key' => 'is_approved',
+				'operator' => 'isnot',
+				'value' => '0'
+			);
+
+			$search_criteria['field_filters']['mode'] = 'all';
+
+        }
 
 		$total_count = 0;
 
@@ -2047,8 +2075,6 @@ class GFDirectory {
 						}
 					}
 				}
-			}
-		}
 
 				foreach ( $field->inputs as $input ) {
 					if ( in_array( $input['label'], $approved_strings ) || ( isset( $input['value'] ) && in_array( $input['value'], $approved_strings ) ) ) {
@@ -2272,12 +2298,6 @@ class GFDirectory {
 		}
 
 		if ( $approvedcolumn ) {
-			$search_criteria['field_filters'][] = array(
-				'key' => $approvedcolumn,
-				'operator' => 'is',
-				'value' => 'Approved'
-			);
-
 			$search_criteria['field_filters']['mode'] = 'all';
 		}
 
@@ -2557,8 +2577,16 @@ class GFDirectory {
 		return gform_get_meta( $lead_id, 'is_approved' );
 	}
 
-	static function check_approval( $lead, $column ) {
-		return self::check_meta_approval( $lead['id'] ) || ! empty( $lead[ $column ] );
+	static function check_approval( $lead, $column, $smartapproval = false ) {
+
+	    $approved = self::check_meta_approval( $lead['id'] ) || ! empty( $lead[ $column ] );
+
+	    // Approval isn't set yet
+	    if( ! $approved && ! empty( $smartapproval ) ) {
+		    $approved = false === gform_get_meta( $lead['id'], 'is_approved' );
+        }
+
+		return $approved;
 	}
 
 	static function hide_in_directory( $form, $field_id ) {
