@@ -1327,7 +1327,7 @@ class GFDirectory {
 		$tableclass .= ! empty( $jstable ) ? sprintf( ' tablesorter tablesorter-%s', apply_filters( 'kws_gf_tablesorter_theme', 'blue', $form ) ) : '';
 		$title           = $form["title"];
 		$sort_field_meta = RGFormsModel::get_field( $form, $sort_field );
-		$is_numeric      = $sort_field_meta["type"] == "number";
+		$is_numeric      = ( $sort_field_meta && $sort_field_meta->type === "number" );
 
 		$columns = self::get_grid_columns( $form_id, true );
 
@@ -2252,6 +2252,7 @@ class GFDirectory {
 		$sorting = array(
             'direction' => $sort_direction,
             'key' => $sort_field_number,
+            'is_numeric' => $is_numeric_sort,
         );
 
 		$paging = array(
