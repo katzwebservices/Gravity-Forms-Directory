@@ -525,14 +525,14 @@ class GFDirectory {
 		global $current_user;
 		require_once( GFCommon::get_base_path() . "/form_display.php" );
 
-		$_gform_directory_approvedcolumn = self::get_approved_column( $Form );
+		$approvedcolumn = self::get_approved_column( $Form );
 
 		// We fetch this again, since it may have had some admin-only columns taken out.
 		#$lead = RGFormsModel::get_lead($lead["id"]);
 
 		// If you want to allow users to edit their own approval (?) add a filter and return true.
 		if ( apply_filters( 'kws_gf_directory_allow_user_edit_approved', false ) === false ) {
-			$Form['fields'] = self::remove_approved_column( 'form', $Form['fields'], $_gform_directory_approvedcolumn );
+			$Form['fields'] = self::remove_approved_column( 'form', $Form['fields'], $approvedcolumn );
 		}
 
 		// If this is not the form that should be edited
@@ -1989,10 +1989,10 @@ class GFDirectory {
 		if ( ! in_array( $lead['id'], $processed_meta ) ) {
 			$processed_meta[] = $lead['id'];
 
-			$forms                           = RGFormsModel::get_forms( NULL, "title" );
-            $_gform_directory_approvedcolumn = self::globals_get_approved_column( $forms[0]->id );
+			$forms          = RGFormsModel::get_forms( null, "title" );
+			$approvedcolumn = self::globals_get_approved_column( $forms[0]->id );
 
-			if ( self::check_approval( $lead, $_gform_directory_approvedcolumn ) ) {
+			if ( self::check_approval( $lead, $approvedcolumn ) ) {
 				echo '<span style="display:none;"><input type="hidden" class="lead_approved" id="lead_approved_' . $lead['id'] . '" value="true" /></span>';
 			}
 		}
