@@ -58,7 +58,7 @@ class KWS_GF_Change_Lead_Creator {
 		RGFormsModel::update_lead_property( $leadid, 'created_by', $created_by );
 
 		// If the creator has changed, let's add a note about who it used to be.
-		$originally_created_by = rgpost( 'originally_created_by' );
+		$originally_created_by = intval( rgpost( 'originally_created_by' ) );
 
 		if ( $originally_created_by !== $created_by ) {
 
@@ -100,7 +100,7 @@ class KWS_GF_Change_Lead_Creator {
 		/**
 		 * There are issues with too many users where it breaks the select. We try to keep it at a reasonable number.
 		 *
-		 * @link   texthttp://codex.wordpress.org/Function_Reference/get_users
+		 * @link http://codex.wordpress.org/Function_Reference/get_users
 		 * @var  array Settings array
 		 */
 		$get_users_settings = apply_filters( 'gravityview_change_entry_creator_user_parameters', array( 'number' => 300 ) );
@@ -113,7 +113,7 @@ class KWS_GF_Change_Lead_Creator {
         <select name="created_by" id="change_created_by" class="widefat">';
 		$output .= '<option value=""> &mdash; ' . esc_attr__( 'No User', 'gravity-view' ) . ' &mdash; </option>';
 		foreach ( $users as $user ) {
-			$output .= '<option value="' . $user->ID . '"' . selected( $lead['created_by'], $user->ID, false ) . '>' . esc_attr( $user->display_name . ' (' . $user->user_nicename . ')' ) . '</option>';
+			$output .= '<option value="' . $user->ID . '" ' . selected( $lead['created_by'], $user->ID, false ) . '>' . esc_attr( $user->display_name . ' (' . $user->user_nicename . ')' ) . '</option>';
 		}
 		$output .= '</select>';
 		$output .= '<input name="originally_created_by" value="' . $lead['created_by'] . '" type="hidden" />';

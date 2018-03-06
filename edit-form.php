@@ -102,7 +102,7 @@ class GFDirectory_EditForm {
 	}
 
 	public function directory_admin_head() {
-		global $_gform_directory_approvedcolumn, $process_bulk_update_message;
+		global $process_bulk_update_message;
 
 		// Entries screen shows first form's entries by default, if not specified
 		if( isset( $_GET['id'] ) ) {
@@ -146,16 +146,14 @@ class GFDirectory_EditForm {
 
 			<?php
 
-			//$formID = RGForms::get("id");
-
 	        if(empty($formID)) {
-		        $forms = RGFormsModel::get_forms(NULL, "title");
+		        $forms = RGFormsModel::get_forms(null, "title");
 	            $formID = $forms[0]->id;
 	        }
 
-		   	$_gform_directory_approvedcolumn = empty($_gform_directory_approvedcolumn) ? GFDirectory::globals_get_approved_column($formID) : $_gform_directory_approvedcolumn;
+		   	$approvedcolumn = GFDirectory::globals_get_approved_column( $formID );
 
-			if(!empty($_gform_directory_approvedcolumn)) {
+			if(!empty($approvedcolumn)) {
 			    echo 'formID = '.$formID.';';
 		       ?>
 
@@ -228,14 +226,17 @@ class GFDirectory_EditForm {
 				    }
 
 					// Update the title and screen-reader text
-			        if(!is_approved) { $(this).text('X').prop('title', unapproveTitle); }
-			        else { $(this).text('O').prop('title', approveTitle); }
+			        if(!is_approved) {
+						$(this).text('X').prop('title', unapproveTitle);
+					} else {
+						$(this).text('O').prop('title', approveTitle);
+					}
 
 					if(e.type == 'click') {
 				        UpdateApproved($('th input[type="checkbox"]', $tr).val(), is_approved ? 0 : 'Approved');
 				    }
 
-					UpdateApprovedColumns($(this).parents('table'), false);
+					UpdateApprovedColumns($(this).parents('table.gf_entries'), false);
 
 					return false;
 
@@ -258,14 +259,14 @@ class GFDirectory_EditForm {
 		    	}
 
 				// Add the header column
-		    	$('thead .column-is_starred, tfoot .column-is_starred').after('<th class="manage-column column-is_starred sortable"><a href="<?php echo esc_url( add_query_arg(array('sort' => $_gform_directory_approvedcolumn)) ); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" title="<?php echo esc_js( __('Show entry in directory view?', 'gravity-forms-addons')); ?>" /></span></a></th>');
+		    	$('thead .column-is_starred, tfoot .column-is_starred').after('<th class="manage-column column-is_starred sortable"><a href="<?php echo esc_url( add_query_arg(array('sort' => $approvedcolumn)) ); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" title="<?php echo esc_js( __('Show entry in directory view?', 'gravity-forms-addons')); ?>" /></span></a></th>');
 
 				// Add to each row
 		    	$('tbody td:has(img[src*="star"]), tbody th:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
 
 		    	$('tr:has(input.lead_approved)').addClass('lead_approved').find('a.toggleApproved').prop('title', unapproveTitle).text('O');
 
-		    	UpdateApprovedColumns($('table'), true);
+		    	UpdateApprovedColumns($('table.gf_entries'), true);
 
 		    });
 			<?php } // end if(!empty($_gform_directory_approvedcolumn)) check ?>
