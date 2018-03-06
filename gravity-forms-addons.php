@@ -37,7 +37,7 @@ class GFDirectory {
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
 	private static $version = "3.8.1";
-	private static $min_gravityforms_version = "1.5";
+	private static $min_gravityforms_version = "2.2.3.12";
 
 	public static function directory_defaults( $args = array() ) {
 		$defaults = array(
