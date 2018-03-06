@@ -209,7 +209,7 @@ class GFDirectory_EditForm {
 			jQuery(document).ready(function($) {
 
 		    	<?php if(!empty($process_bulk_update_message)) { ?>
-			    	displayMessage('<?php echo esc_js($process_bulk_update_message); ?>', 'updated', '#lead_form');
+			    	displayMessage('<?php echo esc_js($process_bulk_update_message); ?>', 'updated', '.gf_entries');
 			    <?php } ?>
 
 		    	var approveTitle = '<?php echo esc_js( __('Entry not approved for directory viewing. Click to approve this entry.', 'gravity-forms-addons')); ?>';
@@ -221,7 +221,7 @@ class GFDirectory_EditForm {
 		    		var $tr = $(this).parents('tr');
 					var is_approved = $tr.is(".lead_approved");
 
-					if(e.type == 'click') {
+					if(e.type === 'click') {
 				        $tr.toggleClass("lead_approved");
 				    }
 
@@ -245,15 +245,40 @@ class GFDirectory_EditForm {
 		    	// We want to make sure that the checkboxes go away even if the Approved column is showing.
 		    	// They will be in sync when loaded, so only upon click will we process.
 		    	function UpdateApprovedColumns($table, onLoad) {
-					var colIndex = $('th:contains("Approved")', $table).index() - 1;
+
+		    		<?php
+
+		    		if( ! empty( $approvedcolumn ) ) {
+		    		   /** @see https://stackoverflow.com/a/350300/480856 */
+		    		   $approved_column_jquery = str_replace( '.', '\\\.', $approvedcolumn );
+		    		   $approved_column_jquery = 'field_id-' . esc_html( $approved_column_jquery );
+		    		} else {
+		    		    echo 'return;'; // No need to update approval columns; the only approval is the meta checkbox
+		    		}
+		    		?>
 
 					$('tr', $table).each(function() {
-						if($(this).is('.lead_approved') || (onLoad && $("input.lead_approved", $(this)).length > 0)) {
-							if(onLoad && $(this).not('.lead_approved')) { $(this).addClass('lead_approved'); }
-							$('td:visible:eq('+colIndex+'):has(.toggleApproved)', $(this)).html("<img src='<?php echo plugins_url('images/tick.png', __FILE__); ?>/>");
+
+						// No GF approval; don't modify things
+						if( 0 === $( '.toggleApproved', $( this ) ).length ) {
+							return;
+						}
+
+						if( $(this).is('.lead_approved') || (onLoad && $("input.lead_approved", $(this)).length > 0)) {
+
+							if(onLoad && $(this).not('.lead_approved')) {
+								$(this).addClass('lead_approved');
+							}
+
+							$('td.column-<?php echo $approved_column_jquery; ?>:visible', $(this)).html('<i class="fa fa-check gf_valid"></i>');
+
 						} else {
-							if(onLoad && $(this).is('.lead_approved')) { $(this).removeClass('lead_approved'); }
-							$('td:visible:eq('+colIndex+'):has(.toggleApproved)', $(this)).html('');
+
+							if(onLoad && $(this).is('.lead_approved')) {
+								$(this).removeClass('lead_approved');
+							}
+
+							$('td.column-<?php echo $approved_column_jquery; ?>:visible', $(this)).html('');
 						}
 					});
 		    	}
