@@ -208,7 +208,6 @@ class GFDirectory {
 			if ( apply_filters( 'kws_gf_directory_shortlink', true ) ) {
 				add_filter( 'get_shortlink', array( 'GFDirectory', 'shortlink' ) );
 			}
-			add_filter( 'kws_gf_directory_lead_filter', array( 'GFDirectory', 'show_only_user_entries' ), 10, 2 );
 			add_filter( 'kws_gf_directory_anchor_text', array( 'GFDirectory', 'directory_anchor_text' ) );
 		}
 
@@ -1116,7 +1115,6 @@ class GFDirectory {
 	}
 
 	public static function update_grid_column_meta( $form_id, $columns ) {
-		global $wpdb;
 
 		$meta = maybe_serialize( stripslashes_deep( $columns ) );
 
@@ -1124,9 +1122,9 @@ class GFDirectory {
 	}
 
 	public static function get_grid_column_meta( $form_id ) {
-		global $wpdb;
 
 		$grid = get_option( 'gf_directory_form_' . $form_id . '_grid' );
+
 		if ( ! $grid ) {
 			$grid = GFFormsModel::get_grid_column_meta( $form_id );
 			self::update_grid_column_meta( $form_id, $grid );
@@ -2423,7 +2421,6 @@ class GFDirectory {
 			}
 			$content = preg_replace( "/<\/tr[^>]*>/", "\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t\t\t\t\t</li>", $content );
 		}
-		#	$content = preg_replace("/\<\/p\>\s+\<\/li/ism","\<\/p\>\<\/li", $content);
 		$content = preg_replace( "/(?:\s+)?(valign\=\"(?:.*?)\"|width\=\"(?:.*?)\"|cellspacing\=\"(?:.*?)\")(?:\s+)?/ism", ' ', $content );
 		$content = preg_replace( "/<\/?tbody[^>]*>/", "", $content );
 		$content = preg_replace( "/<thead[^>]*>.*<\/thead>|<tfoot[^>]*>.*<\/tfoot>/is", "", $content );
@@ -2488,7 +2485,7 @@ class GFDirectory {
 					$url = $url['path'];
 				}
 				$href = trailingslashit( $url ) . sanitize_title( apply_filters( 'kws_gf_directory_endpoint', 'entry' ) ) . '/' . $form_id . apply_filters( 'kws_gf_directory_endpoint_separator', '/' ) . $lead_id . '/';
-				#if(!empty($url['query'])) { $href .= '?'.$url['query']; }
+
 				$href = add_query_arg( array(
 					'gf_search'  => ! empty( $_REQUEST['gf_search'] ) ? $_REQUEST['gf_search'] : NULL,
 					'sort'       => isset( $_REQUEST['sort'] ) ? $_REQUEST['sort'] : NULL,
@@ -2549,7 +2546,6 @@ class GFDirectory {
 
 	static function check_hide_in( $type, $form, $field_id ) {
 		foreach ( $form['fields'] as $field ) {
-#			echo $field['label'] . ' / ' . floor($field['id']).' / '.floor($field_id).' / <strong>'.$field["{$type}"].'</strong><br />';
 			if ( floor( $field_id ) === floor( $field['id'] ) && ! empty( $field["{$type}"] ) ) {
 				return true;
 			}
@@ -2907,17 +2903,11 @@ function kws_gf_load_functions() {
 			$form = RGFormsModel::get_form_meta( $form_id );
 			foreach ( $form["fields"] as $field ) {
 				if ( $field['id'] == $field_id ) {
-					# $output = RGForms::escape_text($field['label']); // No longer used
 					$output = esc_html( $field['label'] ); // Using esc_html(), a WP function
 				} elseif ( is_array( $field['inputs'] ) ) {
 					foreach ( $field["inputs"] as $input ) {
 						if ( $input['id'] == $field_id ) {
-							if ( class_exists( 'GFCommon' ) ) {
-								$output = esc_html( GFCommon::get_label( $field, $field_id ) );
-							} else {
-								#$output = RGForms::escape_text(RGForms::get_label($field,$field_id));  // No longer used
-								$output = esc_html( RGForms::get_label( $field, $field_id ) );  // No longer used
-							}
+							$output = esc_html( GFCommon::get_label( $field, $field_id ) );
 						}
 					}
 				}
