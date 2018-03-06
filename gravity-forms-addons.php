@@ -2755,32 +2755,34 @@ class GFDirectory {
 	public static function save_lead( $form, &$lead ) {
 		global $wpdb;
 
-		if ( IS_ADMIN && ! GFCommon::current_user_can_any( "gravityforms_edit_entries" ) ) {
+		if ( is_admin() && ! GFCommon::current_user_can_any( "gravityforms_edit_entries" ) ) {
 			die( __( "You don't have adequate permission to edit entries.", "gravityforms" ) );
 		}
 
-		$lead_detail_table = RGFormsModel::get_lead_details_table_name();
-
-		//Inserting lead if null
-		if ( $lead == NULL ) {
-			global $current_user;
-			$user_id = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
-
-			$lead_table = RGFormsModel::get_lead_table_name();
-			$user_agent = RGFormsModel::truncate( $_SERVER["HTTP_USER_AGENT"], 250 );
-			$currency   = GFCommon::get_currency();
-			$source_url = RGFormsModel::truncate( RGFormsModel::get_current_page_url(), 200 );
-
-			$wpdb->query( $wpdb->prepare( "INSERT INTO $lead_table(form_id, ip, source_url, date_created, user_agent, currency, created_by) VALUES(%d, %s, %s, utc_timestamp(), %s, %s, {$user_id})", $form["id"], RGFormsModel::get_ip(), $source_url, $user_agent, $currency ) );
-
+		// Create a new entry with just an ID, if null
+		if ( null === $lead ) {
+			$temp_entry = array(
+                'form_id' => $form['id'],
+                'user_agent' => RGFormsModel::truncate( $_SERVER["HTTP_USER_AGENT"], 250 ),
+            );
 
 			//reading newly created lead id
-			$lead_id = $wpdb->insert_id;
-			$lead    = array( "id" => $lead_id );
+			$entry_id = GFAPI::add_entry( $temp_entry );
 
+			unset( $temp_entry );
+
+			$lead = GFAPI::get_entry( $entry_id );
 		}
 
-		$current_fields   = $wpdb->get_results( $wpdb->prepare( "SELECT id, field_number FROM $lead_detail_table WHERE lead_id=%d", $lead["id"] ) );
+
+		if( is_callable( array( 'GFFormsModel', 'get_entry_meta_table_name' ) ) ) {
+			$entry_meta_table = RGFormsModel::get_entry_meta_table_name();
+			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT id, meta_key FROM $entry_meta_table WHERE entry_id=%d", $lead['id'] ) );
+        } else {
+			$lead_detail_table = RGFormsModel::get_lead_details_table_name();
+			$current_fields    = $wpdb->get_results( $wpdb->prepare( "SELECT id, field_number FROM $lead_detail_table WHERE lead_id=%d", $lead["id"] ) );
+		}
+
 		$original_post_id = rgget( "post_id", $lead );
 
 		$total_fields       = array();
@@ -2790,71 +2792,95 @@ class GFDirectory {
 		foreach ( $form["fields"] as $field ) {
 
 			//Ignore fields that are marked as display only
-			if ( rgget( "displayOnly", $field ) && $field["type"] != "password" ) {
+			if ( rgget( "displayOnly", $field ) && $field->type !== "password" ) {
 				continue;
 			}
 
 			//ignore pricing fields in the entry detail
-			if ( RG_CURRENT_VIEW == "entry" && GFCommon::is_pricing_field( $field["type"] ) ) {
+			if ( GFForms::get( 'view' ) === "entry" && GFCommon::is_pricing_field( $field->type ) ) {
 				continue;
 			}
 
 
 			//process total field after all fields have been saved
-			if ( $field["type"] == "total" ) {
+			if ( $field->type == "total" ) {
 				$total_fields[] = $field;
 				continue;
 			}
 
 			//only save fields that are not hidden (except on entry screen)
-			if ( RG_CURRENT_VIEW == "entry" || ! RGFormsModel::is_field_hidden( $form, $field, array(), $lead ) ) {
-				// process calculation fields after all fields have been saved (moved after the is hidden check)
-				if ( GFCommon::has_field_calculation( $field ) ) {
+			if ( GFForms::get( 'view' ) === "entry" || ! GFFormsModel::is_field_hidden( $form, $field, array(), $lead ) ) {
+
+			    // process calculation fields after all fields have been saved (moved after the is hidden check)
+				if ( $field->has_calculation() ) {
 					$calculation_fields[] = $field;
 					continue;
 				}
 
-				if ( $field['type'] == 'post_category' ) {
+				if ( $field->type == 'post_category' ) {
 					$field = GFCommon::add_categories_as_choices( $field, '' );
 				}
 
-				if ( isset( $field["inputs"] ) && is_array( $field["inputs"] ) ) {
-
-					foreach ( $field["inputs"] as $input ) {
-						RGFormsModel::save_input( $form, $field, $lead, $current_fields, $input["id"] );
+				if ( isset( $field->inputs ) && is_array( $field->inputs ) ) {
+					foreach ( $field->inputs as $input ) {
+						GFFormsModel::save_input( $form, $field, $lead, $current_fields, $input["id"] );
 					}
 				} else {
-					RGFormsModel::save_input( $form, $field, $lead, $current_fields, $field["id"] );
+					GFFormsModel::save_input( $form, $field, $lead, $current_fields, $field->id );
 				}
 			}
 
+			if( is_callable( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
+				GFFormsModel::commit_batch_field_operations();
+            }
+
 			//Refresh lead to support conditionals (not optimal but...)
-			$lead = RGFormsModel::get_lead( $lead['id'] );
+			$lead = GFFormsModel::get_lead( $lead['id'] );
 		}
 
 		if ( ! empty( $calculation_fields ) ) {
+
+			if( is_callable( 'GFFormsModel', 'begin_batch_field_operations' ) ) {
+				GFFormsModel::begin_batch_field_operations();
+			}
+
 			foreach ( $calculation_fields as $calculation_field ) {
 
-				if ( isset( $calculation_field["inputs"] ) && is_array( $calculation_field["inputs"] ) ) {
-					foreach ( $calculation_field["inputs"] as $input ) {
+				if ( isset( $calculation_field->inputs ) && is_array( $calculation_field->inputs ) ) {
+					foreach ( $calculation_field->inputs as $input ) {
 						RGFormsModel::save_input( $form, $calculation_field, $lead, $current_fields, $input["id"] );
 						RGFormsModel::refresh_lead_field_value( $lead["id"], $input["id"] );
 					}
 				} else {
-					RGFormsModel::save_input( $form, $calculation_field, $lead, $current_fields, $calculation_field["id"] );
-					RGFormsModel::refresh_lead_field_value( $lead["id"], $calculation_field["id"] );
+					RGFormsModel::save_input( $form, $calculation_field, $lead, $current_fields, $calculation_field->id );
+					RGFormsModel::refresh_lead_field_value( $lead["id"], $calculation_field->id );
 				}
-
 			}
+
+			if( is_callable( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
+				GFFormsModel::commit_batch_field_operations();
+			}
+
 			RGFormsModel::refresh_product_cache( $form, $lead = RGFormsModel::get_lead( $lead['id'] ) );
 		}
 
 		//saving total field as the last field of the form.
 		if ( ! empty( $total_fields ) ) {
+
+			if( is_callable( 'GFFormsModel', 'begin_batch_field_operations' ) ) {
+				GFFormsModel::begin_batch_field_operations();
+			}
+
 			foreach ( $total_fields as $total_field ) {
 				GFCommon::log_debug( "Saving total field." );
-				RGFormsModel::save_input( $form, $total_field, $lead, $current_fields, $total_field["id"] );
+
+				RGFormsModel::save_input( $form, $total_field, $lead, $current_fields, $total_field->id );
+
 			}
+
+			if( is_callable( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
+                GFFormsModel::commit_batch_field_operations();
+            }
 		}
 	}
 
