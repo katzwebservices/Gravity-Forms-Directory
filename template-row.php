@@ -13,7 +13,7 @@ if ( is_array( $leads ) && ! empty( $leads ) && sizeof( $leads ) > 0 && $lead_co
 		$celltitle = '';
 
 		if ( $approved ) {
-			$leadapproved = self::check_approval( $lead, $approvedcolumn );
+			$leadapproved = self::check_approval( $lead, $approvedcolumn, $smartapproval );
 		}
 
 		if ( ( isset( $leadapproved ) && $leadapproved && $approved ) || ! $approved ) {
