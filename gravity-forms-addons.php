@@ -549,10 +549,10 @@ class GFDirectory {
 			( ! empty( $options['useredit'] ) && is_user_logged_in() && intval( $current_user->ID ) === intval( $lead['created_by'] ) ) === true || // OR
 
 			// Administrators can edit every listing, and this person has administrator access
-			( ! empty( $options['adminedit'] ) && self::has_access( "gravityforms_directory" ) ) === true )
-		) {
+			( ! empty( $options['adminedit'] ) && ( self::has_access( "gravityforms_directory" ) === true || GFCommon::current_user_can_any('gravityforms_edit_entries') ) )
+		) ) {
 			// Kick them out.
-			printf( esc_html_e( '%sYou do not have permission to edit this form.%s', 'gravity-forms-addons' ), '<div class="error">', '</div>' );
+			printf( esc_html__( '%sYou do not have permission to edit this form.%s', 'gravity-forms-addons' ), '<div class="error">', '</div>' );
 
 			return;
 		}
