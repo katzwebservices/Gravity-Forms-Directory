@@ -2290,11 +2290,15 @@ class GFDirectory {
 	 *
 	 * @return bool true: same user; false: nope!
 	 */
+	public static function is_current_user( $lead = array() ) {
+		$current_user = wp_get_current_user();
 
 		if ( empty( $lead["created_by"] ) ) {
             return false;
 		}
 
+		return ( (int) $current_user->ID === (int) $lead["created_by"] );
+	}
 
 	/**
      * @deprecated 4.0
