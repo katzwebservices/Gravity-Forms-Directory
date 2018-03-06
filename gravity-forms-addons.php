@@ -481,7 +481,7 @@ class GFDirectory {
 
 	//Returns true if the current page is one of Gravity Forms pages. Returns false if not
 	public static function is_gravity_page( $page = array() ) {
-		$current_page = trim( strtolower( RGForms::get( "page" ) ) );
+		$current_page = trim( strtolower( rgget( "page" ) ) );
 		if ( empty( $page ) ) {
 			$gf_pages = array( "gf_edit_forms", "gf_new_form", "gf_entries", "gf_settings", "gf_export", "gf_help" );
 		} else {
@@ -559,7 +559,7 @@ class GFDirectory {
 		$validation_message = '';
 
 		// If the form is submitted
-		if ( RGForms::post( "action" ) === "update" ) {
+		if ( rgpost( "action" ) === "update" ) {
 			check_admin_referer( 'gforms_save_entry', 'gforms_save_entry' );
 
 			$lead = apply_filters( 'kws_gf_directory_lead_being_updated', $lead, $Form );
@@ -577,6 +577,7 @@ class GFDirectory {
 			foreach ( $Form['fields'] as $field ) {
 				if ( ! GFCommon::is_product_field( $field["type"] ) ) {
 					$validation_message .= ( rgget( "failed_validation", $field ) && ! empty( $field["validation_message"] ) ) ? sprintf( "<li class='gfield_description validation_message'><strong>%s</strong>: %s</li>", $field["label"], $field["validation_message"] ) : "";;
+				if ( ! GFCommon::is_product_field( $field->type ) ) {
 				}
 			}
 			if ( ! empty( $validation_message ) ) {
@@ -684,10 +685,10 @@ class GFDirectory {
 		}
 
 		// There is no edit link
-		if ( isset( $_GET['edit'] ) || RGForms::post( "action" ) === "update" ) {
+		if ( isset( $_GET['edit'] ) || rgpost( "action" ) === "update" ) {
 			// Process editing leads
 			$lead = self::edit_lead_detail( $Form, $lead, $options );
-			if ( RGForms::post( "action" ) !== "update" ) {
+			if ( rgpost( "action" ) !== "update" ) {
 				return;
 			}
 		}
