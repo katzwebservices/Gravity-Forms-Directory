@@ -937,18 +937,18 @@ class GFDirectory {
 			return false;
 		}
 
-		foreach ( $form['fields'] as $key => $col ) {
+		foreach ( $form['fields'] as $key => $field ) {
 			// Only the Go to Entry button adds disableMargins.
 
-			if ( $col['type'] === 'hidden' && ! empty( $col['useAsEntryLink'] ) && ! empty( $col['disableMargins'] ) ) {
+			if ( $field->type === 'hidden' && ! empty( $field->useAsEntryLink ) && ! empty( $field->disableMargins ) ) {
 				continue;
 			}
-			if ( ! empty( $col['adminOnly'] ) ) {
-				$adminOnly[] = $col['id'];
+			if ( ! empty( $field->adminOnly ) ) {
+				$adminOnly[] = $field->id;
 			}
-			if ( isset( $col['inputs'] ) && is_array( $col['inputs'] ) ) {
-				foreach ( $col['inputs'] as $key2 => $input ) {
-					if ( ! empty( $col['adminOnly'] ) ) {
+			if ( isset( $field->inputs ) && is_array( $field->inputs ) ) {
+				foreach ( $field->inputs as $key2 => $input ) {
+					if ( ! empty( $field->adminOnly ) ) {
 						$adminOnly[] = $input['id'];
 					}
 				}
