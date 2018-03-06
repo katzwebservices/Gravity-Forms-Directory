@@ -2546,7 +2546,7 @@ class GFDirectory {
 
 	static function check_hide_in( $type, $form, $field_id ) {
 		foreach ( $form['fields'] as $field ) {
-			if ( floor( $field_id ) === floor( $field['id'] ) && ! empty( $field["{$type}"] ) ) {
+			if ( floor( $field_id ) === floor( $field->id ) && ! empty( $field->{$type} ) ) {
 				return true;
 			}
 		}
