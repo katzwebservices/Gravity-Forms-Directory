@@ -492,49 +492,34 @@ class GFDirectory {
 		return in_array( $current_page, $gf_pages );
 	}
 
+	/**
+     * Update the approval status for the entry
+     *
+	 * @param int $lead_id
+	 * @param int $approved
+	 * @param int $form_id
+	 * @param int $approvedcolumn
+	 */
 	static function directory_update_approved( $lead_id = 0, $approved = 0, $form_id = 0, $approvedcolumn = 0 ) {
 		global $wpdb;
 
-		$lead_detail_table = RGFormsModel::get_lead_details_table_name();
+		$current_user = wp_get_current_user();
 
 		// This will be faster in the 1.6+ future.
 		if ( function_exists( 'gform_update_meta' ) ) {
 			gform_update_meta( $lead_id, 'is_approved', $approved );
 		}
 
-		if ( empty( $approved ) ) {
-			//Deleting details for this field
-			$sql = $wpdb->prepare( "DELETE FROM $lead_detail_table WHERE lead_id=%d AND field_number BETWEEN %f AND %f ", $lead_id, $_gform_directory_approvedcolumn - 0.001, $_gform_directory_approvedcolumn + 0.001 );
-			$wpdb->query( $sql );
+		if( ! is_callable( array( 'GFAPI', 'update_entry_field' ) ) ) {
+			GFCommon::log_error( "Cannot update approval; update_entry_field not available in Gravity Forms" );
+		    return;
+        }
 
-			RGFormsModel::add_note( $lead_id, $current_user->ID, $user_data->display_name, stripslashes( __( 'Disapproved the lead', 'gravity-forms-addons' ) ) );
+        GFAPI::update_entry_field( $lead_id, $approvedcolumn, $approved );
 
-		} else {
+		$message = empty( $approved ) ? __( 'Disapproved the lead', 'gravity-forms-addons' ) : __( 'Approved the lead', 'gravity-forms-addons' );
 
-			// Get the fields for the lead
-			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT id, field_number FROM $lead_detail_table WHERE lead_id=%d", $lead_id ) );
-
-			$lead_detail_id = RGFormsModel::get_lead_detail_id( $current_fields, $_gform_directory_approvedcolumn );
-
-			// If there's already a field for the approved column, then we update it.
-			if ( $lead_detail_id > 0 ) {
-				$update = $wpdb->update( $lead_detail_table, array( "value" => $approved ), array(
-					"lead_id"      => $lead_id,
-					'form_id'      => $form_id,
-					'field_number' => $_gform_directory_approvedcolumn,
-				), array( "%s" ), array( "%d", "%d", "%f" ) );
-			} // Otherwise, we create it.
-			else {
-				$update = $wpdb->insert( $lead_detail_table, array(
-					"lead_id"      => $lead_id,
-					"form_id"      => $form_id,
-					"field_number" => $_gform_directory_approvedcolumn,
-					"value"        => $approved,
-				), array( "%d", "%d", "%f", "%s" ) );
-			}
-
-			RGFormsModel::add_note( $lead_id, $current_user->ID, $user_data->display_name, stripslashes( __( 'Approved the lead', 'gravity-forms-addons' ) ) );
-		}
+        RGFormsModel::add_note( $lead_id, $current_user->ID, $current_user->display_name, $message );
 	}
 
 	static public function edit_lead_detail( $Form, $lead, $options ) {
