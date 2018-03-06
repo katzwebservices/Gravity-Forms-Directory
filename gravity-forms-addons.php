@@ -2282,27 +2282,8 @@ class GFDirectory {
 			);
 		}
 
-		$lead_detail_table_name = RGFormsModel::get_lead_details_table_name();
-		$lead_table_name        = RGFormsModel::get_lead_table_name();
-
-		$orderby = $is_numeric_sort ? "ORDER BY query, (value+0) $sort_direction" : "ORDER BY query, value $sort_direction";
-
-		//$search = empty($search) ? "" : "WHERE d.value LIKE '%$search%' ";
-		$search_term   = "%$search%";
-		$search_filter = empty( $search ) ? "" : $wpdb->prepare( "WHERE d.value LIKE %s", $search_term );
-
-		//starred clause
-		$where = empty( $search ) ? "WHERE" : "AND";
-		$search_filter .= $star !== NULL && $status == 'active' ? $wpdb->prepare( "$where is_starred=%d AND status='active' ", $star ) : "";
-
-		//read clause
-		$where = empty( $search ) ? "WHERE" : "AND";
-		$search_filter .= $read !== NULL && $status == 'active' ? $wpdb->prepare( "$where is_read=%d AND status='active' ", $read ) : "";
-
-		//status clause
-		if ( function_exists( 'gform_get_meta' ) ) {
-			$where = empty( $search ) ? "WHERE" : "AND";
-			$search_filter .= $wpdb->prepare( "$where status=%s ", $status );
+		if ( $start_date ) {
+			$search_criteria['start_date'] = $start_date;
 		}
 
 		if ( $end_date ) {
