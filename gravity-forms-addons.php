@@ -676,7 +676,8 @@ class GFDirectory {
 		$display_empty_fields       = '';
 		$allow_display_empty_fields = true;
 		if ( $allow_display_empty_fields ) {
-			$display_empty_fields = @rgget( "gf_display_empty_fields", $_COOKIE );
+			$cookie_array = isset( $_COOKIE ) ? $_COOKIE : array();
+			$display_empty_fields = rgar( $cookie_array, "gf_display_empty_fields" );
 		}
 		if ( empty( $options ) ) {
 			$options = self::directory_defaults();
