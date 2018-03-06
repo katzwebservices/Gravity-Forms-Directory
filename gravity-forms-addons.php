@@ -566,7 +566,7 @@ class GFDirectory {
 
 			// We don't DO passwords.
 			foreach ( $Form['fields'] as $key => $field ) {
-				if ( $field['type'] === 'password' ) {
+				if ( $field->type === 'password' ) {
 					unset( $Form['fields'][ $key ] );
 				}
 			}
@@ -575,9 +575,8 @@ class GFDirectory {
 
 			$validation_message = '';
 			foreach ( $Form['fields'] as $field ) {
-				if ( ! GFCommon::is_product_field( $field["type"] ) ) {
-					$validation_message .= ( rgget( "failed_validation", $field ) && ! empty( $field["validation_message"] ) ) ? sprintf( "<li class='gfield_description validation_message'><strong>%s</strong>: %s</li>", $field["label"], $field["validation_message"] ) : "";;
 				if ( ! GFCommon::is_product_field( $field->type ) ) {
+					$validation_message .= ( rgget( "failed_validation", $field ) && ! empty( $field->validation_message ) ) ? sprintf( "<li class='gfield_description validation_message'><strong>%s</strong>: %s</li>", $field->label, $field->validation_message ) : "";;
 				}
 			}
 			if ( ! empty( $validation_message ) ) {
@@ -624,7 +623,7 @@ class GFDirectory {
 				$product_fields        = array();
 				foreach ( $Form['fields'] as $key => $field ) {
 					if (
-						GFCommon::is_product_field( $field["type"] ) ||
+						GFCommon::is_product_field( $field->type ) ||
 						is_numeric( $lead["post_id"] ) && GFCommon::is_post_field( $field )
 					) {
 						if ( is_numeric( $lead["post_id"] ) && GFCommon::is_post_field( $field ) && ! $message_shown ) {
@@ -633,9 +632,9 @@ class GFDirectory {
 						}
 
 						unset( $form_without_products['fields'][ $key ] );
-						$product_fields[] = $field['id'];
-						if ( ! empty( $field['inputs'] ) ) {
-							foreach ( $field['inputs'] as $input ) {
+						$product_fields[] = $field->id;
+						if ( ! empty( $field->inputs ) ) {
+							foreach ( $field->inputs as $input ) {
 								$product_fields[] = $input['id'];
 							}
 						}
@@ -729,9 +728,9 @@ class GFDirectory {
 			foreach ( $Form["fields"] as $field ) {
 
 				// Don't show fields defined as hide in single.
-				if ( ! empty( $field['hideInSingle'] ) ) {
+				if ( ! empty( $field->hideInSingle ) ) {
 					if ( self::has_access( "gravityforms_directory" ) ) {
-						echo "\n\t\t\t\t\t\t\t\t\t" . '<!-- ' . sprintf( esc_html__( '(Admin-only notice) Field #%d not shown: "Hide This Field in Single Entry View" was selected.', 'gravity-forms-addons' ), $field['id'] ) . ' -->' . "\n\n";
+						echo "\n\t\t\t\t\t\t\t\t\t" . '<!-- ' . sprintf( esc_html__( '(Admin-only notice) Field #%d not shown: "Hide This Field in Single Entry View" was selected.', 'gravity-forms-addons' ), $field->id ) . ' -->' . "\n\n";
 					}
 					continue;
 				}
@@ -773,7 +772,7 @@ class GFDirectory {
 
 					default :
 						//ignore product fields as they will be grouped together at the end of the grid
-						if ( GFCommon::is_product_field( $field["type"] ) ) {
+						if ( GFCommon::is_product_field( $field->type ) ) {
 							$has_product_fields = true;
 							continue;
 						}
@@ -1144,21 +1143,21 @@ class GFDirectory {
 			for ( $i = 0, $count = sizeof( $form["fields"] ); $i < $count && $i < 5; $i ++ ) {
 				$field = $form["fields"][ $i ];
 
-				if ( RGForms::get( "displayOnly", $field ) ) {
+				if ( $field->displayOnly ) {
 					continue;
 				}
 
 
-				if ( isset( $field["inputs"] ) && is_array( $field["inputs"] ) ) {
-					$field_ids[] = $field["id"];
-					if ( $field["type"] == "name" ) {
-						$field_ids[] = $field["id"] . '.3'; //adding first name
-						$field_ids[] = $field["id"] . '.6'; //adding last name
-					} else if ( isset( $field["inputs"][0] ) ) {
-						$field_ids[] = $field["inputs"][0]["id"]; //getting first input
+				if ( isset( $field->inputs ) && is_array( $field->inputs ) ) {
+					$field_ids[] = $field->id;
+					if ( 'name' === $field->type ) {
+						$field_ids[] = $field->id . '.3'; //adding first name
+						$field_ids[] = $field->id . '.6'; //adding last name
+					} else if ( isset( $field->inputs[0] ) ) {
+						$field_ids[] = $field->inputs[0]["id"]; //getting first input
 					}
 				} else {
-					$field_ids[] = $field["id"];
+					$field_ids[] = $field->id;
 				}
 			}
 			//adding default entry meta columns
@@ -1210,8 +1209,8 @@ class GFDirectory {
 					if ( $field ) {
 						$columns[ strval( $field_id ) ] = array(
 							"label"     => self::get_label( $field, $field_id, $input_label_only ),
-							"type"      => rgget( "type", $field ),
-							"inputType" => rgget( "inputType", $field ),
+							"type"      => rgobj( $field, 'type' ),
+							"inputType" => rgobj( $field, 'inputType' ),
 						);
 					}
 			}
@@ -1224,9 +1223,9 @@ class GFDirectory {
 	 * Get the label for the input field. This is necessary to prevent Admin Labels from being used instead of normal labels.
 	 */
 	public static function get_label( $field, $input_id = 0, $input_only = false ) {
-		$field_label = rgar( $field, "label" );
+		$field_label = rgobj( $field, "label" );
 		$input       = GFFormsModel::get_input( $field, $input_id );
-		if ( rgget( "type", $field ) == "checkbox" && $input != NULL ) {
+		if ( 'checkbox' === rgobj( $field, "type" ) && $input != NULL ) {
 			return $input["label"];
 		} else if ( $input != NULL ) {
 			return $input_only ? $input["label"] : $field_label . ' (' . $input["label"] . ')';
@@ -2175,8 +2174,8 @@ class GFDirectory {
 		$search_fields = array();
 
 		foreach ( $form['fields'] as $field ) {
-			if ( ! empty( $field['isSearchFilter'] ) ) {
-				$search_fields[] = $field['id'];
+			if ( ! empty( $field->isSearchFilter ) ) {
+				$search_fields[] = $field->id;
 			}
 		}
 
@@ -2578,7 +2577,7 @@ class GFDirectory {
 		}
 		foreach ( $form['fields'] as $field ) {
 
-			if ( floor( $field_id ) === floor( $field['id'] ) && ! empty( $field[ $property ] ) ) {
+			if ( floor( $field_id ) === floor( $field->id ) && ! empty( $field[ $property ] ) ) {
 				return $field[ $property ];
 			}
 		}
@@ -2602,7 +2601,7 @@ class GFDirectory {
 		}
 
 		foreach ( $form['fields'] as $field ) {
-			if ( floor( $field_id ) === floor( $field['id'] ) ) {
+			if ( floor( $field_id ) === floor( $field->id ) ) {
 				return $field;
 			}
 		}
@@ -2915,10 +2914,10 @@ function kws_gf_load_functions() {
 		function get_gf_field_label( $form_id, $field_id ) {
 			$form = RGFormsModel::get_form_meta( $form_id );
 			foreach ( $form["fields"] as $field ) {
-				if ( $field['id'] == $field_id ) {
-					$output = esc_html( $field['label'] ); // Using esc_html(), a WP function
-				} elseif ( is_array( $field['inputs'] ) ) {
-					foreach ( $field["inputs"] as $input ) {
+				if ( $field->id == $field_id ) {
+					$output = esc_html( $field->label ); // Using esc_html(), a WP function
+				} elseif ( is_array( $field->inputs ) ) {
+					foreach ( $field->inputs as $input ) {
 						if ( $input['id'] == $field_id ) {
 							$output = esc_html( GFCommon::get_label( $field, $field_id ) );
 						}
