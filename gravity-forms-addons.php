@@ -1408,6 +1408,7 @@ class GFDirectory {
                 );
 			}
 		}
+
 		if( $smartapproval && $enable_smart_approval ) {
 
 			$search_criteria['field_filters'][] = array(
@@ -1426,7 +1427,7 @@ class GFDirectory {
 
         }
 
-		$total_count = 0;
+        $total_count = 0;
 
 		//
 		// Or start to generate the directory
