@@ -2226,7 +2226,7 @@ class GFDirectory {
 
 		$search_criteria['field_filters'] = rgar( $search_criteria, 'field_filters', array() );
 
-		if ( '' !== $search ) {
+		if ( '' !== $search && ! is_null( $search ) ) {
 			$search_criteria['field_filters'][] = array(
 				'key' => 0,
 				'value' => $search,
