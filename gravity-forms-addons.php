@@ -1475,8 +1475,8 @@ class GFDirectory {
 			<script>
 				<?php if(! empty( $lightboxsettings['images'] ) || ! empty( $lightboxsettings['entry'] )) { ?>
 
-				var tb_pathToImage = "<?php echo site_url( '/wp-includes/js/thickbox/loadingAnimation.gif' ); ?>";
-				var tb_closeImage = "<?php echo site_url( '/wp-includes/js/thickbox/tb-close.png' ); ?>";
+				var tb_pathToImage = "<?php echo esc_js( site_url( '/wp-includes/js/thickbox/loadingAnimation.gif' ) ); ?>";
+				var tb_closeImage = "<?php echo esc_js( site_url( '/wp-includes/js/thickbox/tb-close.png' ) ); ?>";
 				var tb_height = 600;
 				<?php } ?>
 				function not_empty( variable ) {
@@ -1523,7 +1523,7 @@ class GFDirectory {
 						} else {
 							echo '&';
 						} ?>page=' +<?php echo isset( $_GET['pagenum'] ) ? intval( $_GET['pagenum'] ) : '"1"'; ?>;
-					var location = "<?php echo get_permalink( $post->ID ); ?>" + page + search + sort + dir + search_filters;
+					var location = "<?php echo esc_js( get_permalink( $post->ID ) ); ?>" + page + search + sort + dir + search_filters;
 					document.location = location;
 				}
 				<?php } ?>
@@ -1660,7 +1660,7 @@ class GFDirectory {
 									foreach ( $search_criteria as $key => $value ) {
 										$new_query_args[ 'filter_' . $key ] = $value;
 									}
-									echo add_query_arg( $new_query_args, get_permalink( $post->ID ) );
+									echo esc_url_raw( add_query_arg( $new_query_args, get_permalink( $post->ID ) ) );
 									?>"><?php
 								}
 								if ( $field_info['type'] == 'id' && $entry ) {
@@ -2630,7 +2630,7 @@ class GFDirectory {
 			if ( $linknewwindow ) {
 				$target = ' target="_blank"';
 			}
-			$address .= "<br/>" . apply_filters( 'kws_gf_directory_map_link', "<a href='http://maps.google.com/maps?q=$address_qs'" . $target . " class='map-it-link'>" . __( 'Map It' ) . "</a>" );
+			$address .= "<br/>" . apply_filters( 'kws_gf_directory_map_link', "<a href='https://maps.google.com/maps?q=$address_qs'" . $target . " class='map-it-link'>" . esc_html__( 'Map It' ) . "</a>" );
 		}
 
 		return $address;

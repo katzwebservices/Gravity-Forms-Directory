@@ -273,11 +273,11 @@ if ( is_array( $leads ) && ! empty( $leads ) && sizeof( $leads ) > 0 && $lead_co
 		<td colspan="<?php echo sizeof( $columns ); ?>" class="noresults" style="padding:20px;"><?php
 
 			if ( $search_query ) {
-				_e( "This search returned no results.", "gravity-forms-addons" );
+				esc_html_e( "This search returned no results.", "gravity-forms-addons" );
 			} elseif ( $limituser ) {
-				_e( "This form does not have any visible entries.", "gravity-forms-addons" );
+				esc_html_e( "This form does not have any visible entries.", "gravity-forms-addons" );
 			} else {
-				_e( "This form does not have any entries yet.", "gravity-forms-addons" );
+				esc_html_e( "This form does not have any entries yet.", "gravity-forms-addons" );
 			}
 
 			?></td>
