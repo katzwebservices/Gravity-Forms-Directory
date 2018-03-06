@@ -1336,11 +1336,12 @@ class GFDirectory {
 
 		$approvedcolumn = NULL;
 
-		if ( ( ! $approved && $approved !== - 1 ) || ( ! empty( $smartapproval ) && $approved === - 1 ) ) {
+		if ( true === $approved || ( $smartapproval && $approved === - 1 ) ) {
 			$approvedcolumn = self::get_approved_column( $form );
 		}
 
-		if ( ! empty( $smartapproval ) && $approved === - 1 && ! empty( $approvedcolumn ) ) {
+
+		if ( $approved || ( ! empty( $smartapproval ) && $approved === - 1 ) && ! empty( $approvedcolumn ) ) {
 			$approved = true; // If there is an approved column, turn on approval
 		} else {
 			$approved = false; // Otherwise, show entries as normal.
