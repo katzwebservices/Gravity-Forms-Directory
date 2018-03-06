@@ -2296,6 +2296,13 @@ class GFDirectory {
 		}
 
 
+	/**
+     * @deprecated 4.0
+	 */
+	static function show_only_user_entries( $leads = array(), $settings = array() ) {
+		_deprecated_function( __METHOD__, '4.0' );
+		return $leads;
+	}
 
 
 		if ( apply_filters( 'kws_gf_directory_anchor_text_striphttp', true ) ) {
