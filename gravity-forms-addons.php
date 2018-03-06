@@ -479,7 +479,11 @@ class GFDirectory {
 		$wp_rewrite->add_endpoint( "{$endpoint}", EP_ALL );
 	}
 
-	//Returns true if the current page is one of Gravity Forms pages. Returns false if not
+	/**
+	 * @param array $page
+	 *
+	 * @return bool Returns true if the current page is one of Gravity Forms pages. Returns false if not
+	 */
 	public static function is_gravity_page( $page = array() ) {
 		$current_page = trim( strtolower( rgget( "page" ) ) );
 		if ( empty( $page ) ) {
@@ -488,7 +492,7 @@ class GFDirectory {
 			$gf_pages = is_array( $page ) ? $page : array( $page );
 		}
 
-		return in_array( $current_page, $gf_pages );
+		return in_array( $current_page, $gf_pages, true );
 	}
 
 	/**

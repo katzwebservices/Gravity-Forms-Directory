@@ -169,7 +169,7 @@ class GFDirectory_Admin {
 			}
 		}
 
-		if ( in_array( rgget( 'page' ), array( 'gf_entries', 'gf_edit_forms' ), true ) ) {
+		if ( GFDirectory::is_gravity_page('gf_entries') || GFDirectory::is_gravity_page('gf_edit_forms') ) {
 			self::add_edit_js( isset( $_REQUEST['id'] ), $settings );
 		}
 	}
