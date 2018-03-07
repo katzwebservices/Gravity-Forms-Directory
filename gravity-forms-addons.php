@@ -1062,10 +1062,11 @@ class GFDirectory {
 
 		list( $formid, $leadid ) = self::get_form_and_lead_ids();
 
-		if ( ! is_null( $leadid ) && ! is_null( $formid ) ) {
+		$lead = is_null( $leadid ) ? false : apply_filters( 'kws_gf_directory_lead_detail', RGFormsModel::get_lead( (int) $leadid ) );
+
+		if ( $lead && ! is_null( $formid ) ) {
 
 			$form = apply_filters( 'kws_gf_directory_lead_detail_form', RGFormsModel::get_form_meta( (int) $formid ) );
-			$lead = apply_filters( 'kws_gf_directory_lead_detail', RGFormsModel::get_lead( (int) $leadid ) );
 
 			if ( empty( $approvedcolumn ) ) {
 				$approvedcolumn = self::get_approved_column( $form );
@@ -1078,7 +1079,7 @@ class GFDirectory {
 
 			//since 3.5
 			$lead = self::remove_hidden_fields( array( $lead ), $adminonlycolumns, $approvedcolumn, true, true, $showadminonly, $form );
-			$lead = $lead[0];
+			$lead = isset( $lead[0] ) ? $lead[0] : false;
 
 			ob_start(); // Using ob_start() allows us to filter output
 
@@ -2706,6 +2707,12 @@ class GFDirectory {
 		if ( $is_leads ) {
 
 			foreach ( $leads as $index => $lead ) {
+
+				if ( ! $lead ) {
+					unset( $leads[ $index ] );
+					continue;
+				}
+
 				// the field_ids are the numeric array keys of a lead
 				$field_ids = array_filter( array_keys( $lead ), 'is_int' );
 
