@@ -1062,9 +1062,9 @@ class GFDirectory {
 
 		list( $formid, $leadid ) = self::get_form_and_lead_ids();
 
-		$lead = is_null( $leadid ) ? false : apply_filters( 'kws_gf_directory_lead_detail', RGFormsModel::get_lead( (int) $leadid ) );
+		$lead = apply_filters( 'kws_gf_directory_lead_detail', GFAPI::get_entry( $leadid ) );
 
-		if ( $lead && ! is_null( $formid ) ) {
+		if ( $lead && ! is_wp_error( $lead ) && ! is_null( $formid ) ) {
 
 			$form = apply_filters( 'kws_gf_directory_lead_detail_form', RGFormsModel::get_form_meta( (int) $formid ) );
 
