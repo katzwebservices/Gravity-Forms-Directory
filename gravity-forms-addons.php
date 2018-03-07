@@ -193,6 +193,12 @@ class GFDirectory {
 
 		self::add_rewrite();
 
+		add_action( 'wp_ajax_rg_update_feed_active', array( 'GFDirectory', 'update_feed_active' ) );
+        add_action( 'wp_ajax_gf_select_directory_form', array( 'GFDirectory', 'select_directory_form' ) );
+        add_action( 'wp_ajax_rg_update_approved', array( 'GFDirectory', 'directory_update_approved_hook' ) );
+        add_action( 'wp_ajax_change_directory_columns', array( 'GFDirectory', 'change_directory_columns' ) );
+		add_filter( 'plugin_action_links', array( 'GFDirectory', 'settings_link' ), 10, 2 );
+
 		if ( ! self::is_gravityforms_supported() ) {
 			return;
 		}
@@ -229,15 +235,6 @@ class GFDirectory {
 		} else if ( self::is_gravity_page( 'gf_entries' ) ) {
 			wp_enqueue_script( 'thickbox', array( 'jquery' ) );
 			add_filter( "gform_get_field_value", array( 'GFDirectory', 'add_lead_approved_hidden_input' ), 1, 3 );
-		} else if ( in_array( RG_CURRENT_PAGE, array( "admin-ajax.php" ) ) ) {
-			add_action( 'wp_ajax_rg_update_feed_active', array( 'GFDirectory', 'update_feed_active' ) );
-			add_action( 'wp_ajax_gf_select_directory_form', array( 'GFDirectory', 'select_directory_form' ) );
-			add_action( 'wp_ajax_rg_update_approved', array( 'GFDirectory', 'directory_update_approved_hook' ) );
-			add_action( 'wp_ajax_change_directory_columns', array( 'GFDirectory', 'change_directory_columns' ) );
-		} else if ( in_array( RG_CURRENT_PAGE, array( "plugins.php" ) ) ) {
-
-			add_filter( 'plugin_action_links', array( 'GFDirectory', 'settings_link' ), 10, 2 );
-
 		}
 
 	}
