@@ -2107,7 +2107,7 @@ class GFDirectory {
 			$this_plugin = plugin_basename( __FILE__ );
 		}
 		if ( $file == $this_plugin ) {
-			$settings_link = '<a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons' ) . '">' . __( 'Settings', 'gravity-forms-addons' ) . '</a>';
+			$settings_link = '<a href="' . admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons' ) . '">' . esc_html__( 'Settings', 'gravity-forms-addons' ) . '</a>';
 			array_unshift( $links, $settings_link ); // before other links
 		}
 
