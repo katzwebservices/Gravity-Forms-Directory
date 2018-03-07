@@ -232,14 +232,14 @@ A big update to make Gravity Forms Directory compatible with Gravity Forms 2.3, 
 
 **Gravity Forms Directory is not under active development.** We're focusing on [GravityView](https://gravityview.co), which is a way better plugin! Try it out for 30 days, if you don't like it, we'll give you your money back.
 
-** New: **
+**New:**
 
 - Compatible with Gravity Forms 2.3
 - Now requires Gravity Forms 2.2.3.12 or newer
 - Uses Gravity Forms API to fetch entries, instead of direct queries
 - Prevent access to unapproved single entries for users without permission
 
-** Fixed: **
+**Fixed:**
 
 - "Edit" action links for entries work again
 - The ability to see the IDs for each field in an entry
@@ -247,7 +247,7 @@ A big update to make Gravity Forms Directory compatible with Gravity Forms 2.3, 
 - Allow users with `gravityforms_edit_entries` capabilities to edit entries (previously, only users with `gravityforms_directory` capability)
 - Searching for `0` values
 
-** Improvements **
+**Improvements:**
 
 - Update code to use `GF_Field` instead of array
 - Remove calls to deprecated `get_currentuserinfo()` function
