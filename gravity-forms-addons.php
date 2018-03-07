@@ -509,7 +509,7 @@ class GFDirectory {
 			gform_update_meta( $lead_id, 'is_approved', $approved );
 		}
 
-		if( ! method_exists( array( 'GFAPI', 'update_entry_field' ) ) ) {
+		if( ! method_exists( 'GFAPI', 'update_entry_field' ) ) {
 			GFCommon::log_error( "Cannot update approval; update_entry_field not available in Gravity Forms" );
 		    return;
         }
@@ -2902,7 +2902,6 @@ class GFDirectory {
 				GFCommon::log_debug( "Saving total field." );
 
 				RGFormsModel::save_input( $form, $total_field, $lead, $current_fields, $total_field->id );
-
 			}
 
 			if( method_exists( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
