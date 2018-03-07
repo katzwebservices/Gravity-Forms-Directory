@@ -509,7 +509,7 @@ class GFDirectory {
 			gform_update_meta( $lead_id, 'is_approved', $approved );
 		}
 
-		if( ! is_callable( array( 'GFAPI', 'update_entry_field' ) ) ) {
+		if( ! method_exists( array( 'GFAPI', 'update_entry_field' ) ) ) {
 			GFCommon::log_error( "Cannot update approval; update_entry_field not available in Gravity Forms" );
 		    return;
         }
@@ -2802,7 +2802,7 @@ class GFDirectory {
 		}
 
 
-		if( is_callable( array( 'GFFormsModel', 'get_entry_meta_table_name' ) ) ) {
+		if( method_exists( 'GFFormsModel', 'get_entry_meta_table_name' ) ) {
 			$entry_meta_table = RGFormsModel::get_entry_meta_table_name();
 			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT id, meta_key FROM $entry_meta_table WHERE entry_id=%d", $lead['id'] ) );
         } else {
@@ -2857,7 +2857,7 @@ class GFDirectory {
 				}
 			}
 
-			if( is_callable( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
+			if( method_exists( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
 				GFFormsModel::commit_batch_field_operations();
             }
 
@@ -2867,7 +2867,7 @@ class GFDirectory {
 
 		if ( ! empty( $calculation_fields ) ) {
 
-			if( is_callable( 'GFFormsModel', 'begin_batch_field_operations' ) ) {
+			if( method_exists( 'GFFormsModel', 'begin_batch_field_operations' ) ) {
 				GFFormsModel::begin_batch_field_operations();
 			}
 
@@ -2884,7 +2884,7 @@ class GFDirectory {
 				}
 			}
 
-			if( is_callable( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
+			if( method_exists( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
 				GFFormsModel::commit_batch_field_operations();
 			}
 
@@ -2894,7 +2894,7 @@ class GFDirectory {
 		//saving total field as the last field of the form.
 		if ( ! empty( $total_fields ) ) {
 
-			if( is_callable( 'GFFormsModel', 'begin_batch_field_operations' ) ) {
+			if( method_exists( 'GFFormsModel', 'begin_batch_field_operations' ) ) {
 				GFFormsModel::begin_batch_field_operations();
 			}
 
@@ -2905,7 +2905,7 @@ class GFDirectory {
 
 			}
 
-			if( is_callable( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
+			if( method_exists( 'GFFormsModel', 'commit_batch_field_operations' ) ) {
                 GFFormsModel::commit_batch_field_operations();
             }
 		}
