@@ -2802,7 +2802,7 @@ class GFDirectory {
 		}
 
 
-		if( method_exists( 'GFFormsModel', 'get_entry_meta_table_name' ) ) {
+		if ( version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
 			$entry_meta_table = RGFormsModel::get_entry_meta_table_name();
 			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT id, meta_key FROM $entry_meta_table WHERE entry_id=%d", $lead['id'] ) );
         } else {
