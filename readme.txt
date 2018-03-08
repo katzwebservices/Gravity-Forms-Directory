@@ -228,10 +228,11 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 = 4.1 on March 8, 2018 =
 
+* Fixed: Approval column not showing when there was no Approval fields in the form
 * Bulk Approval updates
     * Now requires Gravity Forms 2.2.4 (released August 8, 2017)
     * Fixed: Approval now works when selecting all entries in a form
-* Fixed: Creating unreachable database rows when there are no entry Approval fields
+* Fixed: Creating unreachable database rows when there are no Approval fields in a form
 
 = 4.0 on March 6, 2018 =
 
