@@ -226,6 +226,8 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 == Changelog ==
 
+* Fixed: Creating unreachable database rows when there are no entry Approval fields
+
 = 4.0 on March 6, 2018 =
 
 A big update to make Gravity Forms Directory compatible with Gravity Forms 2.3, and to fix entry approval.

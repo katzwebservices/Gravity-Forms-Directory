@@ -500,7 +500,6 @@ class GFDirectory {
 	 * @param int $approvedcolumn
 	 */
 	static function directory_update_approved( $lead_id = 0, $approved = 0, $form_id = 0, $approvedcolumn = 0 ) {
-		global $wpdb;
 
 		$current_user = wp_get_current_user();
 
@@ -509,14 +508,17 @@ class GFDirectory {
 			gform_update_meta( $lead_id, 'is_approved', $approved );
 		}
 
-		if( ! method_exists( 'GFAPI', 'update_entry_field' ) ) {
-			GFCommon::log_error( "Cannot update approval; update_entry_field not available in Gravity Forms" );
-		    return;
-        }
+		if ( ! empty( $approvedcolumn ) ) {
 
-		$approved = $approved ? $approved : '';
+			if ( ! method_exists( 'GFAPI', 'update_entry_field' ) ) {
+				GFCommon::log_error( "Cannot update approval; update_entry_field not available in Gravity Forms" );
+				return;
+			}
 
-        GFAPI::update_entry_field( $lead_id, $approvedcolumn, $approved );
+			$approved = $approved ? $approved : '';
+
+			GFAPI::update_entry_field( $lead_id, $approvedcolumn, $approved );
+		}
 
 		$message = empty( $approved ) ? __( 'Disapproved the lead', 'gravity-forms-addons' ) : __( 'Approved the lead', 'gravity-forms-addons' );
 
