@@ -1409,7 +1409,8 @@ class GFDirectory {
 			}
 		}
 
-		if( $smartapproval && $enable_smart_approval ) {
+        // 2.3 supports $smartapproval out of the box
+		if( $smartapproval && $enable_smart_approval && version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
 
 			$search_criteria['field_filters'][] = array(
 				'key' => 'is_approved',
@@ -2309,6 +2310,33 @@ class GFDirectory {
 		}
 
 		$return = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging, $total_count );
+
+		// Gravity Forms 2.3 supports smart approval out of the box. Before then, nope!
+		if ( ! version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
+
+			$entry_ids = array();
+			foreach ( $return as $l ) {
+				$entry_ids[] = $l['id'];
+			}
+
+			$meta_values = gform_get_meta_values_for_entries( $entry_ids, array( 'is_approved' ) );
+
+			foreach ( $return as $key => $lead ) {
+
+				/**
+				 * @var object $meta_value {
+				 * @type string $lead_id Entry ID
+				 * @type string $is_approved 'Approved' if approved; '0' if not
+				 * }
+				 */
+				foreach ( $meta_values as $meta_value ) {
+					if ( (string) $lead['id'] === rgobj( $meta_value, 'lead_id' ) && '0' === rgobj( $meta_value, 'is_approved' ) ) {
+						unset( $return[ $key ] );
+						$total_count--;
+					}
+				}
+			}
+		}
 
 		// Used by at least the show_only_user_entries() method
 		$return = apply_filters( 'kws_gf_directory_lead_filter', $return, compact( "approved", "sort_field_number", "sort_direction", "search_query", "search_criteria", "first_item_index", "page_size", "star", "read", "is_numeric", "start_date", "end_date", "status", "approvedcolumn", "limituser" ) );
