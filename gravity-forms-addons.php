@@ -4,7 +4,7 @@ Plugin Name: 	Gravity Forms Directory & Addons
 Plugin URI: 	https://katz.co/gravity-forms-addons/
 Description: 	Turn <a href="https://katz.si/gravityforms">Gravity Forms</a> into a great WordPress directory...and more!
 Author: 		Katz Web Services, Inc.
-Version: 		4.0
+Version: 		4.1
 Author URI:		https://gravityview.co
 Text Domain:    gravity-forms-addons
 License:		GPLv2 or later
@@ -35,7 +35,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "4.0";
+	private static $version = "4.1";
 	private static $min_gravityforms_version = "2.2.3.12";
 
 	public static function directory_defaults( $args = array() ) {
@@ -500,7 +500,6 @@ class GFDirectory {
 	 * @param int $approvedcolumn
 	 */
 	static function directory_update_approved( $lead_id = 0, $approved = 0, $form_id = 0, $approvedcolumn = 0 ) {
-		global $wpdb;
 
 		$current_user = wp_get_current_user();
 
@@ -509,14 +508,17 @@ class GFDirectory {
 			gform_update_meta( $lead_id, 'is_approved', $approved );
 		}
 
-		if( ! method_exists( 'GFAPI', 'update_entry_field' ) ) {
-			GFCommon::log_error( "Cannot update approval; update_entry_field not available in Gravity Forms" );
-		    return;
-        }
+		if ( ! empty( $approvedcolumn ) ) {
 
-		$approved = $approved ? $approved : '';
+			if ( ! method_exists( 'GFAPI', 'update_entry_field' ) ) {
+				GFCommon::log_error( "Cannot update approval; update_entry_field not available in Gravity Forms" );
+				return;
+			}
 
-        GFAPI::update_entry_field( $lead_id, $approvedcolumn, $approved );
+			$approved = $approved ? $approved : '';
+
+			GFAPI::update_entry_field( $lead_id, $approvedcolumn, $approved );
+		}
 
 		$message = empty( $approved ) ? __( 'Disapproved the lead', 'gravity-forms-addons' ) : __( 'Approved the lead', 'gravity-forms-addons' );
 
@@ -1407,7 +1409,8 @@ class GFDirectory {
 			}
 		}
 
-		if( $smartapproval && $enable_smart_approval ) {
+        // 2.3 supports $smartapproval out of the box
+		if( $smartapproval && $enable_smart_approval && version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
 
 			$search_criteria['field_filters'][] = array(
 				'key' => 'is_approved',
@@ -2307,6 +2310,33 @@ class GFDirectory {
 		}
 
 		$return = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging, $total_count );
+
+		// Gravity Forms 2.3 supports smart approval out of the box. Before then, nope!
+		if ( ! version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
+
+			$entry_ids = array();
+			foreach ( $return as $l ) {
+				$entry_ids[] = $l['id'];
+			}
+
+			$meta_values = gform_get_meta_values_for_entries( $entry_ids, array( 'is_approved' ) );
+
+			foreach ( $return as $key => $lead ) {
+
+				/**
+				 * @var object $meta_value {
+				 * @type string $lead_id Entry ID
+				 * @type string $is_approved 'Approved' if approved; '0' if not
+				 * }
+				 */
+				foreach ( $meta_values as $meta_value ) {
+					if ( (string) $lead['id'] === rgobj( $meta_value, 'lead_id' ) && '0' === rgobj( $meta_value, 'is_approved' ) ) {
+						unset( $return[ $key ] );
+						$total_count--;
+					}
+				}
+			}
+		}
 
 		// Used by at least the show_only_user_entries() method
 		$return = apply_filters( 'kws_gf_directory_lead_filter', $return, compact( "approved", "sort_field_number", "sort_direction", "search_query", "search_criteria", "first_item_index", "page_size", "star", "read", "is_numeric", "start_date", "end_date", "status", "approvedcolumn", "limituser" ) );

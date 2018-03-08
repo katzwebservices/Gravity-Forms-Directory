@@ -144,7 +144,6 @@ class GFDirectory_EditForm {
 		}
 		</style>
 		<script>
-
 			<?php
 
 	        if(empty($formID)) {
@@ -154,7 +153,6 @@ class GFDirectory_EditForm {
 
 		   	$approvedcolumn = GFDirectory::globals_get_approved_column( $formID );
 
-			if(!empty($approvedcolumn)) {
 			    echo 'formID = '.$formID.';';
 		       ?>
 
@@ -240,7 +238,6 @@ class GFDirectory_EditForm {
 					UpdateApprovedColumns($(this).parents('table.gf_entries'), false);
 
 					return false;
-
 		    	});
 
 		    	// We want to make sure that the checkboxes go away even if the Approved column is showing.
@@ -253,9 +250,7 @@ class GFDirectory_EditForm {
 		    		   /** @see https://stackoverflow.com/a/350300/480856 */
 		    		   $approved_column_jquery = str_replace( '.', '\\\.', $approvedcolumn );
 		    		   $approved_column_jquery = 'field_id-' . esc_html( $approved_column_jquery );
-		    		} else {
-		    		    echo 'return;'; // No need to update approval columns; the only approval is the meta checkbox
-		    		}
+
 		    		?>
 
 					$('tr', $table).each(function() {
@@ -282,20 +277,22 @@ class GFDirectory_EditForm {
 							$('td.column-<?php echo $approved_column_jquery; ?>:visible', $(this)).html('');
 						}
 					});
+					<?php
+					}
+					?>
 		    	}
 
 				// Add the header column
 		    	$('thead .column-is_starred, tfoot .column-is_starred').after('<th class="manage-column column-is_starred sortable"><a href="<?php echo esc_url( add_query_arg(array('sort' => $approvedcolumn)) ); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__); ?>" title="<?php echo esc_js( __('Show entry in directory view?', 'gravity-forms-addons')); ?>" /></span></a></th>');
 
 				// Add to each row
-		    	$('tbody td:has(img[src*="star"]), tbody th:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
+		    	$('tbody th:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
 
 		    	$('tr:has(input.lead_approved)').addClass('lead_approved').find('a.toggleApproved').prop('title', unapproveTitle).text('O');
 
 		    	UpdateApprovedColumns($('table.gf_entries'), true);
 
 		    });
-			<?php } // end if(!empty($_gform_directory_approvedcolumn)) check ?>
 		</script><?php
 	}
 

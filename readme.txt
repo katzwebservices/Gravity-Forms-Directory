@@ -2,7 +2,7 @@
 Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 4.0
 Tested up to: 4.9.4
-Stable tag: 4.0
+Stable tag: 4.1
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
 Donate link: https://gravityview.co
@@ -10,6 +10,8 @@ Donate link: https://gravityview.co
 Add directory capabilities and other functionality to the great Gravity Forms plugin.
 
 == Description ==
+
+### This plugin requires [Gravity Forms](https://katz.si/gravityforms)
 
 > #### [GravityView](https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=readme) is the best way to display Gravity Forms entries
 >
@@ -36,6 +38,7 @@ Gravity Forms is already the easiest form plugin...now, the Gravity Forms Direct
 * Define custom styles inside the shortcode
 * Includes lightbox support for uploaded images
 * Option to __view single entries__ in their own page or in a lightbox
+* Bulk Approve & Disapprove entries
 
 ####Insert a totally configurable table using the editor
 
@@ -223,8 +226,26 @@ Since 3.6.3, the Directory plugin displays formatted values (like currency). To 
 
 `add_filter('kws_gf_directory_format_value', '__return_false' );`
 
+= Bulk Approval/Disapproval of entries doesn't work for me! =
+
+Since 4.1, Bulk Approval requires Gravity Forms 2.2.4 (released August 8, 2017). Please update your Gravity Forms.
+
+= There's an incorrect entry count when using Smart Approval =
+
+Since 4.1, Smart Approval may return inaccurate entry counts. This will be fixed automatically once Gravity Forms 2.3 is released and installed on your site.
 
 == Changelog ==
+
+= 4.1 on March 8, 2018 =
+
+* Fixed: No entries are visible when using Smart Approval
+    * The Directory may return inaccurate entry counts, but this will be fixed automatically once Gravity Forms 2.3 is released and installed on your site
+    * Sorry, but this was necessary!
+* Fixed: Approval column not showing when there was no Approval fields in the form
+* Bulk Approval updates
+    * This feature now requires Gravity Forms 2.2.4 (released August 8, 2017)
+    * Fixed: Approval now works when selecting all entries in a form
+* Fixed: Creating unreachable database rows when there are no Approval fields in a form
 
 = 4.0 on March 6, 2018 =
 

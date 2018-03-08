@@ -43,11 +43,12 @@ class GFDirectory_Admin {
 
 		add_action( 'gform_entry_list_bulk_actions', array( $this, 'add_bulk_actions' ), 10, 2 );
 
-		self::process_bulk_update();
+		add_action( 'gform_entry_list_action', array( $this, 'process_bulk_update' ), 10, 3 );
+
 	}
 
 	/**
-     * Add Approve and Disapprove bulk actions to the entries dropdown
+	 * Add Approve and Disapprove bulk actions to the entries dropdown
 	 * @param array $actions
 	 * @param int $form_id
 	 *
@@ -58,43 +59,51 @@ class GFDirectory_Admin {
 		$actions['approve-' . $form_id ] = esc_html__('Approve', 'gravity-forms-addons');
 		$actions['unapprove-' . $form_id ] = esc_html__('Disapprove', 'gravity-forms-addons');
 
-	    return $actions;
-    }
+		return $actions;
+	}
 
-	public static function process_bulk_update() {
-		global $process_bulk_update_message;
-
-		if ( empty( $_POST['action'] ) && empty( $_POST['action2'] ) || empty( $_POST['gforms_entry_list'] ) ) {
-            return;
-		}
-
-		$bulk_action = ! empty( $_POST["action"] ) ? $_POST["action"] : $_POST["action2"];
+	/**
+	 * Fires after the default entry list actions have been processed.
+	 *
+     * Requires Gravity Forms 2.2.4
+     *
+	 * @param string $action  Action being performed.
+	 * @param array  $entries The entry IDs the action is being applied to.
+	 * @param int    $form_id The current form ID.
+	 *
+	 * @return void
+	 */
+	public static function process_bulk_update( $bulk_action = '', $entries = array(), $form_id = 0 ) {
 
 		$bulk_action = explode( '-', $bulk_action );
-		if ( !in_array( $bulk_action[0], array( 'approve', 'unapprove' ) ) || ! isset( $bulk_action[1] ) || ! is_numeric( $bulk_action[1] ) ) {
-		    return;
+
+		if ( !in_array( $bulk_action[0], array( 'approve', 'unapprove' ) ) || ! isset( $bulk_action[1] ) || intval( $bulk_action[1] ) !== intval( $form_id ) ) {
+			return;
 		}
 
-        check_admin_referer( 'gforms_entry_list', 'gforms_entry_list' );
+		$message = '';
 
-		$leads = isset( $_POST["lead"] ) ? $_POST["lead"] : $_POST["entry"];
+		$entries = array_map( 'intval', $entries );
 
-		$leads = array_map( 'intval', $leads );
+		$entry_count = count( $entries ) > 1 ? sprintf( __( "%d entries", "gravityforms" ), count( $entries ) ) : __( "1 entry", "gravityforms" );
 
-        $entry_count = count( $leads ) > 1 ? sprintf( __( "%d entries", "gravityforms" ), count( $leads ) ) : __( "1 entry", "gravityforms" );
+		switch ( $bulk_action[0] ) {
+			case "approve":
+				self::directory_update_bulk( $entries, 1, $bulk_action[1] );
+				$message = sprintf( __( "%s approved.", "gravity-forms-addons" ), $entry_count );
+				break;
 
-        switch ( $bulk_action[0] ) {
-            case "approve":
-                self::directory_update_bulk( $leads, 1, $bulk_action[1] );
-                $process_bulk_update_message = sprintf( __( "%s approved.", "gravity-forms-addons" ), $entry_count );
-                break;
+			case "unapprove":
+				self::directory_update_bulk( $entries, 0, $bulk_action[1] );
+				$message = sprintf( __( "%s disapproved.", "gravity-forms-addons" ), $entry_count );
+				break;
+		}
 
-            case "unapprove":
-                self::directory_update_bulk( $leads, 0, $bulk_action[1] );
-                $process_bulk_update_message = sprintf( __( "%s disapproved.", "gravity-forms-addons" ), $entry_count );
-                break;
-        }
+		if( $message ) {
+			echo '<div id="message" class="updated notice is-dismissible"><p>' . $message . '</p></div>';
+		}
 	}
+
 
 	static private function directory_update_bulk( $leads, $approved, $form_id ) {
 
