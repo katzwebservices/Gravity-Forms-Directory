@@ -4,7 +4,7 @@ Plugin Name: 	Gravity Forms Directory & Addons
 Plugin URI: 	https://katz.co/gravity-forms-addons/
 Description: 	Turn <a href="https://katz.si/gravityforms">Gravity Forms</a> into a great WordPress directory...and more!
 Author: 		Katz Web Services, Inc.
-Version: 		4.1
+Version: 		4.1.0.1
 Author URI:		https://gravityview.co
 Text Domain:    gravity-forms-addons
 License:		GPLv2 or later
@@ -35,7 +35,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "4.1";
+	private static $version = "4.1.0.1";
 	private static $min_gravityforms_version = "2.2.3.12";
 
 	public static function directory_defaults( $args = array() ) {
