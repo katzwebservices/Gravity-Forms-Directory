@@ -253,7 +253,7 @@ class GFDirectorySelectColumns {
 										<?php
 									}
 								}
-							} else if ( ! $field->displayOnly && ! in_array( $field->id, $field_ids ) && RGFormsModel::get_input_type( $field ) != 'list' ) {
+							} else if ( ! $field->displayOnly && ! in_array( $field->id, $field_ids ) ) {
 								?>
                                 <li id="<?php echo $field->id ?>"><?php echo esc_html( GFCommon::get_label( $field ) ); ?></li>
 								<?php
