@@ -2,10 +2,10 @@
 Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 4.0
 Tested up to: 4.9.4
-Stable tag: 4.1
+Stable tag: 4.1.1
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
-Donate link: https://gravityview.co
+Donate link: https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=donate
 
 Add directory capabilities and other functionality to the great Gravity Forms plugin.
 
@@ -235,6 +235,15 @@ Since 4.1, Bulk Approval requires Gravity Forms 2.2.4 (released August 8, 2017).
 Since 4.1, Smart Approval may return inaccurate entry counts. This will be fixed automatically once Gravity Forms 2.3 is released and installed on your site.
 
 == Changelog ==
+
+= 4.1.1 on March 30, 2018 =
+
+* Fixed: Searching entries using the global search would not filter entries
+* Fixed: Searches with a value of `0` would not filter entries
+
+= 4.1.0.1 on March 8, 2018 =
+
+* Removed test folders containing JSHint files, as suggested by WordPress.org
 
 = 4.1 on March 8, 2018 =
 

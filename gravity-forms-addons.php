@@ -4,7 +4,7 @@ Plugin Name: 	Gravity Forms Directory & Addons
 Plugin URI: 	https://katz.co/gravity-forms-addons/
 Description: 	Turn <a href="https://katz.si/gravityforms">Gravity Forms</a> into a great WordPress directory...and more!
 Author: 		Katz Web Services, Inc.
-Version: 		4.1
+Version: 		4.1.1
 Author URI:		https://gravityview.co
 Text Domain:    gravity-forms-addons
 License:		GPLv2 or later
@@ -35,7 +35,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "4.1";
+	private static $version = "4.1.1";
 	private static $min_gravityforms_version = "2.2.3.12";
 
 	public static function directory_defaults( $args = array() ) {
@@ -1311,7 +1311,7 @@ class GFDirectory {
 
 		$sort_field     = empty( $_GET["sort"] ) ? $sort : $_GET["sort"];
 		$sort_direction = empty( $_GET["dir"] ) ? $dir : $_GET["dir"];
-		$search_query   = ! empty( $_GET["gf_search"] ) ? $_GET["gf_search"] : NULL;
+		$search_query   = isset( $_GET["gf_search"] ) ? $_GET["gf_search"] : NULL;
 
 
 		$start_date = ! empty( $_GET["start_date"] ) ? $_GET["start_date"] : $start_date;
@@ -2268,7 +2268,7 @@ class GFDirectory {
 
 		if ( '' !== $search && ! is_null( $search ) ) {
 			$search_criteria['field_filters'][] = array(
-				'key' => 0,
+				'key' => null,
 				'value' => $search,
 			);
 		}
