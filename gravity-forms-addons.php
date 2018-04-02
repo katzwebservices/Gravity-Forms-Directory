@@ -4,7 +4,7 @@ Plugin Name: 	Gravity Forms Directory & Addons
 Plugin URI: 	https://katz.co/gravity-forms-addons/
 Description: 	Turn <a href="https://katz.si/gravityforms">Gravity Forms</a> into a great WordPress directory...and more!
 Author: 		Katz Web Services, Inc.
-Version: 		4.1.1
+Version: 		4.1.2
 Author URI:		https://gravityview.co
 Text Domain:    gravity-forms-addons
 License:		GPLv2 or later
@@ -35,7 +35,7 @@ class GFDirectory {
 
 	private static $path = "gravity-forms-addons/gravity-forms-addons.php";
 	private static $slug = "gravity-forms-addons";
-	private static $version = "4.1.1";
+	private static $version = "4.2";
 	private static $min_gravityforms_version = "2.2.3.12";
 
 	public static function directory_defaults( $args = array() ) {
@@ -1410,7 +1410,7 @@ class GFDirectory {
 		}
 
         // 2.3 supports $smartapproval out of the box
-		if( $smartapproval && $enable_smart_approval && version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
+		if( $smartapproval && $enable_smart_approval && self::us_gf_23_db() ) {
 
 			$search_criteria['field_filters'][] = array(
 				'key' => 'is_approved',
@@ -1829,6 +1829,17 @@ class GFDirectory {
 
 		return $content; // Return it!
 	}
+
+	/**
+     * Should we use Gravity Forms 2.3+ database structure?
+     *
+     * @since 4.1.2
+     *
+	 * @return bool True: Gravity Forms 2.3 is alive; false: What's 2.3?
+	 */
+	static public function use_gf_23_db() {
+		return method_exists( 'GFFormsModel', 'get_database_version' ) && version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' );
+    }
 
 	/**
 	 * Render image link HTML
@@ -2312,7 +2323,7 @@ class GFDirectory {
 		$return = GFAPI::get_entries( $form_id, $search_criteria, $sorting, $paging, $total_count );
 
 		// Gravity Forms 2.3 supports smart approval out of the box. Before then, nope!
-		if ( ! version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
+		if ( ! self::use_gf_23_db() ) {
 
 			$entry_ids = array();
 			foreach ( $return as $l ) {
@@ -2832,7 +2843,7 @@ class GFDirectory {
 		}
 
 
-		if ( version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
+		if ( self::use_gf_23_db() ) {
 			$entry_meta_table = RGFormsModel::get_entry_meta_table_name();
 			$current_fields = $wpdb->get_results( $wpdb->prepare( "SELECT id, meta_key FROM $entry_meta_table WHERE entry_id=%d", $lead['id'] ) );
         } else {

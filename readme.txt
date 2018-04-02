@@ -2,7 +2,7 @@
 Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 4.0
 Tested up to: 4.9.4
-Stable tag: 4.1.1
+Stable tag: 4.1.2
 Contributors: katzwebdesign, katzwebservices
 License: GPLv2 or later
 Donate link: https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=donate
@@ -235,6 +235,10 @@ Since 4.1, Bulk Approval requires Gravity Forms 2.2.4 (released August 8, 2017).
 Since 4.1, Smart Approval may return inaccurate entry counts. This will be fixed automatically once Gravity Forms 2.3 is released and installed on your site.
 
 == Changelog ==
+
+= 4.1.2 on April 2, 2018 =
+
+* Fixed: Check whether a function exists that was introduced in Gravity Forms 2.2
 
 = 4.1.1 on March 30, 2018 =
 
