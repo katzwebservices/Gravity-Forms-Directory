@@ -1270,7 +1270,7 @@ class GFDirectory {
 		}
 
 		ob_start(); // Using ob_start() allows us to use echo instead of $output .=
-
+		$atts = (array) $atts; // Type casting $atts to array to work if empty.
 		foreach ( $atts as $key => $att ) {
 			if ( strtolower( $att ) == 'false' ) {
 				$atts[ $key ] = false;
