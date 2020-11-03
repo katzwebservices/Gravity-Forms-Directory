@@ -10,7 +10,7 @@ class GFDirectory_EditForm {
 
 	function __construct() {
 
-		add_action('admin_init',  array(&$this, 'process_exterior_pages'));
+		add_action('admin_init',  array(&$this, 'process_exterior_pages'), 9 );
 
 		if(self::is_gravity_page() ) {
 
