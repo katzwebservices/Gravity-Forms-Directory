@@ -231,7 +231,7 @@ class GFDirectory_Admin {
 
 		if( ! empty( $settings['modify_admin']['ids'] ) ) {
 
-            $field_id_url = plugins_url( "field-ids.php", __FILE__ );
+            $field_id_url = GF_DIRECTORY_URL . "includes/field-ids.php";
 			$field_id_url = add_query_arg( array(
 			        'id' => $form_id,
 			        'show_field_ids' => 'true',
@@ -1094,7 +1094,7 @@ EOD;
 				"referrer"           => isset( $_POST["gf_addons_referrer"] ),
 				"directory_defaults" => GFDirectory::directory_defaults( $_POST['gf_addons_directory_defaults'], true ),
 				"modify_admin"       => isset( $_POST["gf_addons_modify_admin"] ) ? $_POST["gf_addons_modify_admin"] : array(),
-				"version"            => GFDirectory::get_version(),
+				"version"            => GF_DIRECTORY_VERSION,
 				"saved"              => true,
 			);
 			$message  = esc_html__( 'Settings saved.', 'gravity-forms-addons' );
@@ -1181,7 +1181,7 @@ EOD;
 
 			// if you must, you can filter this out...
 			if ( apply_filters( 'kws_gf_show_donate_box', true ) ) {
-				include( plugin_dir_path( __FILE__ ) . '/gravityview-info.php' );
+				include_once( GF_DIRECTORY_PATH . '/includes/gravityview-info.php' );
 			} // End donate box
 
 			?>

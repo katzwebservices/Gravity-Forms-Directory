@@ -56,13 +56,13 @@
 	<div class="aligncenter">
 		<a href="http://katz.si/gravityview"
 		   title="<?php esc_attr_e( 'Go to the GravityView Website', 'gravity-forms-addons' ); ?>"
-		   class="aligncenter"><img src="<?php echo plugins_url( '/images/GravityView.png', __FILE__ ); ?>"
+		   class="aligncenter"><img src="<?php echo GF_DIRECTORY_URL. '/images/GravityView.png' ?>"
 		                            alt="GravityView Logo"/></a>
 		<h2><?php esc_html_e( 'Better, simpler, more powerful.', 'gravity-forms-addons' ); ?></h2>
 
 		<h3><?php esc_html_e( 'Not just a premium version: a whole different plugin.', 'gravity-forms-addons' ); ?></h3>
 
-		<img src="<?php echo plugins_url( '/images/money-back-guarantee.jpg', __FILE__ ); ?>"
+		<img src="<?php echo GF_DIRECTORY_URL. '/images/money-back-guarantee.jpg' ?>"
 		     alt="GravityView money-back Guarantee" class="alignright" style="margin: 10px 0 0 10px;"/>
 		<?php
 

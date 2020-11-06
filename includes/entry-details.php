@@ -64,7 +64,7 @@ function show_table() {
 
 	if(isset($_REQUEST['leadid']) && isset($_REQUEST['form'])) {
 
-			require_once(dirname( __FILE__ )."/gravity-forms-addons.php");
+			require_once( GF_DIRECTORY_PATH ."gravity-forms-addons.php");
 
 			$transient = false;
 			if(isset($_REQUEST['post'])) {

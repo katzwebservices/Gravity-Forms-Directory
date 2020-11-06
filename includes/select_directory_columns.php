@@ -191,7 +191,7 @@ class GFDirectorySelectColumns {
 		<body data-formid="<?php echo $form_id; ?>">
 		<div id="wrapper">
         <?php
-		$columns   = GFDirectory::get_grid_columns( $form_id );
+		$columns   = GFDirectory_shortcode::get_grid_columns( $form_id );
 		$field_ids = array_keys( $columns );
 		$form = RGFormsModel::get_form_meta( $form_id );
 		array_push( $form['fields'], array( 'id' => 'id', 'label' => __( 'Entry Id', 'gravity-forms-addons' ) ) );

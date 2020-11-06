@@ -10,7 +10,7 @@ class GFDirectory_EditForm {
 
 	function __construct() {
 
-		add_action('admin_init',  array(&$this, 'process_exterior_pages'));
+		add_action('admin_init',  array(&$this, 'process_exterior_pages'), 9 );
 
 		if(self::is_gravity_page() ) {
 
@@ -44,7 +44,7 @@ class GFDirectory_EditForm {
 
         switch(rgget("gf_page")){
             case "directory_columns" :
-            	require_once("select_directory_columns.php");
+            	require_once( GF_DIRECTORY_PATH . "includes/select_directory_columns.php");
             break;
         }
         exit();
