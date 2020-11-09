@@ -149,16 +149,6 @@ class GFDirectory_Admin {
 		}
 	}
 
-	public function activation() {
-		_deprecated_function( __METHOD__, 'TODO', 'GFDirectory_Shortcode::add_activation_notice' );
-		return GFDirectory_Shortcode::add_activation_notice();
-	}
-
-	public function add_activation_notice() {
-		_deprecated_function( __METHOD__, 'TODO', 'GFDirectory_Shortcode::add_activation_notice' );
-		return GFDirectory_Shortcode::add_activation_notice();
-	}
-
 	public function admin_head( $settings = array() ) {
 		if ( empty( $settings ) ) {
 			$settings = GFDirectory::get_settings();
