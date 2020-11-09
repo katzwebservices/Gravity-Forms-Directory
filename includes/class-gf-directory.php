@@ -2292,5 +2292,20 @@ class GFDirectory {
 		}
 	}
 
+	public static function make_directory( $atts ) {
+		_deprecated_function( __METHOD__, 'TODO', 'GFDirectory_Shortcode::make_directory' );
+		return GFDirectory_Shortcode::make_directory( $atts );
+	}
+
+	public static function get_grid_columns( $form_id, $input_label_only = false ) {
+		_deprecated_function( __METHOD__, 'TODO', 'GFDirectory_Shortcode::get_grid_columns' );
+		return GFDirectory_Shortcode::get_grid_columns( $form_id, $input_label_only );
+
+	}
+
+	private static function get_entrylink_column( $form, $entry = false ) {
+		_deprecated_function( __METHOD__, 'TODO', 'GFDirectory_Shortcode::get_entrylink_column' );
+		return GFDirectory_Shortcode::get_entrylink_column( $form, $entry );
+	}
 
 }

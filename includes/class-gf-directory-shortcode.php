@@ -707,7 +707,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 		return $columns;
 	}
 
-	static private function get_entrylink_column( $form, $entry = false ) {
+	public static function get_entrylink_column( $form, $entry = false ) {
 		if ( ! is_array( $form ) ) {
 			return false;
 		}
