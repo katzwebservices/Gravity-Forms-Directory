@@ -51,7 +51,7 @@ class GFDirectory {
 
 		// Include common function file.
 		include_once( GF_DIRECTORY_PATH . '/includes/edit-form.php' );
-		include_once( GF_DIRECTORY_PATH . '/includes/admin.php' );
+		include_once( GF_DIRECTORY_PATH . '/includes/admin/class-gf-directory-admin.php' );
 		include_once( GF_DIRECTORY_PATH . '/includes/gravity-forms-lead-creator.php' );
 	}
 
