@@ -1637,6 +1637,7 @@ class GFDirectory {
 			$search_criteria['field_filters'][] = array(
 				'key' => null,
 				'value' => $search,
+				'operator' => 'contains',
 			);
 		}
 
