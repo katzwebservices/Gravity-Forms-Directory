@@ -27,7 +27,7 @@ class GFDirectory_Activator {
 
 	 public static function flush_rules() {
 		global $wp_rewrite;
-		self::add_rewrite();
+		GFDirectory::add_rewrite();
 		$wp_rewrite->flush_rules();
 		return;
 	}
