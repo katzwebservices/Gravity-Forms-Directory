@@ -50,9 +50,9 @@ class GFDirectory {
 	private function includes() {
 
 		// Include common function file.
-		include_once( GF_DIRECTORY_PATH . '/includes/edit-form.php' );
-		include_once( GF_DIRECTORY_PATH . '/includes/admin/class-gf-directory-admin.php' );
-		include_once( GF_DIRECTORY_PATH . '/includes/gravity-forms-lead-creator.php' );
+		include_once( GF_DIRECTORY_PATH . 'includes/class-gf-directory-edit-form.php' );
+		include_once( GF_DIRECTORY_PATH . 'includes/admin/class-gf-directory-admin.php' );
+		include_once( GF_DIRECTORY_PATH . 'includes/gravity-forms-lead-creator.php' );
 	}
 
 	/**
