@@ -87,7 +87,7 @@
 
 	// if you must, you can filter this out...
 	if ( apply_filters( 'kws_gf_show_donate_box', true ) ) {
-		include_once( GF_DIRECTORY_PATH . '/includes/gravityview-info.php' );
+		include_once( GF_DIRECTORY_PATH . '/includes/views/html-gravityview-info-admin.php' );
 	} // End donate box
 
 	?>

@@ -1,3 +1,15 @@
+<?php
+/**
+ * The template to display GravityView info on the admin settings page.
+ *
+ * @link       https://gravityview.co
+ * @since      TODO
+ *
+ * @package    gravity-forms-addons
+ * @subpackage gravity-forms-addons/includes/views
+ */
+?>
+
 <style type="text/css">
 	#kws_gravityview_info {
 		float: left;
@@ -81,8 +93,7 @@
 
 		echo wpautop( sprintf( esc_html__( 'We re-wrote the Directory plugin from the ground up to be more simple and more powerful. If you like the Directory plugin, you&rsquo;ll %slove%s GravityView.', 'gravity-forms-addons' ), '<em>', '</em>' ) ); ?>
 
-		<p><a href="http://katz.si/gravityview"
-		      class="button button-hero button-primary"><?php esc_html_e( 'Check out GravityView', 'gravity-forms-addons' ); ?></a>
+		<p><a href="http://katz.si/gravityview" class="button button-hero button-primary"><?php esc_html_e( 'Check out GravityView', 'gravity-forms-addons' ); ?></a>
 		</p>
 	</div>
 </div>
