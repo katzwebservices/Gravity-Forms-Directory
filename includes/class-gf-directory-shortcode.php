@@ -20,10 +20,24 @@ class GFDirectory_Shortcode extends GFDirectory {
 	 */
 	protected static $instance = null;
 
+	/**
+	 * Constructor.
+	 *
+	 * @since      TODO
+	 *
+	 * @return     void
+	 */
 	public function __construct() {
 		add_shortcode( 'directory', array( $this, 'make_directory' ) );
 	}
 
+	/**
+	 * Return an instance of this class.
+	 *
+	 * @since     TODO
+	 *
+	 * @return    Object    A single instance of this class.
+	 */
 	public static function get_instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
@@ -31,21 +45,35 @@ class GFDirectory_Shortcode extends GFDirectory {
 		return self::$instance;
 	}
 
+	/**
+	 * Include gravity forms files if not found loaded before.
+	 *
+	 * @since     TODO
+	 *
+	 */
 	public static function include_gf_files() {
 		if ( ! class_exists( 'GFEntryDetail' ) ) {
-			@require_once( GFCommon::get_base_path() . "/entry_detail.php" );
+			@require_once( GFCommon::get_base_path() . '/entry_detail.php' );
 		}
 		if ( ! class_exists( 'GFCommon' ) ) {
-			@require_once( GFCommon::get_base_path() . "/common.php" );
+			@require_once( GFCommon::get_base_path() . '/common.php' );
 		}
 		if ( ! class_exists( 'RGFormsModel' ) ) {
-			@require_once( GFCommon::get_base_path() . "/forms_model.php" );
+			@require_once( GFCommon::get_base_path() . '/forms_model.php' );
 		}
 		if ( ! class_exists( 'GFEntryList' ) ) {
-			require_once( GFCommon::get_base_path() . "/entry_list.php" );
+			require_once( GFCommon::get_base_path() . '/entry_list.php' );
 		}
 	}
 
+	/**
+	 * Render [directory] shortcode content.
+	 *
+	 * @since     TODO
+	 *
+	 * @param  array  $atts    Array of attributes passed with the shortcode.
+	 * @return string $content HTML content.
+	 */
 	public static function make_directory( $atts ) {
 		global $wpdb, $wp_rewrite, $post, $wpdb, $directory_shown, $kws_gf_scripts, $kws_gf_styles;
 
@@ -64,15 +92,14 @@ class GFDirectory_Shortcode extends GFDirectory {
 		ob_start(); // Using ob_start() allows us to use echo instead of $output .=
 
 		foreach ( $atts as $key => $att ) {
-			if ( strtolower( $att ) == 'false' ) {
+			if ( 'false' == strtolower( $att ) ) {
 				$atts[ $key ] = false;
-			}
-			if ( strtolower( $att ) == 'true' ) {
+			} elseif ( 'true' == strtolower( $att ) ) {
 				$atts[ $key ] = true;
 			}
 		}
 
-		$atts['approved'] = isset( $atts['approved'] ) ? $atts['approved'] : - 1;
+		$atts['approved'] = isset( $atts['approved'] ) ? $atts['approved'] : -1;
 
 		if ( ! empty( $atts['lightboxsettings'] ) && is_string( $atts['lightboxsettings'] ) ) {
 			$atts['lightboxsettings'] = explode( ',', $atts['lightboxsettings'] );
@@ -84,70 +111,83 @@ class GFDirectory_Shortcode extends GFDirectory {
 		if ( is_array( $options['lightboxsettings'] ) ) {
 			foreach ( $options['lightboxsettings'] as $key => $value ) {
 				if ( is_numeric( $key ) ) {
-					$options['lightboxsettings']["{$value}"] = $value;
-					unset( $options['lightboxsettings']["{$key}"] );
+					$options['lightboxsettings'][ "{$value}" ] = $value;
+					unset( $options['lightboxsettings'][ "{$key}" ] );
 				}
 			}
 		}
 
-
 		extract( $options );
 
 		$form_id = $form;
-
-		$form = GFAPI::get_form( $form_id );
+		$form    = GFAPI::get_form( $form_id );
 
 		if ( ! $form ) {
 			return;
 		}
 
-		$sort_field     = empty( $_GET["sort"] ) ? $sort : $_GET["sort"];
-		$sort_direction = empty( $_GET["dir"] ) ? $dir : $_GET["dir"];
-		$search_query   = isset( $_GET["gf_search"] ) ? $_GET["gf_search"] : NULL;
+		$get_fields = array_merge(
+			array(
+				'sort'       => $sort,
+				'dir'        => $dir,
+				'gf_search'  => null,
+				'start_date' => $start_date,
+				'end_date'   => $end_date,
+				'pagenum'    => $startpage,
+				'star'       => '',
+				'read'       => '',
+			),
+			array_filter( wp_unslash( $_GET ) )
+		);
 
+		$sort_field     = $sort;
+		$sort_direction = $dir;
+		$search_query   = $get_fields['gf_search'];
 
-		$start_date = ! empty( $_GET["start_date"] ) ? $_GET["start_date"] : $start_date;
-		$end_date   = ! empty( $_GET["end_date"] ) ? $_GET["end_date"] : $end_date;
+		$page_index       = intval( $get_fields['pagenum'] ) - 1;
+		$star             = is_numeric( $get_fields['star'] ) ? intval( $get_fields['star'] ) : null;
+		$read             = is_numeric( $get_fields['read'] ) ? intval( $get_fields['read'] ) : null;
 
-		$page_index       = empty( $_GET["pagenum"] ) ? $startpage - 1 : intval( $_GET["pagenum"] ) - 1;
-		$star             = ( isset( $_GET["star"] ) && is_numeric( $_GET["star"] ) ) ? intval( $_GET["star"] ) : NULL;
-		$read             = ( isset( $_GET["read"] ) && is_numeric( $_GET["read"] ) ) ? intval( $_GET["read"] ) : NULL;
 		$first_item_index = $page_index * $page_size;
 		$link_params      = array();
+
 		if ( ! empty( $page_index ) ) {
 			$link_params['pagenum'] = $page_index;
 		}
-		$formaction = esc_url_raw( remove_query_arg( array(
-			'gf_search',
-			'sort',
-			'dir',
-			'pagenum',
-			'edit',
-		), add_query_arg( $link_params ) ) );
-		$tableclass .= ! empty( $jstable ) ? sprintf( ' tablesorter tablesorter-%s', apply_filters( 'kws_gf_tablesorter_theme', 'blue', $form ) ) : '';
-		$title           = $form["title"];
+		$formaction = esc_url_raw(
+			remove_query_arg(
+				array(
+					'gf_search',
+					'sort',
+					'dir',
+					'pagenum',
+					'edit',
+				),
+				add_query_arg( $link_params )
+			)
+		);
+		$tableclass     .= ! empty( $jstable ) ? sprintf( ' tablesorter tablesorter-%s', apply_filters( 'kws_gf_tablesorter_theme', 'blue', $form ) ) : '';
+		$title           = $form['title'];
 		$sort_field_meta = RGFormsModel::get_field( $form, $sort_field );
-		$is_numeric      = ( $sort_field_meta && $sort_field_meta->type === "number" );
+		$is_numeric      = ( $sort_field_meta && 'number' === $sort_field_meta->type );
 
 		$columns = self::get_grid_columns( $form_id, true );
 
-		$approvedcolumn = NULL;
-
-		$smartapproval = ! empty( $smartapproval );
+		$approvedcolumn        = null;
+		$smartapproval         = ! empty( $smartapproval );
 		$enable_smart_approval = false;
 
 		// Approved is not enabled, and smart approval is enabled
 		if ( - 1 === $approved && $smartapproval ) {
-		    $enable_smart_approval = true;
-            $approved = true;
+			$enable_smart_approval = true;
+			$approved              = true;
 		}
 
 		if ( true === $approved ) {
 			$approvedcolumn = self::get_approved_column( $form );
 		}
 
-
-		if ( $approved || ( ! empty( $smartapproval ) && $approved === - 1 ) && ! empty( $approvedcolumn ) ) {
+		if ( $approved || ( ! empty( $smartapproval ) && -1 === $approved ) && ! empty( $approvedcolumn ) ) {
 			$approved = true; // If there is an approved column, turn on approval
 		} else {
 			$approved = false; // Otherwise, show entries as normal.
@@ -156,9 +196,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 		$entrylinkcolumns = self::get_entrylink_column( $form, $entry );
 		$adminonlycolumns = self::get_admin_only( $form );
 
-		//
-		// Show only a single entry
-		//
+		// Show only a single entry.
 		$detail = self::process_lead_detail( true, $entryback, $showadminonly, $adminonlycolumns, $approvedcolumn, $options, $entryonly );
 
 		if ( ! empty( $entry ) && ! empty( $detail ) ) {
@@ -169,7 +207,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 			}
 
 			if ( ! empty( $entryonly ) ) {
-				do_action( 'kws_gf_after_directory', do_action( 'kws_gf_after_directory_form_' . $form_id, $form, compact( "approved", "sort_field", "sort_direction", "search_query", "first_item_index", "page_size", "star", "read", "is_numeric", "start_date", "end_date" ) ) );
+				do_action( 'kws_gf_after_directory', do_action( 'kws_gf_after_directory_form_' . $form_id, $form, compact( 'approved', 'sort_field', 'sort_direction', 'search_query', 'first_item_index', 'page_size', 'star', 'read', 'is_numeric', 'start_date', 'end_date' ) ) );
 
 				$content = ob_get_clean(); // Get the output and clear the buffer
 
@@ -180,55 +218,46 @@ class GFDirectory_Shortcode extends GFDirectory {
 			}
 		}
 
-
 		// since 3.5 - remove columns of the fields not allowed to be shown
 		$columns = self::remove_hidden_fields( $columns, $adminonlycolumns, $approvedcolumn, false, false, $showadminonly, $form );
 
 		// hook for external selection of columns
 		$columns = apply_filters( 'kws_gf_directory_filter_columns', $columns );
 
-
 		//since 3.5 search criteria
 		$show_search_filters = self::get_search_filters( $form );
 		$show_search_filters = apply_filters( 'kws_gf_directory_search_filters', $show_search_filters, $form );
 		$search_criteria     = array();
+
 		foreach ( $show_search_filters as $key ) {
-			if ( '' !== rgget('filter_' . $key ) ) {
+			if ( '' !== rgget( 'filter_' . $key ) ) {
 				$search_criteria['field_filters'][] = array(
-                  'key' => $key,
-                  'value' => rgget('filter_' . $key ),
-                );
+					'key' => $key,
+					'value' => rgget( 'filter_' . $key ),
+				);
 			}
 		}
 
-        // 2.3 supports $smartapproval out of the box
-		if( $smartapproval && $enable_smart_approval && self::use_gf_23_db() ) {
+		// 2.3 supports $smartapproval out of the box
+		if ( $smartapproval && $enable_smart_approval && self::use_gf_23_db() ) {
 
 			$search_criteria['field_filters'][] = array(
-				'key' => 'is_approved',
+				'key'      => 'is_approved',
 				'operator' => 'isnot',
-				'value' => ''
-			);
-
-			$search_criteria['field_filters'][] = array(
-				'key' => 'is_approved',
-				'operator' => 'isnot',
-				'value' => '0'
+				'value'    => '',
 			);
 
 			$search_criteria['field_filters']['mode'] = 'all';
 
-        }
+		}
 
-        $total_count = 0;
+		$total_count = 0;
 
-		//
-		// Or start to generate the directory
-		//
+		// Or start to generate the directory.
 		$leads = GFDirectory::get_leads( $form_id, $sort_field, $sort_direction, $search_query, $first_item_index, $page_size, $star, $read, $is_numeric, $start_date, $end_date, 'active', $approvedcolumn, $limituser, $search_criteria, $total_count );
 
 		// Allow lightbox to determine whether showadminonly is valid without passing a query string in URL
-		if ( $entry === true && ! empty( $lightboxsettings['entry'] ) ) {
+		if ( true === $entry && ! empty( $lightboxsettings['entry'] ) ) {
 			if ( get_site_transient( 'gf_form_' . $form_id . '_post_' . $post->ID . '_showadminonly' ) != $showadminonly ) {
 				set_site_transient( 'gf_form_' . $form_id . '_post_' . $post->ID . '_showadminonly', $showadminonly, HOUR_IN_SECONDS );
 			}
@@ -236,19 +265,18 @@ class GFDirectory_Shortcode extends GFDirectory {
 			delete_site_transient( 'gf_form_' . $form_id . '_post_' . $post->ID . '_showadminonly' );
 		}
 
-
 		// Get a list of query args for the pagination links
 		if ( ! empty( $search_query ) ) {
-			$args["gf_search"] = urlencode( $search_query );
+			$args['gf_search'] = urlencode( $search_query );
 		}
 		if ( ! empty( $sort_field ) ) {
-			$args["sort"] = $sort_field;
+			$args['sort'] = $sort_field;
 		}
 		if ( ! empty( $sort_direction ) ) {
-			$args["dir"] = $sort_direction;
+			$args['dir'] = $sort_direction;
 		}
 		if ( ! empty( $star ) ) {
-			$args["star"] = $star;
+			$args['star'] = $star;
 		}
 
 		if ( $page_size > 0 ) {
@@ -261,9 +289,8 @@ class GFDirectory_Shortcode extends GFDirectory {
 				$lead_count = $total_count;
 			}
 
-
 			$page_links = array(
-				'base'      => esc_url_raw( @add_query_arg( 'pagenum', '%#%' ) ),// get_permalink().'%_%',
+				'base'      => esc_url_raw( @add_query_arg( 'pagenum', '%#%' ) ), // get_permalink().'%_%',
 				'format'    => '&pagenum=%#%',
 				'add_args'  => $args,
 				'prev_text' => $prev_text,
@@ -272,20 +299,18 @@ class GFDirectory_Shortcode extends GFDirectory {
 				'current'   => $page_index + 1,
 				'show_all'  => $pagelinksshowall,
 			);
-
 			$page_links = apply_filters( 'kws_gf_results_pagination', $page_links );
-
 			$page_links = paginate_links( $page_links );
 		} else {
-			// Showing all results
+			// Showing all results.
 			$page_links = false;
-			$lead_count = sizeof( $leads );
+			$lead_count = count( $leads );
 		}
-		
+
 		include_once( GF_DIRECTORY_PATH . 'includes/views/html-gf-directory-shortcode.php' );
 
-		$content = ob_get_contents(); // Get the output
-		ob_end_clean(); // Clear the cache
+		$content = ob_get_contents(); // Get the output.
+		ob_end_clean(); // Clear the cache.
 
 		// If the form is form #2, two filters are applied: `kws_gf_directory_output_2` and `kws_gf_directory_output`
 		$content = apply_filters( 'kws_gf_directory_output', apply_filters( 'kws_gf_directory_output_' . $form_id, self::html_display_type_filter( $content, $directoryview ) ) );
@@ -293,36 +318,44 @@ class GFDirectory_Shortcode extends GFDirectory {
 		return $content; // Return it!
 	}
 
+	/**
+	 * Get grid columns.
+	 *
+	 * @since     TODO
+	 *
+	 * @param  int   $form_id          Gravity form ID.
+	 * @param  bool  $input_label_only Input label only or not.
+	 * @return array $columns          Array of grid columns.
+	 */
 	public static function get_grid_columns( $form_id, $input_label_only = false ) {
 		$form      = GFFormsModel::get_form_meta( $form_id );
 		$field_ids = self::get_grid_column_meta( $form_id );
 
 		if ( ! is_array( $field_ids ) ) {
 			$field_ids = array();
-			for ( $i = 0, $count = sizeof( $form["fields"] ); $i < $count && $i < 5; $i ++ ) {
-				$field = $form["fields"][ $i ];
+			for ( $i = 0, $count = count( $form['fields'] ); $i < $count && $i < 5; $i ++ ) {
+				$field = $form['fields'][ $i ];
 
 				if ( $field->displayOnly ) {
 					continue;
 				}
 
-
 				if ( isset( $field->inputs ) && is_array( $field->inputs ) ) {
 					$field_ids[] = $field->id;
 					if ( 'name' === $field->type ) {
-						$field_ids[] = $field->id . '.3'; //adding first name
-						$field_ids[] = $field->id . '.6'; //adding last name
+						$field_ids[] = $field->id . '.3'; //adding first name.
+						$field_ids[] = $field->id . '.6'; //adding last name.
 					} else if ( isset( $field->inputs[0] ) ) {
-						$field_ids[] = $field->inputs[0]["id"]; //getting first input
+						$field_ids[] = $field->inputs[0]['id']; //getting first input.
 					}
 				} else {
 					$field_ids[] = $field->id;
 				}
 			}
-			//adding default entry meta columns
+			//adding default entry meta columns.
 			$entry_metas = GFFormsModel::get_entry_meta( $form_id );
 			foreach ( $entry_metas as $key => $entry_meta ) {
-				if ( rgar( $entry_meta, "is_default_column" ) ) {
+				if ( rgar( $entry_meta, 'is_default_column' ) ) {
 					$field_ids[] = $key;
 				}
 			}
@@ -333,43 +366,73 @@ class GFDirectory_Shortcode extends GFDirectory {
 		foreach ( $field_ids as $field_id ) {
 
 			switch ( $field_id ) {
-				case "id" :
-					$columns[ $field_id ] = array( "label" => "Entry Id", "type" => "id" );
+				case 'id':
+					$columns[ $field_id ] = array(
+						'label' => 'Entry Id',
+						'type'  => 'id',
+					);
 					break;
-				case "ip" :
-					$columns[ $field_id ] = array( "label" => "User IP", "type" => "ip" );
+				case 'ip':
+					$columns[ $field_id ] = array(
+						'label' => 'User IP',
+						'type'  => 'ip',
+					);
 					break;
-				case "date_created" :
-					$columns[ $field_id ] = array( "label" => "Entry Date", "type" => "date_created" );
+				case 'date_created':
+					$columns[ $field_id ] = array(
+						'label' => 'Entry Date',
+						'type'  => 'date_created',
+					);
 					break;
-				case "source_url" :
-					$columns[ $field_id ] = array( "label" => "Source Url", "type" => "source_url" );
+				case 'source_url':
+					$columns[ $field_id ] = array(
+						'label' => 'Source Url',
+						'type'  => 'source_url',
+					);
 					break;
-				case "payment_status" :
-					$columns[ $field_id ] = array( "label" => "Payment Status", "type" => "payment_status" );
+				case 'payment_status':
+					$columns[ $field_id ] = array(
+						'label' => 'Payment Status',
+						'type'  => 'payment_status',
+					);
 					break;
-				case "transaction_id" :
-					$columns[ $field_id ] = array( "label" => "Transaction Id", "type" => "transaction_id" );
+				case 'transaction_id':
+					$columns[ $field_id ] = array(
+						'label' => 'Transaction Id',
+						'type'  => 'transaction_id',
+					);
 					break;
-				case "payment_date" :
-					$columns[ $field_id ] = array( "label" => "Payment Date", "type" => "payment_date" );
+				case 'payment_date':
+					$columns[ $field_id ] = array(
+						'label' => 'Payment Date',
+						'type'  => 'payment_date',
+					);
 					break;
-				case "payment_amount" :
-					$columns[ $field_id ] = array( "label" => "Payment Amount", "type" => "payment_amount" );
+				case 'payment_amount':
+					$columns[ $field_id ] = array(
+						'label' => 'Payment Amount',
+						'type'  => 'payment_amount',
+					);
 					break;
-				case "created_by" :
-					$columns[ $field_id ] = array( "label" => "User", "type" => "created_by" );
+				case 'created_by':
+					$columns[ $field_id ] = array(
+						'label' => 'User',
+						'type'  => 'created_by',
+					);
 					break;
-				case ( ( is_string( $field_id ) || is_int( $field_id ) ) && array_key_exists( $field_id, $entry_meta ) ) :
-					$columns[ $field_id ] = array( "label" => $entry_meta[ $field_id ]["label"], "type" => $field_id );
+				case ( ( is_string( $field_id ) || is_int( $field_id ) ) && array_key_exists( $field_id, $entry_meta ) ):
+					$columns[ $field_id ] = array(
+						'label' => $entry_meta[ $field_id ]['label'],
+						'type'  => $field_id,
+					);
 					break;
-				default :
+				default:
 					$field = GFFormsModel::get_field( $form, $field_id );
 					if ( $field ) {
 						$columns[ strval( $field_id ) ] = array(
-							"label"     => self::get_label( $field, $field_id, $input_label_only ),
-							"type"      => rgobj( $field, 'type' ),
-							"inputType" => rgobj( $field, 'inputType' ),
+							'label'     => self::get_label( $field, $field_id, $input_label_only ),
+							'type'      => rgobj( $field, 'type' ),
+							'inputType' => rgobj( $field, 'inputType' ),
 						);
 					}
 			}
@@ -378,6 +441,15 @@ class GFDirectory_Shortcode extends GFDirectory {
 		return $columns;
 	}
 
+	/**
+	 * Get entrylink columns.
+	 *
+	 * @since     TODO
+	 *
+	 * @param  array $form    Gravity form ID.
+	 * @param  array $entry   Entry.
+	 * @return array $columns Array of columns.
+	 */
 	public static function get_entrylink_column( $form, $entry = false ) {
 		if ( ! is_array( $form ) ) {
 			return false;
