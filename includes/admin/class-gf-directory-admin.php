@@ -221,7 +221,7 @@ class GFDirectory_Admin {
 
 		if( ! empty( $settings['modify_admin']['ids'] ) ) {
 
-            $field_id_url = GF_DIRECTORY_URL . "includes/field-ids.php";
+            $field_id_url = GF_DIRECTORY_URL . "includes/views/html-field-ids.php";
 			$field_id_url = add_query_arg( array(
 			        'id' => $form_id,
 			        'show_field_ids' => 'true',
