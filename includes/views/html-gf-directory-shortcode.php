@@ -237,7 +237,7 @@ if ( ! isset( $directory_shown ) ) {
 		<?php } ?>
 		<tbody class="list:user user-list">
 		<?php
-		include_once( GF_DIRECTORY_PATH. "includes/template-row.php" );
+		include_once( GF_DIRECTORY_PATH. 'includes/views/template-row.php' );
 		?>
 		</tbody>
 		<?php if ( $tfoot ) {
