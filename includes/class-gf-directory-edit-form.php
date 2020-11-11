@@ -44,7 +44,7 @@ class GFDirectory_EditForm {
 
         switch(rgget("gf_page")){
             case "directory_columns" :
-            	require_once( GF_DIRECTORY_PATH . "includes/select_directory_columns.php");
+            	require_once( GF_DIRECTORY_PATH . "includes/class-select-directory-columns.php");
             break;
         }
         exit();
