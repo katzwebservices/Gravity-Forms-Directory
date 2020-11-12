@@ -89,7 +89,7 @@
 				//ignore product fields as they will be grouped together at the end of the grid
 				if ( GFCommon::is_product_field( $field->type ) ) {
 					$has_product_fields = true;
-					continue;
+					break;
 				}
 
 				$value         = RGFormsModel::get_lead_field_value( $lead, $field );
