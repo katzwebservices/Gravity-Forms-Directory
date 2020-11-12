@@ -17,7 +17,7 @@ class GFDirectory {
 	/**
 	 * Instance of this class.
 	 *
-	 * @since    TODO
+	 * @since    4.2
 	 *
 	 * @var      object
 	 */
@@ -26,7 +26,7 @@ class GFDirectory {
 	/**
 	 * Constructor.
 	 *
-	 * @since      TODO
+	 * @since      4.2
 	 *
 	 * @return     void
 	 */
@@ -34,13 +34,12 @@ class GFDirectory {
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 		add_action( 'plugins_loaded', array( $this, 'register_text_domain' ), 9 );
 		add_action( 'init', array( 'GFDirectory', 'init' ) );
-		$this->init_classes();
 	}
 
 	/**
 	 * Include required files.
 	 *
-	 * @since      1.0.0
+	 * @since      4.2
 	 *
 	 * @return     void
 	 */
@@ -53,26 +52,9 @@ class GFDirectory {
 	}
 
 	/**
-	 * Initialize functionalities.
-	 *
-	 * @since      1.0.0
-	 *
-	 * @return     void
-	 */
-	private function init_classes() {
-		if ( class_exists( 'SNG_Manager_Admin' ) ) {
-			SNG_Manager_Admin::get_instance();
-		}
-		if ( class_exists( 'SNG_Manager_Public' ) ) {
-			SNG_Manager_Public::get_instance();
-		}
-	}
-
-
-	/**
 	 * Return an instance of this class.
 	 *
-	 * @since     TODO
+	 * @since     4.2
 	 *
 	 * @return    Object    A single instance of this class.
 	 */
