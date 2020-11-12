@@ -5,7 +5,7 @@
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @link       https://gravityview.co
- * @since      TODO
+ * @since      4.2
  *
  * @package    gravity-forms-addons
  * @subpackage gravity-forms-addons/includes

@@ -3,7 +3,7 @@
  * The template to display GravityView info on the admin settings page.
  *
  * @link       https://gravityview.co
- * @since      TODO
+ * @since      4.2
  *
  * @package    gravity-forms-addons
  * @subpackage gravity-forms-addons/includes/views

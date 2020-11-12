@@ -3,7 +3,7 @@
  * Loads the content of [directory] shortcode.
  *
  * @link       https://gravityview.co
- * @since      TODO
+ * @since      4.2
  *
  * @package    gravity-forms-addons
  * @subpackage gravity-forms-addons/includes
@@ -14,7 +14,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 	/**
 	 * Instance of this class.
 	 *
-	 * @since    TODO
+	 * @since    4.2
 	 *
 	 * @var      object
 	 */
@@ -23,7 +23,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 	/**
 	 * Constructor.
 	 *
-	 * @since      TODO
+	 * @since      4.2
 	 *
 	 * @return     void
 	 */
@@ -34,7 +34,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 	/**
 	 * Return an instance of this class.
 	 *
-	 * @since     TODO
+	 * @since     4.2
 	 *
 	 * @return    Object    A single instance of this class.
 	 */
@@ -48,7 +48,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 	/**
 	 * Include gravity forms files if not found loaded before.
 	 *
-	 * @since     TODO
+	 * @since     4.2
 	 *
 	 */
 	public static function include_gf_files() {
@@ -69,7 +69,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 	/**
 	 * Render [directory] shortcode content.
 	 *
-	 * @since     TODO
+	 * @since     4.2
 	 *
 	 * @param  array  $atts    Array of attributes passed with the shortcode.
 	 * @return string $content HTML content.
@@ -311,7 +311,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 	/**
 	 * Get grid columns.
 	 *
-	 * @since     TODO
+	 * @since     4.2
 	 *
 	 * @param  int   $form_id          Gravity form ID.
 	 * @param  bool  $input_label_only Input label only or not.
@@ -434,7 +434,7 @@ class GFDirectory_Shortcode extends GFDirectory {
 	/**
 	 * Get entrylink columns.
 	 *
-	 * @since     TODO
+	 * @since     4.2
 	 *
 	 * @param  array $form    Gravity form ID.
 	 * @param  array $entry   Entry.

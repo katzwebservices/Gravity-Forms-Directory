@@ -3,7 +3,7 @@
  * The template that loads entry detail.
  *
  * @link       https://gravityview.co
- * @since      TODO
+ * @since      4.2
  *
  * @package    gravity-forms-addons
  * @subpackage gravity-forms-addons/includes/views
