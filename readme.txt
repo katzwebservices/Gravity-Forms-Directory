@@ -236,6 +236,33 @@ Since 4.1, Smart Approval may return inaccurate entry counts. This will be fixed
 
 == Changelog ==
 
+= 4.2 on November 12, 2020 =
+
+**New:**
+
+- Compatible with WordPress 5.5.3
+- Compatible with Gravity Forms 2.4.20.5
+- Activation check to verify if Gravity Forms is active
+
+**Fixed:**
+
+- Directory Columns window now displays properly
+- Search by substring on directory view works
+- PHP warnings
+
+**Improvements:**
+
+- Restructured classes and templates
+- Folder structure
+
+**Updated:**
+
+- Languages file
+
+**Removed:**
+
+- Redundant code
+
 = 4.1.2 & 4.1.3 on April 2, 2018 =
 
 * Fixed: Check whether a function exists that was introduced in Gravity Forms 2.2
