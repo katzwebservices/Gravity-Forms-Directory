@@ -73,7 +73,7 @@
 		function InsertGFDirectory() {
 			var directory_id = jQuery( "#add_directory_id" ).val();
 			if ( directory_id == "" ) {
-				alert( "<?php echo esc_js( __( "Please select a form", "gravity-forms-addons" ) ); ?>" );
+				alert( "<?php echo esc_js( __( 'Please select a form', 'gravity-forms-addons' ) ); ?>" );
 				jQuery( '#add_directory_id' ).focus();
 				return false;
 			}
@@ -84,11 +84,11 @@
 			$ids = $idOutputList = $setvalues = $vars = '';
 
 			foreach ( $js as $j ) {
-				$vars .= $j['js'] . "
-				";
-				$ids .= $j['idcode'] . " ";
-				$setvalues .= $j['setvalue'] . "
-				";
+				$vars .= $j['js'] . '
+				';
+				$ids .= $j['idcode'] . ' ';
+				$setvalues .= $j['setvalue'] . '
+				';
 				$idOutputList .= $j['id'] . 'Output' . ' + ';
 			}
 			echo $vars;
@@ -108,27 +108,27 @@
 		<div class="wrap">
 			<div>
 				<div style="padding:15px 15px 0 15px;">
-					<h2><?php esc_html_e( "Insert A Directory", "gravity-forms-addons" ); ?></h2>
+					<h2><?php esc_html_e( 'Insert A Directory', 'gravity-forms-addons' ); ?></h2>
 				<span>
-					<?php esc_html_e( "Select a form below to add it to your post or page.", "gravity-forms-addons" ); ?>
+					<?php esc_html_e( 'Select a form below to add it to your post or page.', 'gravity-forms-addons' ); ?>
 				</span>
 				</div>
 				<div style="padding:15px 15px 0 15px;">
 					<select id="add_directory_id">
 						<option
-							value="">  <?php esc_html_e( "Select a Form", "gravity-forms-addons" ); ?>  </option>
+							value="">  <?php esc_html_e( 'Select a Form', 'gravity-forms-addons' ); ?>  </option>
 						<?php
-						$forms = RGFormsModel::get_forms( 1, "title" );
+						$forms = RGFormsModel::get_forms( 1, 'title' );
 						foreach ( $forms as $form ) {
 							?>
 							<option
-								value="<?php echo absint( $form->id ) ?>"><?php echo esc_html( $form->title ) ?></option>
+								value="<?php echo absint( $form->id ); ?>"><?php echo esc_html( $form->title ); ?></option>
 							<?php
 						}
 						?>
 					</select> <br/>
 					<div
-						style="padding:8px 0 0 0; font-size:11px; font-style:italic; color:#5A5A5A"><?php esc_html_e( "This form will be the basis of your directory.", "gravity-forms-addons" ); ?></div>
+						style="padding:8px 0 0 0; font-size:11px; font-style:italic; color:#5A5A5A"><?php esc_html_e( 'This form will be the basis of your directory.', 'gravity-forms-addons' ); ?></div>
 				</div>
 				<?php
 
@@ -137,9 +137,9 @@
 				?>
 				<div class="submit">
 					<input type="submit" class="button-primary" style="margin-right:15px;"
-					       value="Insert Directory" id="insert_gf_directory"/>
+						   value="Insert Directory" id="insert_gf_directory"/>
 					<a class="button button-secondary" style="color:#bbb;" href="#"
-					   onclick="tb_remove(); return false;"><?php esc_html_e( "Cancel", "gravity-forms-addons" ); ?></a>
+					   onclick="tb_remove(); return false;"><?php esc_html_e( 'Cancel', 'gravity-forms-addons' ); ?></a>
 				</div>
 			</div>
 		</div>

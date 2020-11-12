@@ -711,7 +711,7 @@ class GFDirectory {
 
 			// The ID of the form needs to be `gform_{form_id}` for the pluploader
 			?>
-			<form method="post" id="gform_<?php echo esc_attr( $Form['id'] ); ?> action=" <?php echo esc_url( remove_query_arg( array( 'gf_search', 'sort', 'dir', 'pagenum', 'edit', ), add_query_arg( array() ) ) ); ?>">
+			<form method="post" id="gform_<?php echo esc_attr( $Form['id'] ); ?> action=" <?php echo esc_url( remove_query_arg( array( 'gf_search', 'sort', 'dir', 'pagenum', 'edit' ), add_query_arg( array() ) ) ); ?>">
 				<?php
 				wp_nonce_field( 'gforms_save_entry', 'gforms_save_entry' );
 				?>
