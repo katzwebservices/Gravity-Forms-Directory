@@ -2122,17 +2122,43 @@ class GFDirectory {
 		}
 	}
 
+	/**
+	 * (Deprecated) Render [directory] shortcode content.
+	 *
+	 * @since 4.2 moved to GFDirectory_Shortcode class.
+	 *
+	 * @param  array  $atts    Array of attributes passed with the shortcode.
+	 * @return string $content HTML content.
+	 */
 	public static function make_directory( $atts ) {
 		_deprecated_function( __METHOD__, '4.2', 'GFDirectory_Shortcode::make_directory' );
 		return GFDirectory_Shortcode::make_directory( $atts );
 	}
 
+	/**
+	 * (Deprecated) Get grid columns.
+	 *
+	 * @since 4.2 moved to GFDirectory_Shortcode class.
+	 *
+	 * @param  int   $form_id          Gravity form ID.
+	 * @param  bool  $input_label_only Input label only or not.
+	 * @return array $columns          Array of grid columns.
+	 */
 	public static function get_grid_columns( $form_id, $input_label_only = false ) {
 		_deprecated_function( __METHOD__, '4.2', 'GFDirectory_Shortcode::get_grid_columns' );
 		return GFDirectory_Shortcode::get_grid_columns( $form_id, $input_label_only );
 
 	}
 
+	/**
+	 * (Deprecated) Get entrylink columns.
+	 *
+	 * @since 4.2 moved to GFDirectory_Shortcode class.
+	 *
+	 * @param  array $form    Gravity form ID.
+	 * @param  array $entry   Entry.
+	 * @return array $columns Array of columns.
+	 */
 	private static function get_entrylink_column( $form, $entry = false ) {
 		_deprecated_function( __METHOD__, '4.2', 'GFDirectory_Shortcode::get_entrylink_column' );
 		return GFDirectory_Shortcode::get_entrylink_column( $form, $entry );
