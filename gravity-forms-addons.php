@@ -82,7 +82,7 @@ function gf_directory_check_dependancy() {
 * @return void
 */
 function gf_directory_dependancy_notice() {
-	echo '<div class="error"><p> ' . __( 'Plugin deactivated - To make <strong>Gravity Forms Directory & Addons</strong> plugin work, you need to install and activate Gravity Forms plugin first.', 'gravity-forms-addons' ) . '</p></div>';
+	echo sprintf( '<div class="error"><p>%s</p></div>', __( 'Plugin deactivated - To make <strong>Gravity Forms Directory & Addons</strong> plugin work, you need to install and activate Gravity Forms plugin first.', 'gravity-forms-addons' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**

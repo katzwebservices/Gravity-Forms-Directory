@@ -25,9 +25,9 @@ class GFDirectorySelectColumns {
 
 	public static function select_columns_page() {
 
-		$form_id = intval( $_GET["id"] );
+		$form_id = intval( $_GET['id'] );
 		if ( empty( $form_id ) ) {
-			echo esc_html__( "Oops! We could not locate your form. Please try again.", "gravity-forms-addons" );
+			echo esc_html__( 'Oops! We could not locate your form. Please try again.', 'gravity-forms-addons' );
 			exit;
 		}
 
@@ -37,15 +37,96 @@ class GFDirectorySelectColumns {
 		$columns   = GFDirectory_shortcode::get_grid_columns( $form_id );
 		$field_ids = array_keys( $columns );
 		$form = RGFormsModel::get_form_meta( $form_id );
-		array_push( $form['fields'], array( 'id' => 'id', 'label' => __( 'Entry Id', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'date_created', 'label' => __( 'Entry Date', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'ip', 'label' => __( 'User IP', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'source_url', 'label' => __( 'Source Url', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'payment_status', 'label' => __( 'Payment Status', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'transaction_id', 'label' => __( 'Transaction Id', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'payment_amount', 'label' => __( 'Payment Amount', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'payment_date', 'label' => __( 'Payment Date', 'gravity-forms-addons' ) ) );
-		array_push( $form['fields'], array( 'id' => 'created_by', 'label' => __( 'User', 'gravity-forms-addons' ) ) );
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'id',
+				'label' => __(
+					'Entry Id',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'date_created',
+				'label' => __(
+					'Entry Date',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'ip',
+				'label' => __(
+					'User IP',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'source_url',
+				'label' => __(
+					'Source Url',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'payment_status',
+				'label' => __(
+					'Payment Status',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'transaction_id',
+				'label' => __(
+					'Transaction Id',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'payment_amount',
+				'label' => __(
+					'Payment Amount',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'payment_date',
+				'label' => __(
+					'Payment Date',
+					'gravity-forms-addons'
+				),
+			)
+		);
+		array_push(
+			$form['fields'],
+			array(
+				'id' => 'created_by',
+				'label' => __(
+					'User',
+					'gravity-forms-addons'
+				),
+			)
+		);
 
 		$form = self::get_selectable_entry_meta( $form );
 		$form = GFFormsModel::convert_field_objects( $form );
@@ -54,10 +135,16 @@ class GFDirectorySelectColumns {
 	}
 
 	public static function get_selectable_entry_meta( $form ) {
-		$entry_meta = GFFormsModel::get_entry_meta( $form["id"] );
+		$entry_meta = GFFormsModel::get_entry_meta( $form['id'] );
 		$keys       = array_keys( $entry_meta );
 		foreach ( $keys as $key ) {
-			array_push( $form["fields"], array( "id" => $key, "label" => $entry_meta[ $key ]['label'] ) );
+			array_push(
+				$form['fields'],
+				array(
+					'id' => $key,
+					'label' => $entry_meta[ $key ]['label'],
+				)
+			);
 		}
 
 		return $form;
@@ -65,4 +152,4 @@ class GFDirectorySelectColumns {
 
 }
 
-$SelectColumns = new GFDirectorySelectColumns();
+new GFDirectorySelectColumns();

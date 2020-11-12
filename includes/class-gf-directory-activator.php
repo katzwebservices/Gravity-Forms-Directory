@@ -12,7 +12,7 @@
  */
 
 class GFDirectory_Activator {
-	
+
 	public static function activate() {
 		self::add_permissions();
 		self::flush_rules();
@@ -21,11 +21,11 @@ class GFDirectory_Activator {
 
 	public static function add_permissions() {
 		global $wp_roles;
-		$wp_roles->add_cap( "administrator", "gravityforms_directory" );
-		$wp_roles->add_cap( "administrator", "gravityforms_directory_uninstall" );
+		$wp_roles->add_cap( 'administrator', 'gravityforms_directory' );
+		$wp_roles->add_cap( 'administrator', 'gravityforms_directory_uninstall' );
 	}
 
-	 public static function flush_rules() {
+	public static function flush_rules() {
 		global $wp_rewrite;
 		GFDirectory::add_rewrite();
 		$wp_rewrite->flush_rules();
@@ -34,9 +34,14 @@ class GFDirectory_Activator {
 
 	public static function add_activation_notice() {
 		$message = sprintf(
-			esc_html__( 'Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %sGo to the settings page%s to read usage instructions and configure the plugin default settings. %sGo to settings page%s', 'gravity-forms-addons' ),
-			'<a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '">','</a>',
-				'<p class="submit"><a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '" class="button button-secondary">',
+			// Translators: placeholder: Link to Directory settings page.
+			esc_html__(
+				'Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %1$sGo to the settings page%2$s to read usage instructions and configure the plugin default settings. %3$sGo to settings page%4$s',
+				'gravity-forms-addons'
+			),
+			'<a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '">',
+			'</a>',
+			'<p class="submit"><a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '" class="button button-secondary">',
 			'</a></p>'
 		);
 		set_transient( 'kws_gf_activation_notice', $message, 60 * 60 );

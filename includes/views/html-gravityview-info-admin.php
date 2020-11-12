@@ -21,7 +21,7 @@
 		margin-bottom: 10px;
 		background: #fff;
 		text-align: center;
-	<?php echo isset($_GET['viewinstructions']) ? 'display:none;' : ''; ?>
+	<?php echo isset( $_GET['viewinstructions'] ) ? 'display:none;' : ''; ?>
 	}
 
 	#kws_gravityview_info div.aligncenter {
@@ -68,17 +68,17 @@
 	<div class="aligncenter">
 		<a href="http://katz.si/gravityview"
 		   title="<?php esc_attr_e( 'Go to the GravityView Website', 'gravity-forms-addons' ); ?>"
-		   class="aligncenter"><img src="<?php echo GF_DIRECTORY_URL. '/images/GravityView.png' ?>"
-		                            alt="GravityView Logo"/></a>
+		   class="aligncenter"><img src="<?php echo GF_DIRECTORY_URL . '/images/GravityView.png'; ?>"
+									alt="GravityView Logo"/></a>
 		<h2><?php esc_html_e( 'Better, simpler, more powerful.', 'gravity-forms-addons' ); ?></h2>
 
 		<h3><?php esc_html_e( 'Not just a premium version: a whole different plugin.', 'gravity-forms-addons' ); ?></h3>
 
-		<img src="<?php echo GF_DIRECTORY_URL. '/images/money-back-guarantee.jpg' ?>"
-		     alt="GravityView money-back Guarantee" class="alignright" style="margin: 10px 0 0 10px;"/>
+		<img src="<?php echo GF_DIRECTORY_URL . '/images/money-back-guarantee.jpg'; ?>"
+			 alt="GravityView money-back Guarantee" class="alignright" style="margin: 10px 0 0 10px;"/>
 		<?php
 
-		echo wpautop( sprintf( esc_html__( '%sGravityView%s is the best way to display Gravity Forms entries on your website.', 'gravity-forms-addons' ), '<a href="https://katz.si/gravityview">', '</a>' ) );
+		echo wpautop( sprintf( esc_html__( '%1$sGravityView%2$s is the best way to display Gravity Forms entries on your website.', 'gravity-forms-addons' ), '<a href="https://katz.si/gravityview">', '</a>' ) );
 
 		?>
 
@@ -91,7 +91,8 @@
 
 		<?php
 
-		echo wpautop( sprintf( esc_html__( 'We re-wrote the Directory plugin from the ground up to be more simple and more powerful. If you like the Directory plugin, you&rsquo;ll %slove%s GravityView.', 'gravity-forms-addons' ), '<em>', '</em>' ) ); ?>
+		echo wpautop( sprintf( esc_html__( 'We re-wrote the Directory plugin from the ground up to be more simple and more powerful. If you like the Directory plugin, you&rsquo;ll %1$slove%2$s GravityView.', 'gravity-forms-addons' ), '<em>', '</em>' ) );
+		?>
 
 		<p><a href="http://katz.si/gravityview" class="button button-hero button-primary"><?php esc_html_e( 'Check out GravityView', 'gravity-forms-addons' ); ?></a>
 		</p>

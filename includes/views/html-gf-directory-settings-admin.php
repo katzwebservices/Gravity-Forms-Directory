@@ -77,12 +77,12 @@
 
 <div class="wrap">
 	<?php
-	if ( $plugin_page !== 'gf_settings' ) {
+	if ( 'gf_settings' !== $plugin_page ) {
 
-		echo '<h2>' . esc_html__( 'Gravity Forms Directory Add-on', "gravity-forms-addons" ) . '</h2>';
+		echo '<h2>' . esc_html__( 'Gravity Forms Directory Add-on', 'gravity-forms-addons' ) . '</h2>';
 	}
 	if ( $message ) {
-		echo "<div class='fade below-h2 updated' id='message'>" . wpautop( $message ) . "</div>";
+		echo "<div class='fade below-h2 updated' id='message'>" . wpautop( $message ) . '</div>';
 	}
 
 	// if you must, you can filter this out...
@@ -93,49 +93,55 @@
 	?>
 
 	<p class="submit"><span style="padding-right:.5em;" class="description"><?php esc_html_e( 'Need help getting started?', 'gravity-forms-addons' ); ?></span>
-		<a href="#" class="button button-secondary" id="kws_gf_instructions_button"><?php
-			if ( ! empty( $settings['saved'] ) && ! isset( $_REQUEST['viewinstructions'] ) ) {
-				esc_html_e( 'View Directory Instructions', 'gravity-forms-addons' );
-			} else {
-				esc_html_e( 'Hide Directory Instructions', 'gravity-forms-addons' );
-			}
-			?></a>
+		<a href="#" class="button button-secondary" id="kws_gf_instructions_button">
+		<?php
+		if ( ! empty( $settings['saved'] ) && ! isset( $_REQUEST['viewinstructions'] ) ) {
+			esc_html_e( 'View Directory Instructions', 'gravity-forms-addons' );
+		} else {
+			esc_html_e( 'Hide Directory Instructions', 'gravity-forms-addons' );
+		}
+		?>
+			</a>
 		</p>
 
-	<div id="kws_gf_instructions"<?php if ( ! empty( $settings['saved'] ) && ! isset( $_REQUEST['viewinstructions'] ) ) { ?>  class="hide-if-js clear" <?php } ?>>
+	<div id="kws_gf_instructions"
+	<?php
+	if ( ! empty( $settings['saved'] ) && ! isset( $_REQUEST['viewinstructions'] ) ) {
+		?>
+		  class="hide-if-js clear" <?php } ?>>
 		<div class="delete-alert alert_gray">
 			<div class="alignright" style="margin:1em 1.2em;">
 				<iframe width="400" height="255"
-				        src="http<?php echo is_ssl() ? 's' : ''; ?>://www.youtube.com/embed/PMI7Jb-RP2I?hd=1"
-				        frameborder="0" allowfullscreen></iframe>
+						src="http<?php echo is_ssl() ? 's' : ''; ?>://www.youtube.com/embed/PMI7Jb-RP2I?hd=1"
+						frameborder="0" allowfullscreen></iframe>
 			</div>
 			<h3 style="padding-top:1em; line-height: 1"><?php esc_html_e( 'To integrate a form with Directory:', 'gravity-forms-addons' ); ?></h3>
 			<ol class="ol-decimal">
 				<li><?php esc_html_e( 'Go to the post or page where you would like to add the directory.', 'gravity-forms-addons' ); ?></li>
 				<li><?php esc_html_e( 'Click the "Add Directory" button above the content area.', 'gravity-forms-addons' ); ?></li>
 				<li><?php esc_html_e( 'Choose a form from the drop-down menu and configure settings as you would like them.', 'gravity-forms-addons' ); ?></li>
-				<li><?php printf( esc_html__( 'Click "Insert Directory". A "shortcode" should appear in the content editor that looks similar to %s[directory form="#"]%s', 'gravity-forms-addons' ), '<code style="font-size:1em;">', '</code>' ); ?></li>
+				<li><?php printf( esc_html__( 'Click "Insert Directory". A "shortcode" should appear in the content editor that looks similar to %1$s[directory form="#"]%2$s', 'gravity-forms-addons' ), '<code style="font-size:1em;">', '</code>' ); ?></li>
 				<li><?php esc_html_e( 'Save the post or page', 'gravity-forms-addons' ); ?></li>
 			</ol>
 
-			<h4><?php esc_html_e( 'Configuring Fields & Columns', "gravity-forms-addons" ); ?></h4>
+			<h4><?php esc_html_e( 'Configuring Fields & Columns', 'gravity-forms-addons' ); ?></h4>
 
-			<?php echo wpautop( esc_html__( 'When editing a form, click on a field to expand the field. Next, click the "Directory" tab. There, you will find options to:', "gravity-forms-addons" ) ); ?>
+			<?php echo wpautop( esc_html__( 'When editing a form, click on a field to expand the field. Next, click the "Directory" tab. There, you will find options to:', 'gravity-forms-addons' ) ); ?>
 
 			<ul class="ul-square">
-				<li><?php esc_html_e( "Choose whether you would like the field to be a link to the Single Entry View;", "gravity-forms-addons" ); ?></li>
-				<li><?php esc_html_e( "Hide the field in Directory View; and", "gravity-forms-addons" ); ?></li>
-				<li><?php esc_html_e( "Hide the field in Single Entry View", "gravity-forms-addons" ); ?></li>
+				<li><?php esc_html_e( 'Choose whether you would like the field to be a link to the Single Entry View;', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Hide the field in Directory View; and', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Hide the field in Single Entry View', 'gravity-forms-addons' ); ?></li>
 			</ul>
 
-			<h4><?php esc_html_e( 'Configuring Column Visibility & Order', "gravity-forms-addons" ); ?></h4>
+			<h4><?php esc_html_e( 'Configuring Column Visibility & Order', 'gravity-forms-addons' ); ?></h4>
 
-			<?php echo wpautop( esc_html__( 'When editing a form in Gravity Forms, click the link near the top-center of the page named "Directory Columns"', "gravity-forms-addons" ) ); ?>
+			<?php echo wpautop( esc_html__( 'When editing a form in Gravity Forms, click the link near the top-center of the page named "Directory Columns"', 'gravity-forms-addons' ) ); ?>
 
 			<ol class="ol-decimal">
-				<li><?php esc_html_e( 'When editing a form in Gravity Forms, click the link near the top-center of the page named "Directory Columns"', "gravity-forms-addons" ); ?></li>
-				<li><?php esc_html_e( 'Drag and drop columns from the right ("Hidden Columns") side to the left ("Visible Columns") side.', "gravity-forms-addons" ); ?></li>
-				<li><?php esc_html_e( 'Click the "Save" button', "gravity-forms-addons" ); ?></li>
+				<li><?php esc_html_e( 'When editing a form in Gravity Forms, click the link near the top-center of the page named "Directory Columns"', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Drag and drop columns from the right ("Hidden Columns") side to the left ("Visible Columns") side.', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Click the "Save" button', 'gravity-forms-addons' ); ?></li>
 			</ol>
 
 		</div>
@@ -143,22 +149,22 @@
 		<div class="hr-divider"></div>
 	</div>
 	<form method="post" action="" class="clear">
-		<?php wp_nonce_field( "update", "gf_directory_update" ) ?>
+		<?php wp_nonce_field( 'update', 'gf_directory_update' ); ?>
 		<table class="form-table">
 			<tr>
 				<th scope="row"><label
-						for="gf_addons_directory"><?php esc_html_e( "Gravity Forms Directory", "gravity-forms-addons" ); ?></label>
+						for="gf_addons_directory"><?php esc_html_e( 'Gravity Forms Directory', 'gravity-forms-addons' ); ?></label>
 				</th>
 				<td>
-					<label for="gf_addons_directory" class="howto"><input type="checkbox" id="gf_addons_directory" name="gf_addons_directory" <?php checked( $settings["directory"] ); ?> /> <?php esc_html_e( 'Enable Gravity Forms Directory capabilities', 'gravity-forms-addons' ); ?>
+					<label for="gf_addons_directory" class="howto"><input type="checkbox" id="gf_addons_directory" name="gf_addons_directory" <?php checked( $settings['directory'] ); ?> /> <?php esc_html_e( 'Enable Gravity Forms Directory capabilities', 'gravity-forms-addons' ); ?>
 					</label>
 				</td>
 			</tr>
 			<tr id="directory_settings_row">
 				<th scope="row"></th>
 				<td>
-					<h2 style="margin-bottom:0; padding-bottom:0;"><?php esc_html_e( "Directory Default Settings", "gravity-forms-addons" ); ?></h2>
-					<h3><?php esc_html_e( "These defaults can be over-written when inserting a directory.", "gravity-forms-addons" ); ?></h3>
+					<h2 style="margin-bottom:0; padding-bottom:0;"><?php esc_html_e( 'Directory Default Settings', 'gravity-forms-addons' ); ?></h2>
+					<h3><?php esc_html_e( 'These defaults can be over-written when inserting a directory.', 'gravity-forms-addons' ); ?></h3>
 
 					<?php
 					self::make_popup_options( false );
@@ -168,41 +174,41 @@
 			</tr>
 			<tr>
 				<th scope="row"><label
-						for="gf_addons_referrer"><?php esc_html_e( "Add Referrer Data to Emails", "gravity-forms-addons" ); ?></label>
+						for="gf_addons_referrer"><?php esc_html_e( 'Add Referrer Data to Emails', 'gravity-forms-addons' ); ?></label>
 				</th>
 				<td>
 					<label for="gf_addons_referrer">
-						<input type="checkbox" id="gf_addons_referrer" name="gf_addons_referrer" <?php checked( $settings["referrer"] ); ?> /> <?php esc_html_e( "Adds referrer data to entries, including the path the user took to get to the form before submitting.", 'gravity-forms-addons' ); ?>
+						<input type="checkbox" id="gf_addons_referrer" name="gf_addons_referrer" <?php checked( $settings['referrer'] ); ?> /> <?php esc_html_e( 'Adds referrer data to entries, including the path the user took to get to the form before submitting.', 'gravity-forms-addons' ); ?>
 					</label>
 				</td>
 			</tr>
 			<tr>
 				<th scope="row"><label
-						for="gf_addons_modify_admin"><?php esc_html_e( "Modify Gravity Forms Admin", "gravity-forms-addons" ); ?></label>
+						for="gf_addons_modify_admin"><?php esc_html_e( 'Modify Gravity Forms Admin', 'gravity-forms-addons' ); ?></label>
 				</th>
 				<td>
 					<ul>
 						<li>
 							<label for="gf_addons_modify_admin_expand">
-								<input type="checkbox" id="gf_addons_modify_admin_expand" name="gf_addons_modify_admin[expand]" <?php checked( isset( $settings["modify_admin"]['expand'] ) ); ?> /> <?php esc_html_e( "Show option to expand Form Editor Field boxes", "gravity-forms-addons" ); ?>
+								<input type="checkbox" id="gf_addons_modify_admin_expand" name="gf_addons_modify_admin[expand]" <?php checked( isset( $settings['modify_admin']['expand'] ) ); ?> /> <?php esc_html_e( 'Show option to expand Form Editor Field boxes', 'gravity-forms-addons' ); ?>
 							</label>
 						</li>
 
 						<li>
 							<label for="gf_addons_modify_admin_toggle">
-								<input type="checkbox" id="gf_addons_modify_admin_toggle" name="gf_addons_modify_admin[toggle]" <?php checked( isset( $settings["modify_admin"]['toggle'] ) ); ?> /> <?php esc_html_e( 'When clicking Form Editor Field boxes, toggle open and closed instead of "accordion mode" (closing all except the clicked box).', "gravity-forms-addons" ); ?>
+								<input type="checkbox" id="gf_addons_modify_admin_toggle" name="gf_addons_modify_admin[toggle]" <?php checked( isset( $settings['modify_admin']['toggle'] ) ); ?> /> <?php esc_html_e( 'When clicking Form Editor Field boxes, toggle open and closed instead of "accordion mode" (closing all except the clicked box).', 'gravity-forms-addons' ); ?>
 							</label>
 						</li>
 
 						<li>
 							<label for="gf_addons_modify_admin_edit">
-								<input type="checkbox" id="gf_addons_modify_admin_edit" name="gf_addons_modify_admin[edit]" <?php checked( isset( $settings["modify_admin"]['edit'] ) ); ?> /> <?php printf( esc_html__( "Makes possible direct editing of entries from %sEntries list view%s", "gravity-forms-addons" ), '<a href="' . admin_url( 'admin.php?page=gf_entries' ) . '">', '</a>' ); ?>
+								<input type="checkbox" id="gf_addons_modify_admin_edit" name="gf_addons_modify_admin[edit]" <?php checked( isset( $settings['modify_admin']['edit'] ) ); ?> /> <?php printf( esc_html__( 'Makes possible direct editing of entries from %1$sEntries list view%2$s', 'gravity-forms-addons' ), '<a href="' . admin_url( 'admin.php?page=gf_entries' ) . '">', '</a>' ); ?>
 							</label>
 						</li>
 
 						<li>
 							<label for="gf_addons_modify_admin_ids">
-								<input type="checkbox" id="gf_addons_modify_admin_ids" name="gf_addons_modify_admin[ids]" <?php checked( isset( $settings["modify_admin"]['ids'] ) ); ?> /> <?php printf( esc_html__( "Adds a link in the Forms list view to view form IDs", "gravity-forms-addons" ), '<a href="' . admin_url( 'admin.php?page=gf_edit_forms' ) . '">', '</a>' ); ?>
+								<input type="checkbox" id="gf_addons_modify_admin_ids" name="gf_addons_modify_admin[ids]" <?php checked( isset( $settings['modify_admin']['ids'] ) ); ?> /> <?php printf( esc_html__( 'Adds a link in the Forms list view to view form IDs', 'gravity-forms-addons' ), '<a href="' . admin_url( 'admin.php?page=gf_edit_forms' ) . '">', '</a>' ); ?>
 							</label>
 						</li>
 					</ul>
@@ -210,7 +216,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<input type="submit" name="gf_addons_submit" class="button-primary button-large button-mega" value="<?php esc_attr_e( "Save Settings", "gravity-forms-addons" ) ?>"/>
+					<input type="submit" name="gf_addons_submit" class="button-primary button-large button-mega" value="<?php esc_attr_e( 'Save Settings', 'gravity-forms-addons' ); ?>"/>
 				</td>
 			</tr>
 		</table>
