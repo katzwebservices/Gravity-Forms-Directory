@@ -126,34 +126,24 @@ class GFDirectory_Shortcode extends GFDirectory {
 			return;
 		}
 
-		$get_fields = array_merge(
-			array(
-				'sort'       => $sort,
-				'dir'        => $dir,
-				'gf_search'  => null,
-				'start_date' => $start_date,
-				'end_date'   => $end_date,
-				'pagenum'    => $startpage,
-				'star'       => '',
-				'read'       => '',
-			),
-			array_filter( wp_unslash( $_GET ) )
-		);
+		$get_fields = wp_unslash( $_GET );
 
-		$sort_field     = $sort;
-		$sort_direction = $dir;
-		$search_query   = $get_fields['gf_search'];
+		$sort_field     = empty( $get_fields["sort"] ) ? $sort : $get_fields["sort"];
+		$sort_direction = empty( $get_fields["dir"] ) ? $dir : $get_fields["dir"];
+		$search_query   = isset( $get_fields["gf_search"] ) ? $get_fields["gf_search"] : NULL;
 
-		$page_index       = intval( $get_fields['pagenum'] ) - 1;
-		$star             = is_numeric( $get_fields['star'] ) ? intval( $get_fields['star'] ) : null;
-		$read             = is_numeric( $get_fields['read'] ) ? intval( $get_fields['read'] ) : null;
+		$start_date = ! empty( $get_fields["start_date"] ) ? $get_fields["start_date"] : $start_date;
+		$end_date   = ! empty( $get_fields["end_date"] ) ? $get_fields["end_date"] : $end_date;
 
+		$page_index       = empty( $get_fields["pagenum"] ) ? $startpage - 1 : intval( $get_fields["pagenum"] ) - 1;
+		$star             = ( isset( $get_fields["star"] ) && is_numeric( $get_fields["star"] ) ) ? intval( $get_fields["star"] ) : NULL;
+		$read             = ( isset( $get_fields["read"] ) && is_numeric( $get_fields["read"] ) ) ? intval( $get_fields["read"] ) : NULL;
 		$first_item_index = $page_index * $page_size;
 		$link_params      = array();
-
 		if ( ! empty( $page_index ) ) {
 			$link_params['pagenum'] = $page_index;
 		}
+
 		$formaction = esc_url_raw(
 			remove_query_arg(
 				array(
