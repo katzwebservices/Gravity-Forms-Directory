@@ -192,7 +192,7 @@ class GFDirectory_Admin {
 				var onScrollScript = window.onscroll;
 				$( 'div.gforms_edit_form #add_fields #floatMenu' ).prepend( '<div class="gforms_expend_all_menus_form"><label for="expandAllMenus"><input type="checkbox" id="expandAllMenus" value="1" /> Expand All Menus</label></div>' );
 
-				$( 'input#expandAllMenus' ).live( 'click', function ( e ) {
+				$( 'input#expandAllMenus' ).on( 'click', function ( e ) {
 					if ( $( this ).is( ':checked' ) ) {
 						window.onscroll = '';
 						$( 'div.gforms_edit_form' ).addClass( 'gforms_edit_form_expanded' );
