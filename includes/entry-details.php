@@ -24,7 +24,7 @@ require_once( $bootstrap_search_dir . '/wp-blog-header.php' );
 require_once( $bootstrap_search_dir . '/wp-admin/includes/admin.php' );
 
 // Check that the GF Directory plugin is active. If it isn't, this shouldn't be shown.
-if ( ! is_plugin_active( 'gravity-forms-addons/gravity-forms-addons.php' ) ) {
+if ( ! is_plugin_active( GF_DIRECTORY_PLUGIN_BASENAME ) ) {
 	wp_die( 'The Gravity Forms Directory plugin is not active.', 'gravity-forms-addons' );
 }
 

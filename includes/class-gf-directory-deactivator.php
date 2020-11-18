@@ -26,8 +26,7 @@ class GFDirectory_Deactivator {
 		delete_option( 'gf_addons_settings' );
 
 		//Deactivating plugin
-		$plugin = 'gravity-forms-addons/gravity-forms-addons.php';
-		deactivate_plugins( $plugin );
-		update_option( 'recently_activated', array( $plugin => time() ) + (array) get_option( 'recently_activated' ) );
+		deactivate_plugins( GF_DIRECTORY_PLUGIN_BASENAME );
+		update_option( 'recently_activated', array( GF_DIRECTORY_PLUGIN_BASENAME => time() ) + (array) get_option( 'recently_activated' ) );
 	}
 }
