@@ -441,15 +441,15 @@ class GFDirectory {
 
 			if ( $jstable ) {
 				$theme = apply_filters( 'kws_gf_tablesorter_theme', 'blue', $form );
-				wp_enqueue_style( 'tablesorter-' . $theme, plugins_url( "/bower_components/jquery.tablesorter/css/theme.{$theme}.css", __FILE__ ) );
-				wp_enqueue_script( 'tablesorter-min', plugins_url( '/bower_components/jquery.tablesorter/js/jquery.tablesorter.min.js', __FILE__ ), array( 'jquery' ) );
+				wp_enqueue_style( 'tablesorter-' . $theme, GF_DIRECTORY_URL . "bower_components/jquery.tablesorter/css/theme.{$theme}.css", array(), GF_DIRECTORY_VERSION );
+				wp_enqueue_script( 'tablesorter-min', GF_DIRECTORY_URL . 'bower_components/jquery.tablesorter/js/jquery.tablesorter.min.js', array( 'jquery' ), GF_DIRECTORY_VERSION );
 				$kws_gf_styles[]  = 'tablesorter-' . $theme;
 				$kws_gf_scripts[] = 'tablesorter-min';
 			}
 
 			if ( ! empty( $lightboxsettings ) ) {
-				wp_enqueue_script( 'colorbox', plugins_url( '/bower_components/colorbox/jquery.colorbox-min.js', __FILE__ ), array( 'jquery' ) );
-				wp_enqueue_style( 'colorbox', plugins_url( "/bower_components/colorbox/example{$lightboxstyle}/colorbox.css", __FILE__ ), array() );
+				wp_enqueue_script( 'colorbox', GF_DIRECTORY_URL . 'bower_components/colorbox/jquery.colorbox-min.js', array( 'jquery' ), GF_DIRECTORY_VERSION );
+				wp_enqueue_style( 'colorbox', GF_DIRECTORY_URL . "bower_components/colorbox/example{$lightboxstyle}/colorbox.css", array(), GF_DIRECTORY_VERSION );
 				$kws_gf_scripts[] = $kws_gf_styles[] = 'colorbox';
 				add_action(
 					apply_filters( 'kws_gf_directory_colorbox_action', 'wp_footer' ),
@@ -1358,7 +1358,7 @@ class GFDirectory {
 
 	//Returns the url of the plugin's root folder
 	public static function get_base_url() {
-		return plugins_url( null, __FILE__ );
+		return GF_DIRECTORY_URL;
 	}
 
 
