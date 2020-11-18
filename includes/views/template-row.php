@@ -25,12 +25,7 @@ if ( is_array( $leads ) && ! empty( $leads ) && count( $leads ) > 0 && $lead_cou
 			$rowstyle   = ! empty( $rowstyle ) ? ' style="' . $rowstyle . '"' : '';
 
 			?>
-			<tr id="lead_row_<?php echo $lead['id']; ?>" class='
-										<?php
-										echo trim( $rowclass . $evenodd );
-										echo $lead['is_starred'] ? ' featured' : ''
-										?>
-			'<?php echo $rowstyle . $valignattr; ?>>
+			<tr id="lead_row_<?php echo $lead['id']; ?>" class="<?php echo trim( $rowclass . $evenodd ); echo $lead['is_starred'] ? ' featured' : '';?>" <?php echo $rowstyle . $valignattr; ?>>
 			<?php
 				$class           = '';
 				$is_first_column = true;
