@@ -21,7 +21,7 @@ class GFDirectory_Admin {
 
 		//creates a new Settings page on Gravity Forms' settings screen
 		if ( GFDirectory::has_access( 'gravityforms_directory' ) ) {
-			RGForms::add_settings_page( 'Directory & Addons', array( &$this, 'settings_page' ), '' );
+			RGForms::add_settings_page( 'Directory', array( &$this, 'settings_page' ), '' );
 		}
 		add_filter( 'gform_addon_navigation', array( &$this, 'create_menu' ) ); //creates the subnav left menu
 
@@ -128,13 +128,13 @@ class GFDirectory_Admin {
 
 		if ( ! GFDirectory::is_gravityforms_installed() ) {
 			if ( file_exists( WP_PLUGIN_DIR . '/gravityforms/gravityforms.php' ) ) {
-				$message .= sprintf( esc_html__( '%1$sGravity Forms is installed but not active. %2$sActivate Gravity Forms%3$s to use the Gravity Forms Directory & Addons plugin.%4$s', 'gravity-forms-addons' ), '<p>', '<a href="' . wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=gravityforms/gravityforms.php' ), 'activate-plugin_gravityforms/gravityforms.php' ) . '" style="font-weight:strong;">', '</a>', '</p>' );
+				$message .= sprintf( esc_html__( '%1$sGravity Forms is installed but not active. %2$sActivate Gravity Forms%3$s to use the Gravity Forms Directory plugin.%4$s', 'gravity-forms-addons' ), '<p>', '<a href="' . wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=gravityforms/gravityforms.php' ), 'activate-plugin_gravityforms/gravityforms.php' ) . '" style="font-weight:strong;">', '</a>', '</p>' );
 			} else {
 				$message = sprintf(
 					esc_html__(
 						'%sGravity Forms cannot be found%s
 
-				The %sGravity Forms plugin%s must be installed and activated for the Gravity Forms Addons plugin to work.
+				The %sGravity Forms plugin%s must be installed and activated for the Gravity Forms Directory plugin to work.
 
 				If you haven\'t installed the plugin, you can %3$spurchase the plugin here%4$s. If you have, and you believe this notice is in error, %5$sstart a topic on the plugin support forum%4$s.
 
@@ -968,7 +968,7 @@ EOD;
 		if ( ! empty( $permission ) ) {
 			$menus[] = array(
 				'name'       => 'gf_settings&amp;addon=Directory+%26+Addons',
-				'label'      => esc_html__( 'Directory & Addons', 'gravity-forms-addons' ),
+				'label'      => esc_html__( 'Directory', 'gravity-forms-addons' ),
 				'callback'   => array( &$this, 'settings_page' ),
 				'permission' => $permission,
 			);

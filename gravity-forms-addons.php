@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: 	Gravity Forms Directory & Addons
+Plugin Name: 	Gravity Forms Directory
 Plugin URI: 	https://katz.co/gravity-forms-addons/
 Description: 	Turn <a href="https://katz.si/gravityforms">Gravity Forms</a> into a great WordPress directory...and more!
 Author: 		Katz Web Services, Inc.
@@ -82,7 +82,7 @@ function gf_directory_check_dependancy() {
 * @return void
 */
 function gf_directory_dependancy_notice() {
-	echo sprintf( '<div class="error"><p>%s</p></div>', __( 'Plugin deactivated - To make <strong>Gravity Forms Directory & Addons</strong> plugin work, you need to install and activate Gravity Forms plugin first.', 'gravity-forms-addons' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo sprintf( '<div class="error"><p>%s</p></div>', __( 'Plugin deactivated - To make <strong>Gravity Forms Directory</strong> plugin work, you need to install and activate Gravity Forms plugin first.', 'gravity-forms-addons' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**

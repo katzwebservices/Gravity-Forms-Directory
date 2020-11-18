@@ -36,12 +36,12 @@ class GFDirectory_Activator {
 		$message = sprintf(
 			// Translators: placeholder: Link to Directory settings page.
 			esc_html__(
-				'Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %1$sGo to the settings page%2$s to read usage instructions and configure the plugin default settings. %3$sGo to settings page%4$s',
+				'Congratulations - the Gravity Forms Directory plugin has been installed. %1$sGo to the settings page%2$s to read usage instructions and configure the plugin default settings. %3$sGo to settings page%4$s',
 				'gravity-forms-addons'
 			),
-			'<a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '">',
+			'<a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory&viewinstructions=true' ) ) . '">',
 			'</a>',
-			'<p class="submit"><a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory+%26+Addons&viewinstructions=true' ) ) . '" class="button button-secondary">',
+			'<p class="submit"><a href="' . esc_url_raw( admin_url( 'admin.php?page=gf_settings&addon=Directory&viewinstructions=true' ) ) . '" class="button button-secondary">',
 			'</a></p>'
 		);
 		set_transient( 'kws_gf_activation_notice', $message, 60 * 60 );
