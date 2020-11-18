@@ -1020,7 +1020,7 @@ class GFDirectory {
 	 *
 	 * @return [type]              [description]
 	 */
-	private static function render_image_link( $url, $lead, $options, $title = '', $caption = '', $description = '' ) {
+	public static function render_image_link( $url, $lead, $options, $title = '', $caption = '', $description = '' ) {
 
 		extract( $options );
 
@@ -1115,7 +1115,7 @@ class GFDirectory {
 	 * render_search_dropdown function.
 	 *
 	 * @since 3.5
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @param string $label (default: '') search field label
@@ -1124,7 +1124,7 @@ class GFDirectory {
 	 *
 	 * @return field dropdown html
 	 */
-	private static function render_search_dropdown( $label = '', $name = '', $choices ) {
+	public static function render_search_dropdown( $label = '', $name = '', $choices ) {
 
 		if ( empty( $choices ) || ! is_array( $choices ) || empty( $name ) ) {
 			return '';
@@ -1151,7 +1151,7 @@ class GFDirectory {
 	 * render_search_input function.
 	 *
 	 * @since 3.5
-	 * @access private
+	 * @access public
 	 * @static
 	 *
 	 * @param string $label (default: '') search field label
@@ -1159,7 +1159,7 @@ class GFDirectory {
 	 *
 	 * @return field input html
 	 */
-	private static function render_search_input( $label = '', $name = '' ) {
+	public static function render_search_input( $label = '', $name = '' ) {
 
 		if ( empty( $name ) ) {
 			return '';
@@ -2141,7 +2141,7 @@ class GFDirectory {
 	 * @param  array $entry   Entry.
 	 * @return array $columns Array of columns.
 	 */
-	private static function get_entrylink_column( $form, $entry = false ) {
+	public static function get_entrylink_column( $form, $entry = false ) {
 		_deprecated_function( __METHOD__, '4.2', 'GFDirectory_Shortcode::get_entrylink_column' );
 		return GFDirectory_Shortcode::get_entrylink_column( $form, $entry );
 	}
