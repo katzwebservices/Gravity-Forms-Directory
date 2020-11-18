@@ -106,30 +106,15 @@ if ( ! isset( $directory_shown ) ) {
 			?>
 			<p class="search-box">
 				<?php if ( $search ) : ?>
-					<label class="hidden"
-						   for="lead_search"><?php esc_html_e( 'Search Entries:', 'gravity-forms-addons' ); ?></label>
-					<input type="text" name="gf_search" id="lead_search"
-						   value="<?php echo $search_query; ?>"
-											 <?php
-												if ( $searchtabindex ) {
-													echo ' tabindex="' . intval( $searchtabindex ) . '"';
-												}
-												?>
-					 />
+					<label class="hidden" for="lead_search"><?php esc_html_e( 'Search Entries:', 'gravity-forms-addons' ); ?></label>
+					<input type="text" name="gf_search" id="lead_search" value="<?php echo $search_query; ?>" <?php if ( $searchtabindex ) { echo ' tabindex="' . intval( $searchtabindex ) . '"'; }?> />
 				<?php endif; ?>
 				<?php
 				// If not using permalinks, let's make the form work!
 				echo ! empty( $_GET['p'] ) ? '<input name="p" type="hidden" value="' . esc_html( $_GET['p'] ) . '" />' : '';
 				echo ! empty( $_GET['page_id'] ) ? '<input name="page_id" type="hidden" value="' . esc_html( $_GET['page_id'] ) . '" />' : '';
 				?>
-				<input type="submit" class="button" id="lead_search_button"
-					   value="<?php esc_attr_e( 'Search', 'gravity-forms-addons' ); ?>"
-												<?php
-												if ( $searchtabindex ) {
-													echo ' tabindex="' . intval( $searchtabindex ++ ) . '"';
-												}
-												?>
-				 />
+				<input type="submit" class="button" id="lead_search_button" value="<?php esc_attr_e( 'Search', 'gravity-forms-addons' ); ?>" <?php if ( $searchtabindex ) { echo ' tabindex="' . intval( $searchtabindex ++ ) . '"'; }?> />
 			</p>
 		</form>
 
@@ -154,8 +139,7 @@ if ( ! isset( $directory_shown ) ) {
 						$second_part = $first_item_index + $page_size;
 					}
 					?>
-					<span
-						class="displaying-num"><?php printf( __( 'Displaying %1$d - %2$d of %3$d', 'gravity-forms-addons' ), $first_item_index + 1, $second_part, $lead_count ); ?></span>
+					<span class="displaying-num"><?php printf( __( 'Displaying %1$d - %2$d of %3$d', 'gravity-forms-addons' ), $first_item_index + 1, $second_part, $lead_count ); ?></span>
 					<?php
 				}
 				if ( $page_links ) {
@@ -208,10 +192,6 @@ if ( ! isset( $directory_shown ) ) {
 							<?php
 						} else {
 							$_showlink = true;
-							?>
-							<th scope="col" id="gf-col-<?php echo $form_id . '-' . $field_id; ?>" class="manage-column">
-							<a href="
-							<?php
 							$searchpage     = isset( $_GET['pagenum'] ) ? intval( $_GET['pagenum'] ) : 1;
 							$new_query_args = array(
 								'gf_search' => $search_query,
@@ -222,9 +202,9 @@ if ( ! isset( $directory_shown ) ) {
 							foreach ( $search_criteria as $key => $value ) {
 								$new_query_args[ 'filter_' . $key ] = $value;
 							}
-							echo esc_url_raw( add_query_arg( $new_query_args, get_permalink( $post->ID ) ) );
 							?>
-							">
+							<th scope="col" id="gf-col-<?php echo $form_id . '-' . $field_id; ?>" class="manage-column">
+							<a href="<?php echo esc_url_raw( add_query_arg( $new_query_args, get_permalink( $post->ID ) ) );?>">
 							<?php
 						}
 						if ( $field_info['type'] == 'id' && $entry ) {
@@ -247,9 +227,7 @@ if ( ! isset( $directory_shown ) ) {
 
 				if ( $appendaddress && $addressesExist ) {
 					?>
-					<th scope="col" id="gf-col-<?php echo $form_id . '-' . $field_id; ?>" class="manage-column"
-						onclick="Search('<?php echo $search_query; ?>', '<?php echo $field_id; ?>', '<?php echo $dir; ?>');"
-						style="cursor:pointer;">
+					<th scope="col" id="gf-col-<?php echo $form_id . '-' . $field_id; ?>" class="manage-column" onclick="Search('<?php echo $search_query; ?>', '<?php echo $field_id; ?>', '<?php echo $dir; ?>');" style="cursor:pointer;">
 						<?php
 						$label = apply_filters( 'kws_gf_directory_th', apply_filters( 'kws_gf_directory_th_address', 'Address' ) );
 						echo esc_html( $label )
@@ -308,13 +286,10 @@ if ( ! isset( $directory_shown ) ) {
 				}
 				if ( $appendaddress && $addressesExist ) {
 					?>
-					<th scope="col" id="gf-col-<?php echo $form_id . '-' . $field_id; ?>" class="manage-column"
-						onclick="Search('<?php echo $search_query; ?>', '<?php echo $field_id; ?>', '<?php echo $dir; ?>');"
-						style="cursor:pointer;">
+					<th scope="col" id="gf-col-<?php echo $form_id . '-' . $field_id; ?>" class="manage-column" onclick="Search('<?php echo $search_query; ?>', '<?php echo $field_id; ?>', '<?php echo $dir; ?>');" style="cursor:pointer;">
 						<?php
 						$label = apply_filters( 'kws_gf_directory_th', apply_filters( 'kws_gf_directory_th_address', 'Address' ) );
-						echo esc_html( $label )
-
+						echo esc_html( $label );
 						?>
 						</th>
 					<?php
@@ -351,8 +326,7 @@ if ( ! isset( $directory_shown ) ) {
 						$second_part = $first_item_index + $page_size;
 					}
 					?>
-					<span
-						class="displaying-num"><?php printf( __( 'Displaying %1$d - %2$d of %3$d', 'gravity-forms-addons' ), $first_item_index + 1, $second_part, $lead_count ); ?></span>
+					<span class="displaying-num"><?php printf( __( 'Displaying %1$d - %2$d of %3$d', 'gravity-forms-addons' ), $first_item_index + 1, $second_part, $lead_count ); ?></span>
 					<?php
 				}
 				if ( $page_links ) {
