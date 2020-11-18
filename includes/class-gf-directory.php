@@ -1358,7 +1358,7 @@ class GFDirectory {
 
 	//Returns the url of the plugin's root folder
 	public static function get_base_url() {
-		return GF_DIRECTORY_URL;
+		return rtrim( GF_DIRECTORY_URL, '/' );
 	}
 
 
