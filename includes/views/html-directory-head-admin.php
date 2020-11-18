@@ -12,10 +12,10 @@
 
 <style>
 	.lead_approved .toggleApproved {
-		background: url(<?php echo plugins_url( 'images/tick.png', __FILE__ ); ?>) left top no-repeat;
+		background: url(<?php echo GF_DIRECTORY_URL . 'images/tick.png'; ?>) left top no-repeat;
 	}
 	.toggleApproved {
-		background: url(<?php echo plugins_url( 'images/cross.png', __FILE__ ); ?>) left top no-repeat;
+		background: url(<?php echo GF_DIRECTORY_URL . 'images/cross.png'; ?>) left top no-repeat;
 		width: 16px;
 		height: 16px;
 		display: block;
@@ -164,7 +164,7 @@
 		}
 
 		// Add the header column
-		$('thead .column-is_starred, tfoot .column-is_starred').after('<th class="manage-column column-is_starred sortable"><a href="<?php echo esc_url( add_query_arg( array( 'sort' => $approvedcolumn ) ) ); ?>"><img src="<?php echo plugins_url( '/images/form-button-1.png', __FILE__ ); ?>" title="<?php echo esc_js( __( 'Show entry in directory view?', 'gravity-forms-addons' ) ); ?>" /></span></a></th>');
+		$('thead .column-is_starred, tfoot .column-is_starred').after('<th class="manage-column column-is_starred sortable"><a href="<?php echo esc_url( add_query_arg( array( 'sort' => $approvedcolumn ) ) ); ?>"><img src="<?php echo GF_DIRECTORY_URL . 'images/form-button-1.png'; ?>" title="<?php echo esc_js( __( 'Show entry in directory view?', 'gravity-forms-addons' ) ); ?>" /></span></a></th>');
 
 		// Add to each row
 		$('tbody th:has(img[src*="star"])').after('<td><a href="#" class="toggleApproved" title="'+approveTitle+'">X</a></td>');
