@@ -59,15 +59,7 @@ if ( ! isset( $directory_shown ) ) {
 		} else {
 			var dir = '';
 		}
-		var page = '
-		<?php
-		if ( $wp_rewrite->using_permalinks() ) {
-				echo '?';
-		} else {
-			echo '&';
-		}
-		?>
-			page=' +<?php echo isset( $_GET['pagenum'] ) ? intval( $_GET['pagenum'] ) : '"1"'; ?>;
+		var page = '<?php if ( $wp_rewrite->using_permalinks() ) { echo '?'; } else { echo '&'; } ?> page=' +<?php echo isset( $_GET['pagenum'] ) ? intval( $_GET['pagenum'] ) : '"1"'; ?>;
 		var location = "<?php echo esc_js( get_permalink( $post->ID ) ); ?>" + page + search + sort + dir + search_filters;
 		document.location = location;
 	}
