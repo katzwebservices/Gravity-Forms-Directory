@@ -450,7 +450,7 @@ EOD;
 				'checkbox',
 				'limituser',
 				false,
-				esc_html__( "Display entries only the the creator of the entry (users will not see other people's entries).", 'gravity-forms-addons' ),
+				esc_html__( 'Only display entries created by the currently logged-in user (users will not see entries created by other people).', 'gravity-forms-addons' ),
 			),
 			array(
 				'checkbox',
