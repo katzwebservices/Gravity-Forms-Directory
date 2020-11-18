@@ -9,13 +9,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-11-18T15:38:37+05:30\n"
+"POT-Creation-Date: 2020-11-18T15:51:29+05:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: gravity-forms-addons\n"
 
 #. Plugin Name of the plugin
-#: includes/views/html-gf-directory-settings-admin.php:156
+#: includes/views/html-gf-directory-settings-admin.php:154
 msgid "Gravity Forms Directory"
 msgstr ""
 
@@ -639,7 +639,7 @@ msgid "Click \"Insert Directory\". A \"shortcode\" should appear in the content 
 msgstr ""
 
 #: includes/views/html-gf-directory-settings-admin.php:124
-msgid "Save the post or page"
+msgid "Save the post or page."
 msgstr ""
 
 #: includes/views/html-gf-directory-settings-admin.php:127
@@ -651,11 +651,11 @@ msgid "When editing a form, click on a field to expand the field. Next, click th
 msgstr ""
 
 #: includes/views/html-gf-directory-settings-admin.php:132
-msgid "Choose whether you would like the field to be a link to the Single Entry View;"
+msgid "Choose whether you would like the field to be a link to the Single Entry View"
 msgstr ""
 
 #: includes/views/html-gf-directory-settings-admin.php:133
-msgid "Hide the field in Directory View; and"
+msgid "Hide the field in Directory View"
 msgstr ""
 
 #: includes/views/html-gf-directory-settings-admin.php:134
@@ -666,60 +666,59 @@ msgstr ""
 msgid "Configuring Column Visibility & Order"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:139
-#: includes/views/html-gf-directory-settings-admin.php:142
-msgid "When editing a form in Gravity Forms, click the link near the top-center of the page named \"Directory Columns\""
+#: includes/views/html-gf-directory-settings-admin.php:140
+msgid "When editing a form in Gravity Forms, click the link near the top-center of the page named \"Directory Columns\"."
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:143
+#: includes/views/html-gf-directory-settings-admin.php:141
 msgid "Drag and drop columns from the right (\"Hidden Columns\") side to the left (\"Visible Columns\") side."
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:144
-msgid "Click the \"Save\" button"
+#: includes/views/html-gf-directory-settings-admin.php:142
+msgid "Click the \"Save\" button."
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:159
+#: includes/views/html-gf-directory-settings-admin.php:157
 msgid "Enable Gravity Forms Directory capabilities"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:166
+#: includes/views/html-gf-directory-settings-admin.php:164
 msgid "Directory Default Settings"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:167
+#: includes/views/html-gf-directory-settings-admin.php:165
 msgid "These defaults can be over-written when inserting a directory."
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:177
+#: includes/views/html-gf-directory-settings-admin.php:175
 msgid "Add Referrer Data to Emails"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:181
+#: includes/views/html-gf-directory-settings-admin.php:179
 msgid "Adds referrer data to entries, including the path the user took to get to the form before submitting."
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:187
+#: includes/views/html-gf-directory-settings-admin.php:185
 msgid "Modify Gravity Forms Admin"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:193
+#: includes/views/html-gf-directory-settings-admin.php:191
 msgid "Show option to expand Form Editor Field boxes"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:199
+#: includes/views/html-gf-directory-settings-admin.php:197
 msgid "When clicking Form Editor Field boxes, toggle open and closed instead of \"accordion mode\" (closing all except the clicked box)."
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:205
+#: includes/views/html-gf-directory-settings-admin.php:203
 msgid "Makes possible direct editing of entries from %1$sEntries list view%2$s"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:211
+#: includes/views/html-gf-directory-settings-admin.php:209
 msgid "Adds a link in the Forms list view to view form IDs"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:219
+#: includes/views/html-gf-directory-settings-admin.php:217
 msgid "Save Settings"
 msgstr ""
 

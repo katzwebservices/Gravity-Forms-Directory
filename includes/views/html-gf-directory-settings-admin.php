@@ -121,7 +121,7 @@
 				<li><?php esc_html_e( 'Click the "Add Directory" button above the content area.', 'gravity-forms-addons' ); ?></li>
 				<li><?php esc_html_e( 'Choose a form from the drop-down menu and configure settings as you would like them.', 'gravity-forms-addons' ); ?></li>
 				<li><?php printf( esc_html__( 'Click "Insert Directory". A "shortcode" should appear in the content editor that looks similar to %1$s[directory form="#"]%2$s', 'gravity-forms-addons' ), '<code style="font-size:1em;">', '</code>' ); ?></li>
-				<li><?php esc_html_e( 'Save the post or page', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Save the post or page.', 'gravity-forms-addons' ); ?></li>
 			</ol>
 
 			<h4><?php esc_html_e( 'Configuring Fields & Columns', 'gravity-forms-addons' ); ?></h4>
@@ -129,19 +129,17 @@
 			<?php echo wpautop( esc_html__( 'When editing a form, click on a field to expand the field. Next, click the "Directory" tab. There, you will find options to:', 'gravity-forms-addons' ) ); ?>
 
 			<ul class="ul-square">
-				<li><?php esc_html_e( 'Choose whether you would like the field to be a link to the Single Entry View;', 'gravity-forms-addons' ); ?></li>
-				<li><?php esc_html_e( 'Hide the field in Directory View; and', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Choose whether you would like the field to be a link to the Single Entry View', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Hide the field in Directory View', 'gravity-forms-addons' ); ?></li>
 				<li><?php esc_html_e( 'Hide the field in Single Entry View', 'gravity-forms-addons' ); ?></li>
 			</ul>
 
 			<h4><?php esc_html_e( 'Configuring Column Visibility & Order', 'gravity-forms-addons' ); ?></h4>
 
-			<?php echo wpautop( esc_html__( 'When editing a form in Gravity Forms, click the link near the top-center of the page named "Directory Columns"', 'gravity-forms-addons' ) ); ?>
-
 			<ol class="ol-decimal">
-				<li><?php esc_html_e( 'When editing a form in Gravity Forms, click the link near the top-center of the page named "Directory Columns"', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'When editing a form in Gravity Forms, click the link near the top-center of the page named "Directory Columns".', 'gravity-forms-addons' ); ?></li>
 				<li><?php esc_html_e( 'Drag and drop columns from the right ("Hidden Columns") side to the left ("Visible Columns") side.', 'gravity-forms-addons' ); ?></li>
-				<li><?php esc_html_e( 'Click the "Save" button', 'gravity-forms-addons' ); ?></li>
+				<li><?php esc_html_e( 'Click the "Save" button.', 'gravity-forms-addons' ); ?></li>
 			</ol>
 
 		</div>
