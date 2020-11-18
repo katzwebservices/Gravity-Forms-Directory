@@ -1,21 +1,22 @@
 # Copyright (C) 2020 Katz Web Services, Inc.
-# This file is distributed under the same license as the Gravity Forms Directory & Addons plugin.
+# This file is distributed under the same license as the Gravity Forms Directory plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gravity Forms Directory & Addons 4.1.3\n"
+"Project-Id-Version: Gravity Forms Directory 4.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Gravity-Forms-Directory\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-11-13T00:05:49+05:30\n"
+"POT-Creation-Date: 2020-11-18T15:38:37+05:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: gravity-forms-addons\n"
 
 #. Plugin Name of the plugin
-msgid "Gravity Forms Directory & Addons"
+#: includes/views/html-gf-directory-settings-admin.php:156
+msgid "Gravity Forms Directory"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -35,7 +36,7 @@ msgid "https://gravityview.co"
 msgstr ""
 
 #: gravity-forms-addons.php:85
-msgid "Plugin deactivated - To make <strong>Gravity Forms Directory & Addons</strong> plugin work, you need to install and activate Gravity Forms plugin first."
+msgid "Plugin deactivated - To make <strong>Gravity Forms Directory</strong> plugin work, you need to install and activate Gravity Forms plugin first."
 msgstr ""
 
 #: includes/admin/class-gf-directory-admin.php:57
@@ -55,14 +56,14 @@ msgid "%s disapproved."
 msgstr ""
 
 #: includes/admin/class-gf-directory-admin.php:131
-msgid "%1$sGravity Forms is installed but not active. %2$sActivate Gravity Forms%3$s to use the Gravity Forms Directory & Addons plugin.%4$s"
+msgid "%1$sGravity Forms is installed but not active. %2$sActivate Gravity Forms%3$s to use the Gravity Forms Directory plugin.%4$s"
 msgstr ""
 
 #: includes/admin/class-gf-directory-admin.php:134
 msgid ""
 "%sGravity Forms cannot be found%s\n"
 "\n"
-"\t\t\t\tThe %sGravity Forms plugin%s must be installed and activated for the Gravity Forms Addons plugin to work.\n"
+"\t\t\t\tThe %sGravity Forms plugin%s must be installed and activated for the Gravity Forms Directory plugin to work.\n"
 "\n"
 "\t\t\t\tIf you haven't installed the plugin, you can %3$spurchase the plugin here%4$s. If you have, and you believe this notice is in error, %5$sstart a topic on the plugin support forum%4$s.\n"
 "\n"
@@ -71,6 +72,7 @@ msgid ""
 msgstr ""
 
 #: includes/admin/class-gf-directory-admin.php:195
+#: includes/admin/class-gf-directory-admin.php:971
 #: includes/views/html-editor-script.php:22
 msgid "Directory"
 msgstr ""
@@ -169,7 +171,7 @@ msgid "Allow logged-in users to edit entries they created. Will add an 'Edit You
 msgstr ""
 
 #: includes/admin/class-gf-directory-admin.php:453
-msgid "Display entries only the the creator of the entry (users will not see other people's entries)."
+msgid "Only display entries created by the currently logged-in user (users will not see entries created by other people)."
 msgstr ""
 
 #: includes/admin/class-gf-directory-admin.php:459
@@ -402,17 +404,13 @@ msgstr ""
 msgid "Add a Gravity Forms Directory"
 msgstr ""
 
-#: includes/admin/class-gf-directory-admin.php:971
-msgid "Directory & Addons"
-msgstr ""
-
 #: includes/admin/class-gf-directory-admin.php:995
 msgid "Settings saved."
 msgstr ""
 
 #. Translators: placeholder: Link to Directory settings page.
 #: includes/class-gf-directory-activator.php:38
-msgid "Congratulations - the Gravity Forms Directory & Addons plugin has been installed. %1$sGo to the settings page%2$s to read usage instructions and configure the plugin default settings. %3$sGo to settings page%4$s"
+msgid "Congratulations - the Gravity Forms Directory plugin has been installed. %1$sGo to the settings page%2$s to read usage instructions and configure the plugin default settings. %3$sGo to settings page%4$s"
 msgstr ""
 
 #: includes/class-gf-directory-deactivator.php:22
@@ -424,18 +422,18 @@ msgid "Go to Entry"
 msgstr ""
 
 #: includes/class-gf-directory-edit-form.php:81
-#: includes/class-gf-directory.php:1267
+#: includes/class-gf-directory.php:1249
 msgid "Approved? (Admin-only)"
 msgstr ""
 
 #: includes/class-gf-directory-edit-form.php:83
-#: includes/class-gf-directory.php:1267
+#: includes/class-gf-directory.php:1249
 msgid "Approved?"
 msgstr ""
 
 #: includes/class-gf-directory-edit-form.php:91
 #: includes/class-gf-directory-edit-form.php:266
-#: includes/class-gf-directory.php:1267
+#: includes/class-gf-directory.php:1249
 msgid "Approved"
 msgstr ""
 
@@ -481,47 +479,47 @@ msgstr ""
 msgid "User Edit Link"
 msgstr ""
 
-#: includes/class-gf-directory.php:622
+#: includes/class-gf-directory.php:604
 msgid "Disapproved the lead"
 msgstr ""
 
-#: includes/class-gf-directory.php:622
+#: includes/class-gf-directory.php:604
 msgid "Approved the lead"
 msgstr ""
 
-#: includes/class-gf-directory.php:657
+#: includes/class-gf-directory.php:639
 msgid "%1$sYou do not have permission to edit this form.%2$s"
 msgstr ""
 
-#: includes/class-gf-directory.php:688
+#: includes/class-gf-directory.php:670
 msgid "%1$sThere were errors with the edit you made.%2$s%3$s"
 msgstr ""
 
-#: includes/class-gf-directory.php:704
+#: includes/class-gf-directory.php:686
 msgid "%1$sThe entry was successfully updated.%2$s"
 msgstr ""
 
-#: includes/class-gf-directory.php:730
+#: includes/class-gf-directory.php:712
 msgid "You can edit post details from the %1$spost page%2$s."
 msgstr ""
 
-#: includes/class-gf-directory.php:752
+#: includes/class-gf-directory.php:734
 msgid "Update Entry"
 msgstr ""
 
-#: includes/class-gf-directory.php:760
+#: includes/class-gf-directory.php:742
 msgid "%1$sThe link to edit this entry is not valid; it may have expired.%2$s"
 msgstr ""
 
-#: includes/class-gf-directory.php:947
+#: includes/class-gf-directory.php:929
 msgid "You are not allowed to view this content."
 msgstr ""
 
-#: includes/class-gf-directory.php:953
+#: includes/class-gf-directory.php:935
 msgid "This entry is not approved, but you are logged-in and have permission to see it."
 msgstr ""
 
-#: includes/class-gf-directory.php:1312
+#: includes/class-gf-directory.php:1294
 msgid "Settings"
 msgstr ""
 
@@ -681,10 +679,6 @@ msgstr ""
 msgid "Click the \"Save\" button"
 msgstr ""
 
-#: includes/views/html-gf-directory-settings-admin.php:156
-msgid "Gravity Forms Directory"
-msgstr ""
-
 #: includes/views/html-gf-directory-settings-admin.php:159
 msgid "Enable Gravity Forms Directory capabilities"
 msgstr ""
@@ -729,16 +723,16 @@ msgstr ""
 msgid "Save Settings"
 msgstr ""
 
-#: includes/views/html-gf-directory-shortcode.php:118
+#: includes/views/html-gf-directory-shortcode.php:110
 msgid "Search Entries:"
 msgstr ""
 
-#: includes/views/html-gf-directory-shortcode.php:134
+#: includes/views/html-gf-directory-shortcode.php:126
 msgid "Search"
 msgstr ""
 
-#: includes/views/html-gf-directory-shortcode.php:166
-#: includes/views/html-gf-directory-shortcode.php:363
+#: includes/views/html-gf-directory-shortcode.php:158
+#: includes/views/html-gf-directory-shortcode.php:355
 msgid "Displaying %1$d - %2$d of %3$d"
 msgstr ""
 
@@ -899,14 +893,14 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: includes/views/template-row.php:290
+#: includes/views/template-row.php:285
 msgid "This search returned no results."
 msgstr ""
 
-#: includes/views/template-row.php:292
+#: includes/views/template-row.php:287
 msgid "This form does not have any visible entries."
 msgstr ""
 
-#: includes/views/template-row.php:294
+#: includes/views/template-row.php:289
 msgid "This form does not have any entries yet."
 msgstr ""
