@@ -271,15 +271,8 @@ class GFDirectory {
 			add_filter( 'members_get_capabilities', array( 'GFDirectory', 'members_get_capabilities' ) );
 		}
 
-		add_filter(
-			'kws_gf_directory_td_address',
-			array(
-				'GFDirectory',
-				'format_address',
-			),
-			1,
-			2
-		); // Add this filter so it can be removed or overridden by users
+		// Add this filter so it can be removed or overridden by users
+		add_filter( 'kws_gf_directory_td_address', array( 'GFDirectory', 'format_address' ), 1, 2 );
 
 		if ( self::is_directory_page() ) {
 
