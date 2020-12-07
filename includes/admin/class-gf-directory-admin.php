@@ -967,7 +967,7 @@ EOD;
 		$permission = GFDirectory::has_access( 'gravityforms_directory' );
 		if ( ! empty( $permission ) ) {
 			$menus[] = array(
-				'name'       => 'gf_settings&amp;addon=Directory+%26+Addons',
+				'name'       => 'gf_settings&subview=Directory',
 				'label'      => esc_html__( 'Directory', 'gravity-forms-addons' ),
 				'callback'   => array( &$this, 'settings_page' ),
 				'permission' => $permission,
