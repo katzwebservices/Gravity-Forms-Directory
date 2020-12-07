@@ -200,13 +200,13 @@
 
 						<li>
 							<label for="gf_addons_modify_admin_edit">
-								<input type="checkbox" id="gf_addons_modify_admin_edit" name="gf_addons_modify_admin[edit]" <?php checked( isset( $settings['modify_admin']['edit'] ) ); ?> /> <?php printf( esc_html__( 'Makes possible direct editing of entries from %1$sEntries list view%2$s', 'gravity-forms-addons' ), '<a href="' . admin_url( 'admin.php?page=gf_entries' ) . '">', '</a>' ); ?>
+								<input type="checkbox" id="gf_addons_modify_admin_edit" name="gf_addons_modify_admin[edit]" <?php checked( isset( $settings['modify_admin']['edit'] ) ); ?> /> <?php printf( esc_html__( 'Makes possible direct editing of entries from %1$sEntries list view%2$s', 'gravity-forms-addons' ), '<a href="' . esc_url( admin_url( 'admin.php?page=gf_entries' ) ) . '">', '</a>' ); ?>
 							</label>
 						</li>
 
 						<li>
 							<label for="gf_addons_modify_admin_ids">
-								<input type="checkbox" id="gf_addons_modify_admin_ids" name="gf_addons_modify_admin[ids]" <?php checked( isset( $settings['modify_admin']['ids'] ) ); ?> /> <?php printf( esc_html__( 'Adds a link in the Forms list view to view form IDs', 'gravity-forms-addons' ), '<a href="' . admin_url( 'admin.php?page=gf_edit_forms' ) . '">', '</a>' ); ?>
+								<input type="checkbox" id="gf_addons_modify_admin_ids" name="gf_addons_modify_admin[ids]" <?php checked( isset( $settings['modify_admin']['ids'] ) ); ?> /> <?php printf( esc_html__( 'Adds a link in the Forms list view to view form IDs', 'gravity-forms-addons' ), '<a href="' . esc_url( admin_url( 'admin.php?page=gf_edit_forms' ) ) . '">', '</a>' ); ?>
 							</label>
 						</li>
 					</ul>

@@ -230,7 +230,7 @@ class GFDirectory_EditForm {
 						'height' => 600,
 						'width' => 700,
 					),
-					admin_url()
+					esc_url( admin_url() )
 				) . '">',
 				esc_html__( 'Modify Directory Columns', 'gravity-forms-addons' )
 			),

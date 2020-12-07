@@ -37,7 +37,7 @@
 	?>
 
 	function UpdateApproved(lead_id, approved) {
-		var mysack = new sack("<?php echo admin_url( 'admin-ajax.php' ); ?>" );
+		var mysack = new sack("<?php echo esc_js( admin_url( 'admin-ajax.php' ) ); ?>" );
 		mysack.execute = 1;
 		mysack.method = 'POST';
 		mysack.setVar( "action", "rg_update_approved" );

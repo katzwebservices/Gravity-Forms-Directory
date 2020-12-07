@@ -702,7 +702,7 @@ class GFDirectory {
 						is_numeric( $lead['post_id'] ) && GFCommon::is_post_field( $field )
 					) {
 						if ( is_numeric( $lead['post_id'] ) && GFCommon::is_post_field( $field ) && ! $message_shown ) {
-							echo apply_filters( 'kws_gf_directory_edit_post_details_text', sprintf( esc_html__( 'You can edit post details from the %1$spost page%2$s.', 'gravity-forms-addons' ), '<a href="' . admin_url( 'post.php?action=edit&post=' . $lead['post_id'] ) . '">', '</a>' ), $field, $lead, $lead['post_id'] );
+							echo apply_filters( 'kws_gf_directory_edit_post_details_text', sprintf( esc_html__( 'You can edit post details from the %1$spost page%2$s.', 'gravity-forms-addons' ), '<a href="' . esc_url( admin_url( 'post.php?action=edit&post=' . $lead['post_id'] ) ) . '">', '</a>' ), $field, $lead, $lead['post_id'] );
 							$message_shown = true;
 						}
 

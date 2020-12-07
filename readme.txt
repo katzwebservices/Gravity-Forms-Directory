@@ -254,9 +254,10 @@ Since 4.1, Smart Approval may return inaccurate entry counts. This will be fixed
 
 **Improvements:**
 
+- Security improvements
 - Restructured classes and templates
 - Removed redundant code
-- Folder structure
+- Refactored folder structure
 
 = 4.1.2 & 4.1.3 on April 2, 2018 =
 
