@@ -1,8 +1,9 @@
 === Gravity Forms Directory ===
-Tags: gravity forms, gravity form, forms, gravity, form, directory, business, business directory, directorypress, classifieds, cforms, formidable, gravityview
+Tags: gravity forms, gravity form, forms, gravity, form, directory, business directory, directorypress, classifieds, cforms, formidable, gravityview
 Requires at least: 4.0
 Tested up to: 5.6
-Stable tag: trunk
+Requires at least: 4.4
+Stable tag: 4.2
 Contributors: katzwebservices
 License: GPLv2 or later
 Donate link: https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=donate
@@ -243,17 +244,18 @@ Since 4.1, Smart Approval may return inaccurate entry counts. This will be fixed
 - Compatible with WordPress 5.6
 - Compatible with Gravity Forms 2.5
 - Activation check to verify if Gravity Forms is active
+- Requires WordPress 4.4 or newer
 
 **Fixed:**
 
 - Directory Columns window now displays properly
 - Search by substring on directory view works
 - PHP warnings
-- Removed redundant code
 
 **Improvements:**
 
 - Restructured classes and templates
+- Removed redundant code
 - Folder structure
 
 = 4.1.2 & 4.1.3 on April 2, 2018 =

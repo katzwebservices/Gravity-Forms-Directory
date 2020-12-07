@@ -984,10 +984,13 @@ EOD;
 		if ( isset( $_POST['gf_addons_submit'] ) ) {
 			check_admin_referer( 'update', 'gf_directory_update' );
 
+			$directory_defaults = $_POST['gf_addons_directory_defaults'];
+			$directory_defaults = map_deep( $directory_defaults, array( $this, 'sanitize_setting_text' ) );
+
 			$settings = array(
 				'directory'          => isset( $_POST['gf_addons_directory'] ),
 				'referrer'           => isset( $_POST['gf_addons_referrer'] ),
-				'directory_defaults' => GFDirectory::directory_defaults( $_POST['gf_addons_directory_defaults'], true ),
+				'directory_defaults' => GFDirectory::directory_defaults( $directory_defaults, true ),
 				'modify_admin'       => isset( $_POST['gf_addons_modify_admin'] ) ? $_POST['gf_addons_modify_admin'] : array(),
 				'version'            => GF_DIRECTORY_VERSION,
 				'saved'              => true,
@@ -999,5 +1002,79 @@ EOD;
 		}
 
 		include_once( GF_DIRECTORY_PATH . 'includes/views/html-gf-directory-settings-admin.php' );
+	}
+
+	/**
+     * Allow HTML, but not unsafe HTML, in settings
+     *
+     * @uses wp_kses()
+     *
+	 * @since 4.2
+     *
+     * @param string $setting_text
+     *
+     * @return string, run through wp_kses()
+	 */
+	public function sanitize_setting_text( $setting_text ) {
+	    $allowed_protocols   = wp_allowed_protocols();
+        $allowed_protocols[] = 'data';
+
+        return wp_kses( $setting_text, array(
+            'a'       => array(
+                'class'       => array(),
+                'id'          => array(),
+                'href'        => array(),
+                'title'       => array(),
+                'rel'         => array(),
+                'target'      => array(),
+                'data-toggle' => array(),
+                'data-access' => array(),
+            ),
+            'img'     => array(
+                'class' => array(),
+                'id'    => array(),
+                'src'   => array(),
+                'href'  => array(),
+                'alt'   => array(),
+                'title' => array(),
+            ),
+            'span'    => array( 'class' => array(), 'id' => array(), 'title' => array(), 'data-toggle' => array() ),
+            'label'   => array( 'class' => array(), 'id' => array(), 'for' => array() ),
+            'code'    => array( 'class' => array(), 'id' => array() ),
+            'tt'      => array( 'class' => array(), 'id' => array() ),
+            'pre'     => array( 'class' => array(), 'id' => array() ),
+            'table'   => array( 'class' => array(), 'id' => array() ),
+            'thead'   => array(),
+            'tfoot'   => array(),
+            'td'      => array( 'class' => array(), 'id' => array(), 'colspan' => array() ),
+            'th'      => array( 'class' => array(), 'id' => array(), 'colspan' => array(), 'scope' => array() ),
+            'ul'      => array( 'class' => array(), 'id' => array() ),
+            'li'      => array( 'class' => array(), 'id' => array() ),
+            'p'       => array( 'class' => array(), 'id' => array() ),
+            'h1'      => array( 'class' => array(), 'id' => array() ),
+            'h2'      => array( 'class' => array(), 'id' => array() ),
+            'h3'      => array( 'class' => array(), 'id' => array() ),
+            'h4'      => array( 'class' => array(), 'id' => array() ),
+            'h5'      => array( 'class' => array(), 'id' => array() ),
+            'div'     => array( 'class' => array(), 'id' => array(), 'aria-live' => array() ),
+            'small'   => array( 'class' => array(), 'id' => array(), 'data-toggle' => array() ),
+            'header'  => array( 'class' => array(), 'id' => array() ),
+            'footer'  => array( 'class' => array(), 'id' => array() ),
+            'section' => array( 'class' => array(), 'id' => array() ),
+            'br'      => array(),
+            'strong'  => array(),
+            'em'      => array(),
+            'input'   => array(
+                'class'     => array(),
+                'id'        => array(),
+                'type'      => array( 'text' ),
+                'value'     => array(),
+                'size'      => array(),
+                'aria-live' => array(),
+            ),
+            'button'  => array( 'class' => array(), 'id' => array(), 'aria-live' => array() ),
+        ),
+        $allowed_protocols
+        );
 	}
 }

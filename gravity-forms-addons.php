@@ -10,7 +10,7 @@ Text Domain:    gravity-forms-addons
 License:		GPLv2 or later
 License URI: 	https://www.gnu.org/licenses/gpl-2.0.html
 
-Copyright 2018 Katz Web Services, Inc.  (email: info@katzwebservices.com)
+Copyright 2020 Katz Web Services, Inc.  (email: info@katzwebservices.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
